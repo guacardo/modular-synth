@@ -1,15 +1,15 @@
 import { LitElement, html } from "lit";
-import { customElement } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import "./gain-node-view";
+import { GraphNode } from "../nodes";
 
 @customElement("audio-graph-view")
 export class AudioGraphView extends LitElement {
+    @property()
+    graphNodes?: GraphNode[];
+
     render() {
-        return html`
-            <div>
-                <h1>Nodes</h1>
-                <gain-node-view></gain-node-view>
-            </div>
-        `;
+        console.log(this.graphNodes);
+        return html` <div> ${this.graphNodes?.map((node) => html`<span>${node.type}</span>`)} </div> `;
     }
 }

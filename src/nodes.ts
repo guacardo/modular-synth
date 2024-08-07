@@ -2,65 +2,41 @@
 export const nodeTypes = ["osc", "gain"] as const;
 export type NodeType = (typeof nodeTypes)[number];
 
-export class Node {
-    key: string;
+export class GraphNode {
+    id: string;
     type: NodeType;
     connections: string[];
+    audioNode: OscillatorNode | GainNode;
 
-    constructor(key: string, type: NodeType, connections: string[]) {
-        this.key = key;
+    constructor(key: string, type: NodeType, context: AudioContext, connections: string[] = []) {
+        this.id = key;
         this.type = type;
         this.connections = connections;
-    }
-}
 
-export class OscillatorNode extends Node {
-    frequency: number;
-
-    constructor(node: OscillatorNode) {
-        super(node.key, node.type, node.connections);
-        this.frequency = node.frequency;
-    }
-}
-
-export class GainNode extends Node {
-    gain: number;
-
-    constructor(node: GainNode) {
-        super(node.key, node.type, node.connections);
-        this.gain = node.gain;
-    }
-}
-
-export class AudioGraph {
-    nodes: Array<OscillatorNode | GainNode>;
-    context: AudioContext;
-
-    constructor(nodes: Array<OscillatorNode | GainNode>) {
-        this.nodes = nodes;
-        this.context = new AudioContext();
-    }
-
-    newNode(type: NodeType) {
         switch (type) {
-            case "gain":
-                this.nodes.push(new GainNode({ key: this.nodes.length.toString(), type: "gain", gain: 1, connections: [] }));
+            case `gain`:
+                this.audioNode = new GainNode(context);
                 break;
-            case "osc":
-                this.nodes.push(new OscillatorNode({ key: this.nodes.length.toString(), type: "osc", frequency: 2000, connections: [] }));
+            case `osc`:
+                this.audioNode = new OscillatorNode(context);
                 break;
         }
     }
 }
 
-const AUDIO_GRAPH = new AudioGraph([]);
+export class AudioGraph {
+    readonly graphNodes: GraphNode[];
+    readonly context: AudioContext;
 
-class DomEvents {
-    newGainNode() {
-        AUDIO_GRAPH.newNode("gain");
+    constructor(nodes: GraphNode[]) {
+        this.graphNodes = nodes;
+        this.context = new AudioContext();
     }
 
-    newOscillatorNode() {
-        AUDIO_GRAPH.newNode("osc");
+    addNode(type: NodeType): AudioGraph {
+        return Object.assign(Object.create(AudioGraph.prototype), {
+            ...this,
+            graphNodes: [...this.graphNodes, new GraphNode("bungus", type, this.context)],
+        });
     }
 }
