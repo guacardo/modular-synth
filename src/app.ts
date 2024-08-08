@@ -15,13 +15,17 @@ export class AppView extends LitElement {
         this._audioGraph = this._audioGraph.addNode(type);
     };
 
+    private _doot() {
+        (this._audioGraph.graphNodes[0].audioNode as OscillatorNode).connect(this._audioGraph.context.destination);
+        (this._audioGraph.graphNodes[0].audioNode as OscillatorNode).start();
+    }
+
     render() {
         return html` <div>
             <button @click="${() => this.handleAddNode("gain")}">Gain Node</button>
             <button @click="${() => this.handleAddNode("osc")}">Oscillator Node</button>
-            <button @click="${() => console.log("play")}">Play</button>
-            <button @click="${() => console.log("stop")}">Stop</button>
-            <audio-graph-view .graphNodes=${this._audioGraph.graphNodes}></audio-graph-view>
+            <button @click=${this._doot}>doot</button>
+            <audio-graph-view .audioGraph=${this._audioGraph}></audio-graph-view>
         </div>`;
     }
 }

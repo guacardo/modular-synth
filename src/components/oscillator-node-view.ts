@@ -4,6 +4,19 @@ import { graphNodeStyles } from "../styles/graph-node-styles";
 import { GraphNode } from "../model/audio-graph";
 import { classMap } from "lit/directives/class-map.js";
 
+export interface FrequencyChangeDetail {
+    node: GraphNode | undefined;
+    frequency: number;
+}
+
+export interface OscillatorTypeChangeDetail {
+    node: GraphNode | undefined;
+    type: OscillatorType;
+}
+
+// export higher up? types file?
+const settableOscillatorTypes: readonly OscillatorType[] = ["sawtooth", "sine", "square", "triangle"] as const;
+
 @customElement("oscillator-node-view")
 export class OscillatorNodeView extends LitElement {
     static styles = [graphNodeStyles];
@@ -16,14 +29,44 @@ export class OscillatorNodeView extends LitElement {
 
     private _dispatchClick() {
         const node = this.node;
-        this.dispatchEvent(new CustomEvent("node-clicked", { detail: { node }, bubbles: true, composed: true }));
+        // todo, strongly type the custom event https://github.com/lit/lit-element/issues/808
+        this.dispatchEvent(new CustomEvent("node-clicked", { detail: { node }, composed: true }));
+    }
+
+    private _dispatchFrequencyChange(e: Event) {
+        const frequencyChange: FrequencyChangeDetail = {
+            node: this.node,
+            frequency: Number((e.target as HTMLInputElement).value),
+        };
+        // todo, strongly type the custom event https://github.com/lit/lit-element/issues/808
+        this.dispatchEvent(new CustomEvent("frequency-change", { detail: { frequencyChange }, composed: true }));
+    }
+
+    private _dispatchTypeChange(e: Event) {
+        const typeChange: OscillatorTypeChangeDetail = {
+            node: this.node,
+            type: (e.target as HTMLSelectElement).value as OscillatorType,
+        };
+
+        this.dispatchEvent(new CustomEvent("type-change", { detail: { typeChange }, composed: true }));
     }
 
     render() {
+        console.log((this.node?.audioNode as OscillatorNode).type as OscillatorType);
         return html`<div class="${classMap({ node: true, source: this.isSourceNode })}" @click=${this._dispatchClick}>
             <p>${this.node?.type} ${this.node?.id}</p>
             <p>${this.node?.connections}</p>
-            <input type="range" />
+            <input type="range" min="0" max="2000" @input=${this._dispatchFrequencyChange} @click=${(e: Event) => e.stopPropagation()} />
+            <select @change=${this._dispatchTypeChange} @click=${(e: Event) => e.stopPropagation()}>
+                ${settableOscillatorTypes.map((type) => {
+                    console.log(type);
+                    return html`<option
+                        value=${type}
+                        ?selected=${type === ((this.node?.audioNode as OscillatorNode).type as OscillatorType)}
+                        >${type}</option
+                    >`;
+                })}
+            </select>
         </div>`;
     }
 }

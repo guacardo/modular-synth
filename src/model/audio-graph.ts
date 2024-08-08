@@ -6,7 +6,7 @@ export class GraphNode {
     id: string;
     type: NodeType;
     connections: string[];
-    audioNode: OscillatorNode | GainNode;
+    audioNode: OscillatorNode | GainNode | AudioDestinationNode;
 
     constructor(key: string, type: NodeType, context: AudioContext, connections: string[] = []) {
         this.id = key;
@@ -29,8 +29,8 @@ export class AudioGraph {
     readonly context: AudioContext;
 
     constructor(nodes: GraphNode[]) {
-        this.graphNodes = nodes;
         this.context = new AudioContext();
+        this.graphNodes = nodes;
     }
 
     addNode(type: NodeType): AudioGraph {
