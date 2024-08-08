@@ -52,14 +52,12 @@ export class OscillatorNodeView extends LitElement {
     }
 
     render() {
-        console.log((this.node?.audioNode as OscillatorNode).type as OscillatorType);
         return html`<div class="${classMap({ node: true, source: this.isSourceNode })}" @click=${this._dispatchClick}>
             <p>${this.node?.type} ${this.node?.id}</p>
             <p>${this.node?.connections}</p>
             <input type="range" min="0" max="2000" @input=${this._dispatchFrequencyChange} @click=${(e: Event) => e.stopPropagation()} />
             <select @change=${this._dispatchTypeChange} @click=${(e: Event) => e.stopPropagation()}>
                 ${settableOscillatorTypes.map((type) => {
-                    console.log(type);
                     return html`<option
                         value=${type}
                         ?selected=${type === ((this.node?.audioNode as OscillatorNode).type as OscillatorType)}
