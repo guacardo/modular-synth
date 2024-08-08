@@ -1,9 +1,10 @@
 import { LitElement, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { AudioGraphView } from "./components/audio-graph-view";
-
+import { AudioGraph, NodeType } from "./model/audio-graph";
+import { GainNodeView } from "./components/gain-node-view";
+import { OscillatorNodeView } from "./components/oscillator-node-view";
 import "./components/audio-graph-view";
-import { AudioGraph, NodeType } from "./nodes";
 
 @customElement("app-view")
 export class AppView extends LitElement {
@@ -18,6 +19,8 @@ export class AppView extends LitElement {
         return html` <div>
             <button @click="${() => this.handleAddNode("gain")}">Gain Node</button>
             <button @click="${() => this.handleAddNode("osc")}">Oscillator Node</button>
+            <button @click="${() => console.log("play")}">Play</button>
+            <button @click="${() => console.log("stop")}">Stop</button>
             <audio-graph-view .graphNodes=${this._audioGraph.graphNodes}></audio-graph-view>
         </div>`;
     }
@@ -27,5 +30,7 @@ declare global {
     interface HTMLElementTagNameMap {
         "app-view": AppView;
         "audio-graph-view": AudioGraphView;
+        "gain-node-view": GainNodeView;
+        "oscillator-node-view": OscillatorNodeView;
     }
 }
