@@ -51,9 +51,9 @@ export class AudioGraphView extends LitElement {
         });
     }
 
-    private nodeById(key: string): GraphNode | undefined {
-        return this.audioGraph?.graphNodes.find((node) => node.id === key);
-    }
+    // private nodeById(key: string): GraphNode | undefined {
+    //     return this.audioGraph?.graphNodes.find((node) => node.id === key);
+    // }
 
     private renderNodeView(node: GraphNode) {
         switch (node.type) {
