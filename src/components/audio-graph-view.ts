@@ -1,10 +1,10 @@
 import { LitElement, html } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
-import { AudioGraph, GraphNode } from "../model/audio-graph";
+import { AudioGraph, Connection, GraphNode } from "../model/audio-graph";
 import { audioGraphStyles } from "../styles/audio-graph-styles";
+import { FrequencyChangeDetail, OscillatorTypeChangeDetail } from "./oscillator-node-view";
 import "./gain-node-view";
 import "./oscillator-node-view";
-import { FrequencyChangeDetail, OscillatorTypeChangeDetail } from "./oscillator-node-view";
 
 @customElement("audio-graph-view")
 export class AudioGraphView extends LitElement {
@@ -22,8 +22,10 @@ export class AudioGraphView extends LitElement {
         } else if (this._sourceNode === e.detail.node) {
             this._sourceNode = undefined;
         } else if (this._sourceNode !== e.detail.node) {
+            const connection: Connection = { sourceId: this._sourceNode.id, destinationId: (e.detail.node as GraphNode).id };
+            (e.detail.node as GraphNode).connections = [...(e.detail.node as GraphNode).connections, connection];
+            this._sourceNode.connections = [...this._sourceNode.connections, connection];
             this._sourceNode.audioNode.connect((e.detail.node as GraphNode).audioNode);
-            this._sourceNode.connections = [...this._sourceNode.connections, (e.detail.node as GraphNode).id];
             this._sourceNode = undefined;
         }
     }
@@ -49,28 +51,31 @@ export class AudioGraphView extends LitElement {
         });
     }
 
+    private nodeById(key: string): GraphNode | undefined {
+        return this.audioGraph?.graphNodes.find((node) => node.id === key);
+    }
+
+    private renderNodeView(node: GraphNode) {
+        switch (node.type) {
+            case `gain`:
+                return html`<gain-node-view
+                    .node=${node}
+                    ?isSourceNode=${this._sourceNode === node}
+                    @node-clicked=${this.handleNodeClick}
+                ></gain-node-view>`;
+            case `osc`:
+                return html`<oscillator-node-view
+                    .node=${node}
+                    ?isSourceNode=${this._sourceNode === node}
+                    @node-clicked=${this.handleNodeClick}
+                    @frequency-change=${this.handleFrequencyChange}
+                    @type-change=${this.handleOscillatorTypeChange}
+                ></oscillator-node-view>`;
+        }
+    }
+
     render() {
-        return html`
-            <div class="container">
-                ${this.audioGraph?.graphNodes?.map((node) => {
-                    switch (node.type) {
-                        case `gain`:
-                            return html`<gain-node-view
-                                .node=${node}
-                                ?isSourceNode=${this._sourceNode === node}
-                                @node-clicked=${this.handleNodeClick}
-                            ></gain-node-view>`;
-                        case `osc`:
-                            return html`<oscillator-node-view
-                                .node=${node}
-                                ?isSourceNode=${this._sourceNode === node}
-                                @node-clicked=${this.handleNodeClick}
-                                @frequency-change=${this.handleFrequencyChange}
-                                @type-change=${this.handleOscillatorTypeChange}
-                            ></oscillator-node-view>`;
-                    }
-                })}
-            </div>
-        `;
+        console.log(this.audioGraph?.graphNodes);
+        return html` <div class="container"> ${this.audioGraph?.graphNodes.map((node) => this.renderNodeView(node))} </div> `;
     }
 }

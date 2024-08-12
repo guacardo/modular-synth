@@ -5,4 +5,5 @@ body {
     height: 100vw;
     overflow: hidden;
     font-family: "Courier New", Courier, monospace;
+    margin: 0;
 }

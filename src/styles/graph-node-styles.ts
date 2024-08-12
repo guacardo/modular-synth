@@ -5,6 +5,7 @@ export const graphNodeStyles = css`
         border: 1px solid #ddd;
         border-radius: 4px;
         padding: 8px 16px;
+        background-color: #333;
         cursor: pointer;
     }
 

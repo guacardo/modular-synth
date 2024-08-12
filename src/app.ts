@@ -4,10 +4,13 @@ import { AudioGraphView } from "./components/audio-graph-view";
 import { AudioGraph, NodeType } from "./model/audio-graph";
 import { GainNodeView } from "./components/gain-node-view";
 import { OscillatorNodeView } from "./components/oscillator-node-view";
+import { appStyles } from "./styles/app-styles";
 import "./components/audio-graph-view";
 
 @customElement("app-view")
 export class AppView extends LitElement {
+    static styles = [appStyles];
+
     @state()
     private accessor _audioGraph = new AudioGraph([]);
 
@@ -21,11 +24,13 @@ export class AppView extends LitElement {
     }
 
     render() {
-        return html` <div>
-            <button @click="${() => this.handleAddNode("gain")}">Gain Node</button>
-            <button @click="${() => this.handleAddNode("osc")}">Oscillator Node</button>
-            <button @click=${this._doot}>doot</button>
-            <audio-graph-view .audioGraph=${this._audioGraph}></audio-graph-view>
+        return html` <div class="app">
+            <div class="controls">
+                <button @click="${() => this.handleAddNode("gain")}">Gain Node</button>
+                <button @click="${() => this.handleAddNode("osc")}">Oscillator Node</button>
+                <button @click=${this._doot}>doot</button>
+            </div>
+            <audio-graph-view class="graph" .audioGraph=${this._audioGraph}></audio-graph-view>
         </div>`;
     }
 }
