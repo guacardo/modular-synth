@@ -27,6 +27,7 @@ export class GainNodeView extends LitElement {
 
     private _dispatchClick() {
         const node = this.node;
+        // todo, strongly type the custom event https://github.com/lit/lit-element/issues/808
         this.dispatchEvent(new CustomEvent("node-clicked", { detail: { node }, bubbles: true, composed: true }));
     }
 
@@ -35,6 +36,7 @@ export class GainNodeView extends LitElement {
             node: this.node,
             gain: Number((e.target as HTMLInputElement).value),
         };
+        // todo, strongly type the custom event https://github.com/lit/lit-element/issues/808
         this.dispatchEvent(new CustomEvent("gain-changed", { detail: { gainChange }, bubbles: true, composed: true }));
     }
 

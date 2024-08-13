@@ -52,7 +52,7 @@ export class OscillatorNodeView extends LitElement {
             node: this.node,
             type: (e.target as HTMLSelectElement).value as OscillatorType,
         };
-
+        // todo, strongly type the custom event https://github.com/lit/lit-element/issues/808
         this.dispatchEvent(new CustomEvent("type-change", { detail: { typeChange }, composed: true }));
     }
 
@@ -67,7 +67,18 @@ export class OscillatorNodeView extends LitElement {
             style=${styleMap(this.dragController.styles)}
         >
             <p>${this.node?.id}</p>
-            <input type="range" min="0" max="2000" @input=${this._dispatchFrequencyChange} @click=${(e: Event) => e.stopPropagation()} />
+            <input
+                type="range"
+                min="0"
+                max="2000"
+                @input=${this._dispatchFrequencyChange}
+                @click=${(e: Event) => e.stopPropagation()}
+                draggable="true"
+                @dragstart=${(e: DragEvent) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                }}
+            />
             <select @change=${this._dispatchTypeChange} @click=${(e: Event) => e.stopPropagation()}>
                 ${settableOscillatorTypes.map((type) => {
                     return html`<option
