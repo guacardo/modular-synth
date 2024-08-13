@@ -86,7 +86,6 @@ export class AudioGraphView extends LitElement {
     }
 
     render() {
-        console.log(this.audioGraph?.graphNodes);
-        return html` <div class="container"> ${this.audioGraph?.graphNodes.map((node) => this.renderNodeView(node))} </div> `;
+        return html`${this.audioGraph?.graphNodes.map((node) => this.renderNodeView(node))}`;
     }
 }

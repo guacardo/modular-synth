@@ -7,6 +7,9 @@ export const graphNodeStyles = css`
         padding: 8px 16px;
         background-color: #333;
         cursor: pointer;
+        position: absolute;
+        top: 0;
+        left: 0;
     }
 
     .source {

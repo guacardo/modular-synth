@@ -1,0 +1,20 @@
+MODULAR SYNTH TODO:
+
+- visualize connections
+    - text array
+    - lines. svg? bezier curve?
+- grid
+    - drag-n-drop nodes
+- play/kill sound
+    - how to connections after playback has started?
+    - visualize what's playing
+- gain node:
+    - stateful connect-to-destination button
+- visualize destination node?
+
+
+LONG TERM:
+- keyboard playback
+- sequencing
+
+    
