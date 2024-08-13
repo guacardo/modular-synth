@@ -3,6 +3,9 @@ import { customElement, property } from "lit/decorators.js";
 import { graphNodeStyles } from "../styles/graph-node-styles";
 import { GraphNode } from "../model/audio-graph";
 import { classMap } from "lit/directives/class-map.js";
+import { DragController } from "../controllers/drag-controller";
+import { styleMap } from "lit/directives/style-map.js";
+import { ifDefined } from "lit/directives/if-defined.js";
 
 export interface FrequencyChangeDetail {
     node: GraphNode | undefined;
@@ -26,6 +29,8 @@ export class OscillatorNodeView extends LitElement {
 
     @property({ type: Boolean })
     isSourceNode: boolean = false;
+
+    private dragController = new DragController(this);
 
     private _dispatchClick() {
         const node = this.node;
@@ -52,7 +57,15 @@ export class OscillatorNodeView extends LitElement {
     }
 
     render() {
-        return html`<div class="${classMap({ node: true, source: this.isSourceNode })}" @click=${this._dispatchClick}>
+        return html`<div
+            id=${ifDefined(this.node?.id)}
+            class="${classMap({ node: true, source: this.isSourceNode })}"
+            @click=${this._dispatchClick}
+            @drag=${(e: DragEvent) => this.dragController.onDrag(e)}
+            @dragstart=${(e: DragEvent) => this.dragController.onDragStart(e)}
+            draggable="true"
+            style=${styleMap(this.dragController.styles)}
+        >
             <p>${this.node?.id}</p>
             <input type="range" min="0" max="2000" @input=${this._dispatchFrequencyChange} @click=${(e: Event) => e.stopPropagation()} />
             <select @change=${this._dispatchTypeChange} @click=${(e: Event) => e.stopPropagation()}>

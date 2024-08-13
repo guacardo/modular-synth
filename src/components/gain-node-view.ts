@@ -38,7 +38,7 @@ export class GainNodeView extends LitElement {
         this.dispatchEvent(new CustomEvent("gain-changed", { detail: { gainChange }, bubbles: true, composed: true }));
     }
 
-    private _connectContextHandler(e: Event) {
+    private _connectContextHandler() {
         if (this.destination !== undefined) {
             this.node?.audioNode.connect(this.destination);
         }
@@ -46,6 +46,7 @@ export class GainNodeView extends LitElement {
 
     render() {
         return html`<div
+            id=${this.id}
             class="node"
             @click=${this._dispatchClick}
             @drag=${(e: DragEvent) => this.dragController.onDrag(e)}
