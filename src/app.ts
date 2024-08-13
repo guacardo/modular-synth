@@ -19,15 +19,18 @@ export class AppView extends LitElement {
     };
 
     private _doot() {
-        (this._audioGraph.graphNodes[0].audioNode as OscillatorNode).connect(this._audioGraph.context.destination);
-        (this._audioGraph.graphNodes[0].audioNode as OscillatorNode).start();
+        this._audioGraph.graphNodes.map((node) => {
+            if (node.type === `osc`) {
+                (node.audioNode as OscillatorNode).start();
+            }
+        });
     }
 
     render() {
         return html` <div class="app">
             <div class="controls">
-                <button @click="${() => this.handleAddNode("gain")}">Gain Node</button>
                 <button @click="${() => this.handleAddNode("osc")}">Oscillator Node</button>
+                <button @click="${() => this.handleAddNode("gain")}">Gain Node</button>
                 <button @click=${this._doot}>doot</button>
             </div>
             <audio-graph-view class="graph" .audioGraph=${this._audioGraph}></audio-graph-view>

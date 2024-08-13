@@ -53,7 +53,7 @@ export class OscillatorNodeView extends LitElement {
 
     render() {
         return html`<div class="${classMap({ node: true, source: this.isSourceNode })}" @click=${this._dispatchClick}>
-            <p>${this.node?.type} ${this.node?.id}</p>
+            <p>${this.node?.id}</p>
             <input type="range" min="0" max="2000" @input=${this._dispatchFrequencyChange} @click=${(e: Event) => e.stopPropagation()} />
             <select @change=${this._dispatchTypeChange} @click=${(e: Event) => e.stopPropagation()}>
                 ${settableOscillatorTypes.map((type) => {

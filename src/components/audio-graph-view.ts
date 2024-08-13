@@ -5,6 +5,7 @@ import { audioGraphStyles } from "../styles/audio-graph-styles";
 import { FrequencyChangeDetail, OscillatorTypeChangeDetail } from "./oscillator-node-view";
 import "./gain-node-view";
 import "./oscillator-node-view";
+import { GainChangeDetail } from "./gain-node-view";
 
 @customElement("audio-graph-view")
 export class AudioGraphView extends LitElement {
@@ -51,17 +52,27 @@ export class AudioGraphView extends LitElement {
         });
     }
 
-    // private nodeById(key: string): GraphNode | undefined {
-    //     return this.audioGraph?.graphNodes.find((node) => node.id === key);
-    // }
+    private handleGainChange(e: CustomEvent) {
+        const gainChange = e.detail.gainChange as GainChangeDetail;
+        this.audioGraph?.graphNodes?.map((node) => {
+            if (node === gainChange.node) {
+                (node.audioNode as GainNode).gain.exponentialRampToValueAtTime(
+                    gainChange.gain,
+                    this.audioGraph?.context.currentTime! + 0.1
+                );
+            }
+        });
+    }
 
     private renderNodeView(node: GraphNode) {
         switch (node.type) {
             case `gain`:
                 return html`<gain-node-view
                     .node=${node}
+                    .destination=${this.audioGraph?.context.destination}
                     ?isSourceNode=${this._sourceNode === node}
                     @node-clicked=${this.handleNodeClick}
+                    @gain-changed=${this.handleGainChange}
                 ></gain-node-view>`;
             case `osc`:
                 return html`<oscillator-node-view
