@@ -6,7 +6,6 @@ import { FrequencyChangeDetail, OscillatorTypeChangeDetail } from "./oscillator-
 import "./gain-node-view";
 import "./oscillator-node-view";
 import { GainChangeDetail } from "./gain-node-view";
-import { Util } from "../app/util";
 
 @customElement("audio-graph-view")
 export class AudioGraphView extends LitElement {
