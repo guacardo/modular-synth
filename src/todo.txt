@@ -17,4 +17,7 @@ LONG TERM:
 - keyboard playback
 - sequencing
 
+BUGS:
+- gain node starts at 0.5, default is 1.0
+
     

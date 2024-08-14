@@ -1,11 +1,12 @@
-import { LitElement, html } from "lit";
+import { LitElement, TemplateResult, html } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
-import { AudioGraph, Connection, GraphNode } from "../model/audio-graph";
+import { AudioGraph, Connection, GraphNode } from "../app/audio-graph";
 import { audioGraphStyles } from "../styles/audio-graph-styles";
 import { FrequencyChangeDetail, OscillatorTypeChangeDetail } from "./oscillator-node-view";
 import "./gain-node-view";
 import "./oscillator-node-view";
 import { GainChangeDetail } from "./gain-node-view";
+import { Util } from "../app/util";
 
 @customElement("audio-graph-view")
 export class AudioGraphView extends LitElement {
@@ -64,7 +65,7 @@ export class AudioGraphView extends LitElement {
         });
     }
 
-    private renderNodeView(node: GraphNode) {
+    private renderNodeViews(node: GraphNode): TemplateResult {
         switch (node.type) {
             case `gain`:
                 return html`<gain-node-view
@@ -85,7 +86,19 @@ export class AudioGraphView extends LitElement {
         }
     }
 
+    private renderConnections(): TemplateResult {
+        return html`${this.audioGraph?.graphNodes
+            .map((node) => node.connections)
+            ?.flat()
+            .filter((connection, index, array) => array.indexOf(connection) === index)
+            ?.map((connection) => this.renderConnection(connection))}`;
+    }
+
+    private renderConnection(connection: Connection): TemplateResult {
+        return html`<p>${connection.sourceId}:${connection.destinationId}</p>`;
+    }
+
     render() {
-        return html`${this.audioGraph?.graphNodes.map((node) => this.renderNodeView(node))}`;
+        return html` ${this.audioGraph?.graphNodes.map((node) => this.renderNodeViews(node))} ${this.renderConnections()} `;
     }
 }

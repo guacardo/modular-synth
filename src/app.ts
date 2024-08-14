@@ -1,7 +1,7 @@
 import { LitElement, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { AudioGraphView } from "./components/audio-graph-view";
-import { AudioGraph, NodeType } from "./model/audio-graph";
+import { AudioGraph, NodeType } from "./app/audio-graph";
 import { GainNodeView } from "./components/gain-node-view";
 import { OscillatorNodeView } from "./components/oscillator-node-view";
 import { appStyles } from "./styles/app-styles";

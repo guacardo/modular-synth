@@ -17,7 +17,7 @@ export const appStyles = css`
 
     .graph {
         background-color: #222;
-        border: 1px solid #ccc;
+        border: 1px solid #444;
         border-radius: 4px;
         position: fixed;
         top: 32px;
@@ -25,6 +25,6 @@ export const appStyles = css`
         left: 16px;
         right: 16px;
         background-size: 40px 40px;
-        background-image: linear-gradient(to right, grey 1px, transparent 1px), linear-gradient(to bottom, grey 1px, transparent 1px);
+        background-image: linear-gradient(to right, #444 1px, transparent 1px), linear-gradient(to bottom, #444 1px, transparent 1px);
     }
 `;

@@ -1,7 +1,7 @@
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { graphNodeStyles } from "../styles/graph-node-styles";
-import { GraphNode } from "../model/audio-graph";
+import { GraphNode } from "../app/audio-graph";
 import { DragController } from "../controllers/drag-controller";
 import { styleMap } from "lit/directives/style-map.js";
 
