@@ -12,7 +12,7 @@ export class AppView extends LitElement {
     static styles = [appStyles];
 
     @state()
-    private accessor _audioGraph = new AudioGraph([]);
+    private accessor _audioGraph = new AudioGraph();
 
     readonly handleAddNode = (type: NodeType) => {
         this._audioGraph = this._audioGraph.addNode(type);

@@ -1,9 +1,11 @@
 import { LitElement, html } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { customElement, property, state } from "lit/decorators.js";
 import { graphNodeStyles } from "../styles/graph-node-styles";
 import { GraphNode } from "../app/audio-graph";
 import { DragController } from "../controllers/drag-controller";
 import { styleMap } from "lit/directives/style-map.js";
+import { ifDefined } from "lit/directives/if-defined.js";
+import { classMap } from "lit/directives/class-map.js";
 
 export interface GainChangeDetail {
     node: GraphNode | undefined;
@@ -22,6 +24,9 @@ export class GainNodeView extends LitElement {
 
     @property({ type: Object })
     destination?: AudioDestinationNode;
+
+    @state()
+    connectedToContext: boolean = false;
 
     private dragController = new DragController(this);
 
@@ -43,13 +48,14 @@ export class GainNodeView extends LitElement {
     private _connectContextHandler() {
         if (this.destination !== undefined) {
             this.node?.audioNode.connect(this.destination);
+            this.connectedToContext = true;
         }
     }
 
     render() {
         return html`<div
-            id=${this.id}
-            class="node"
+            id=${ifDefined(this.node?.id)}
+            class=${classMap({ node: true, connectedContext: this.connectedToContext})}
             @click=${this._dispatchClick}
             @drag=${(e: DragEvent) => this.dragController.onDrag(e)}
             @dragstart=${(e: DragEvent) => this.dragController.onDragStart(e)}
@@ -69,7 +75,7 @@ export class GainNodeView extends LitElement {
                     e.preventDefault();
                 }}
             />
-            <button @click=${this._connectContextHandler}>connect</button>
+            ${this.connectedToContext ? html`<p>connected</p>` : html`<button @click=${this._connectContextHandler}>connect</button>`}
         </div>`;
     }
 }

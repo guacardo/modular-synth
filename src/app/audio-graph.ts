@@ -1,3 +1,5 @@
+import { Util } from "./util";
+
 // audio graph node types
 export const nodeTypes = ["osc", "gain"] as const;
 export type NodeType = (typeof nodeTypes)[number];
@@ -10,13 +12,11 @@ export interface Connection {
 export class GraphNode {
     id: string;
     type: NodeType;
-    connections: Connection[];
     audioNode: OscillatorNode | GainNode | AudioDestinationNode;
 
-    constructor(key: string, type: NodeType, context: AudioContext, connections: Connection[] = []) {
+    constructor(key: string, type: NodeType, context: AudioContext) {
         this.id = `${type}_${key}`;
         this.type = type;
-        this.connections = connections;
 
         switch (type) {
             case `gain`:
@@ -31,12 +31,14 @@ export class GraphNode {
 
 export class AudioGraph {
     readonly graphNodes: GraphNode[];
+    connections: Connection[];
     readonly context: AudioContext;
     private _count: number;
 
-    constructor(nodes: GraphNode[]) {
+    constructor(nodes: GraphNode[] = [], connections: Connection[] = []) {
         this.context = new AudioContext();
         this.graphNodes = nodes;
+        this.connections = connections;
         this._count = 0;
     }
 
@@ -46,5 +48,13 @@ export class AudioGraph {
             ...this,
             graphNodes: [...this.graphNodes, new GraphNode(this._count.toString(), type, this.context)],
         });
+    }
+
+    deleteNode(id: string): AudioGraph {
+        Util.graphNodeFromId(id, this.graphNodes)?.audioNode.disconnect();
+        return Object.assign(Object.create(AudioGraph.prototype), {
+            ...this,
+            graphNodes: [...this.graphNodes].filter((node) => node.id !== id)
+        })
     }
 }

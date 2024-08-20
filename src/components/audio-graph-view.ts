@@ -24,8 +24,7 @@ export class AudioGraphView extends LitElement {
             this._sourceNode = undefined;
         } else if (this._sourceNode !== e.detail.node) {
             const connection: Connection = { sourceId: this._sourceNode.id, destinationId: (e.detail.node as GraphNode).id };
-            (e.detail.node as GraphNode).connections = [...(e.detail.node as GraphNode).connections, connection];
-            this._sourceNode.connections = [...this._sourceNode.connections, connection];
+            this.audioGraph!.connections = [...this.audioGraph!.connections, connection];
             this._sourceNode.audioNode.connect((e.detail.node as GraphNode).audioNode);
             this._sourceNode = undefined;
         }
@@ -37,7 +36,7 @@ export class AudioGraphView extends LitElement {
             if (node === frequencyChange.node) {
                 (node.audioNode as OscillatorNode).frequency.setValueAtTime(
                     frequencyChange.frequency,
-                    this.audioGraph?.context.currentTime!
+                    this.audioGraph!.context.currentTime
                 );
             }
         });
@@ -86,15 +85,7 @@ export class AudioGraphView extends LitElement {
     }
 
     private renderConnections(): TemplateResult {
-        return html`${this.audioGraph?.graphNodes
-            .map((node) => node.connections)
-            ?.flat()
-            .filter((connection, index, array) => array.indexOf(connection) === index)
-            ?.map((connection) => this.renderConnection(connection))}`;
-    }
-
-    private renderConnection(connection: Connection): TemplateResult {
-        return html`<p>${connection.sourceId}:${connection.destinationId}</p>`;
+        return html`${this.audioGraph?.connections.map((connection) => html`<p>${connection.destinationId} ${connection.sourceId}</p>`)}`;
     }
 
     render() {
