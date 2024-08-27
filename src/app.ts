@@ -6,6 +6,7 @@ import { GainNodeView } from "./components/gain-node-view";
 import { OscillatorNodeView } from "./components/oscillator-node-view";
 import { appStyles } from "./styles/app-styles";
 import "./components/audio-graph-view";
+import { ConnectionView } from "./components/connection-view";
 
 @customElement("app-view")
 export class AppView extends LitElement {
@@ -44,5 +45,6 @@ declare global {
         "audio-graph-view": AudioGraphView;
         "gain-node-view": GainNodeView;
         "oscillator-node-view": OscillatorNodeView;
+        "connection-view": ConnectionView;
     }
 }

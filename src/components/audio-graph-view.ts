@@ -6,6 +6,7 @@ import { FrequencyChangeDetail, OscillatorTypeChangeDetail } from "./oscillator-
 import "./gain-node-view";
 import "./oscillator-node-view";
 import { GainChangeDetail } from "./gain-node-view";
+import { DomSpace, NodeDomMap } from "../app/dom-mediator";
 
 @customElement("audio-graph-view")
 export class AudioGraphView extends LitElement {
@@ -16,6 +17,9 @@ export class AudioGraphView extends LitElement {
 
     @state()
     protected _sourceNode?: GraphNode;
+
+    @state()
+    _connectionDomElements: NodeDomMap = new Map<string, DomSpace>();
 
     private handleNodeClick(e: CustomEvent) {
         if (this._sourceNode === undefined) {
@@ -63,7 +67,7 @@ export class AudioGraphView extends LitElement {
         });
     }
 
-    private renderNodeViews(node: GraphNode): TemplateResult {
+    private renderNodeView(node: GraphNode): TemplateResult {
         switch (node.type) {
             case `gain`:
                 return html`<gain-node-view
@@ -84,11 +88,14 @@ export class AudioGraphView extends LitElement {
         }
     }
 
-    private renderConnections(): TemplateResult {
-        return html`${this.audioGraph?.connections.map((connection) => html`<p>${connection.destinationId} ${connection.sourceId}</p>`)}`;
+    private renderConnection(connection: Connection): TemplateResult {
+        return html`<connection-view .connection=${connection}></connection-view>`;
     }
 
     render() {
-        return html` ${this.audioGraph?.graphNodes.map((node) => this.renderNodeViews(node))} ${this.renderConnections()} `;
+        return html`
+            ${this.audioGraph?.graphNodes.map((node) => this.renderNodeView(node))}
+            ${this.audioGraph?.connections.map((connection) => this.renderConnection(connection))}
+        `;
     }
 }

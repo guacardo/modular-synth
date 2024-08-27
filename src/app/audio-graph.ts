@@ -54,7 +54,7 @@ export class AudioGraph {
         Util.graphNodeFromId(id, this.graphNodes)?.audioNode.disconnect();
         return Object.assign(Object.create(AudioGraph.prototype), {
             ...this,
-            graphNodes: [...this.graphNodes].filter((node) => node.id !== id)
-        })
+            graphNodes: [...this.graphNodes].filter((node) => node.id !== id),
+        });
     }
 }
