@@ -6,7 +6,6 @@ import { FrequencyChangeDetail, OscillatorTypeChangeDetail } from "./oscillator-
 import "./gain-node-view";
 import "./oscillator-node-view";
 import { GainChangeDetail } from "./gain-node-view";
-import { DomSpace, NodeDomMap } from "../app/dom-mediator";
 
 @customElement("audio-graph-view")
 export class AudioGraphView extends LitElement {
@@ -18,18 +17,13 @@ export class AudioGraphView extends LitElement {
     @state()
     protected _sourceNode?: GraphNode;
 
-    @state()
-    _connectionDomElements: NodeDomMap = new Map<string, DomSpace>();
-
     private handleNodeClick(e: CustomEvent) {
         if (this._sourceNode === undefined) {
             this._sourceNode = e.detail.node;
         } else if (this._sourceNode === e.detail.node) {
             this._sourceNode = undefined;
         } else if (this._sourceNode !== e.detail.node) {
-            const connection: Connection = { sourceId: this._sourceNode.id, destinationId: (e.detail.node as GraphNode).id };
-            this.audioGraph!.connections = [...this.audioGraph!.connections, connection];
-            this._sourceNode.audioNode.connect((e.detail.node as GraphNode).audioNode);
+            this.audioGraph = this.audioGraph?.addConnection(this._sourceNode, e.detail.node as GraphNode);
             this._sourceNode = undefined;
         }
     }

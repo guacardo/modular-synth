@@ -57,4 +57,14 @@ export class AudioGraph {
             graphNodes: [...this.graphNodes].filter((node) => node.id !== id),
         });
     }
+
+    addConnection(sourceNode: GraphNode, destinationNode: GraphNode): AudioGraph {
+        // connect web audio nodes first
+        sourceNode.audioNode.connect(destinationNode.audioNode);
+        // then copy and update the audio graph
+        return Object.assign(Object.create(AudioGraph.prototype), {
+            ...this,
+            connections: [...this.connections, { sourceId: sourceNode.id, destinationId: destinationNode.id }],
+        });
+    }
 }

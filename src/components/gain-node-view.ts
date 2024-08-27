@@ -51,27 +51,30 @@ export class GainNodeView extends Draggable(LitElement) {
     }
 
     render() {
-        return this.renderDraggable(html`<div
-            id=${ifDefined(this.node?.id)}
-            class=${classMap({ node: true, connectedContext: this.connectedToContext })}
-            @click=${this._dispatchClick}
-        >
-            <p>${this.node?.id}</p>
-            <input
-                type="range"
-                min="0.001"
-                max="1.0"
-                step="0.001"
-                @input=${this._dispatchGainChange}
-                draggable="true"
-                @dragstart=${(e: DragEvent) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                }}
-            />
-            ${this.connectedToContext
-                ? html`<p>connected</p>`
-                : html`<button @click=${(e: Event) => this._connectContextHandler(e)}>connect</button>`}
-        </div>`);
+        return this.renderDraggable(
+            this.node!.id,
+            html`<div
+                id=${ifDefined(this.node?.id)}
+                class=${classMap({ node: true, connectedContext: this.connectedToContext })}
+                @click=${this._dispatchClick}
+            >
+                <p>${this.node?.id}</p>
+                <input
+                    type="range"
+                    min="0.001"
+                    max="1.0"
+                    step="0.001"
+                    @input=${this._dispatchGainChange}
+                    draggable="true"
+                    @dragstart=${(e: DragEvent) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                    }}
+                />
+                ${this.connectedToContext
+                    ? html`<p>connected</p>`
+                    : html`<button @click=${(e: Event) => this._connectContextHandler(e)}>connect</button>`}
+            </div>`
+        );
     }
 }

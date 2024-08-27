@@ -55,6 +55,7 @@ export class OscillatorNodeView extends Draggable(LitElement) {
 
     render() {
         return this.renderDraggable(
+            this.node!.id,
             html`<div
                 id=${ifDefined(this.node?.id)}
                 class="${classMap({ node: true, source: this.isSourceNode })}"

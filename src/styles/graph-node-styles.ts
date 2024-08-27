@@ -15,7 +15,7 @@ export const graphNodeStyles = css`
     .source {
         border: 1px solid #98fb98;
     }
-    
+
     .connectedContext {
         border: 1px solid red;
     }
