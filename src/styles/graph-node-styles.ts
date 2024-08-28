@@ -8,6 +8,7 @@ export const graphNodeStyles = css`
         background-color: #333;
         cursor: pointer;
         position: absolute;
+        z-index: 2;
         top: 0;
         left: 0;
     }

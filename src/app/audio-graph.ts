@@ -31,7 +31,7 @@ export class GraphNode {
 
 export class AudioGraph {
     readonly graphNodes: GraphNode[];
-    connections: Connection[];
+    readonly connections: Connection[];
     readonly context: AudioContext;
     private _count: number;
 

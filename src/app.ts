@@ -1,14 +1,14 @@
 import { LitElement, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
-import { AudioGraphView } from "./components/audio-graph-view";
+import { AudioGraphView, NewConnectionDetail } from "./components/audio-graph-view";
 import { AudioGraph, NodeType } from "./app/audio-graph";
 import { GainNodeView } from "./components/gain-node-view";
 import { OscillatorNodeView } from "./components/oscillator-node-view";
 import { appStyles } from "./styles/app-styles";
-import "./components/audio-graph-view";
 import { ConnectionView } from "./components/connection-view";
 import { DomSpaceChangeDetail } from "./mixins/draggable";
 import { DomSpace, NodeDomMap } from "./app/dom-mediator";
+import "./components/audio-graph-view";
 
 @customElement("app-view")
 export class AppView extends LitElement {
@@ -18,7 +18,7 @@ export class AppView extends LitElement {
     private accessor _audioGraph = new AudioGraph();
 
     @state()
-    private domSpace: NodeDomMap = new Map<string, DomSpace>();
+    private _domSpace: NodeDomMap = new Map<string, DomSpace>();
 
     readonly handleAddNode = (type: NodeType) => {
         this._audioGraph = this._audioGraph.addNode(type);
@@ -34,18 +34,24 @@ export class AppView extends LitElement {
 
     handleDomSpaceChange(e: Event) {
         const domSpaceChange = (e as CustomEvent).detail.domSpaceChange as DomSpaceChangeDetail;
-        this.domSpace = new Map<string, DomSpace>(this.domSpace).set(domSpaceChange.id, domSpaceChange.space);
-        console.log(this.domSpace);
+        this._domSpace = new Map<string, DomSpace>(this._domSpace).set(domSpaceChange.id, domSpaceChange.space);
+    }
+
+    handleAddConnection(e: Event) {
+        const addConnection = (e as CustomEvent).detail.newConnection as NewConnectionDetail;
+        this._audioGraph = this._audioGraph?.addConnection(addConnection.sourceNode, addConnection.destinationNode);
     }
 
     connectedCallback(): void {
         super.connectedCallback();
         this.addEventListener("dom-space-change", (e) => this.handleDomSpaceChange(e));
+        this.addEventListener("add-connection", (e) => this.handleAddConnection(e));
     }
 
     disconnectedCallback(): void {
         super.disconnectedCallback();
         this.removeEventListener("dom-space-change", (e) => this.handleDomSpaceChange(e));
+        this.removeEventListener("add-connection", (e) => this.handleAddConnection(e));
     }
 
     render() {
@@ -55,7 +61,7 @@ export class AppView extends LitElement {
                 <button @click="${() => this.handleAddNode("gain")}">Gain Node</button>
                 <button @click=${this._doot}>doot</button>
             </div>
-            <audio-graph-view class="graph" .audioGraph=${this._audioGraph}></audio-graph-view>
+            <audio-graph-view class="graph" .audioGraph=${this._audioGraph} .domSpace=${this._domSpace}></audio-graph-view>
         </div>`;
     }
 }

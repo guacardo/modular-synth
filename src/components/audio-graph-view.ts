@@ -3,9 +3,16 @@ import { customElement, property, state } from "lit/decorators.js";
 import { AudioGraph, Connection, GraphNode } from "../app/audio-graph";
 import { audioGraphStyles } from "../styles/audio-graph-styles";
 import { FrequencyChangeDetail, OscillatorTypeChangeDetail } from "./oscillator-node-view";
+import { GainChangeDetail } from "./gain-node-view";
+import { NodeDomMap } from "../app/dom-mediator";
 import "./gain-node-view";
 import "./oscillator-node-view";
-import { GainChangeDetail } from "./gain-node-view";
+import "./connection-view";
+
+export interface NewConnectionDetail {
+    sourceNode: GraphNode;
+    destinationNode: GraphNode;
+}
 
 @customElement("audio-graph-view")
 export class AudioGraphView extends LitElement {
@@ -13,6 +20,9 @@ export class AudioGraphView extends LitElement {
 
     @property({ type: Object })
     audioGraph?: AudioGraph;
+
+    @property({ type: Object })
+    domSpace?: NodeDomMap;
 
     @state()
     protected _sourceNode?: GraphNode;
@@ -23,7 +33,11 @@ export class AudioGraphView extends LitElement {
         } else if (this._sourceNode === e.detail.node) {
             this._sourceNode = undefined;
         } else if (this._sourceNode !== e.detail.node) {
-            this.audioGraph = this.audioGraph?.addConnection(this._sourceNode, e.detail.node as GraphNode);
+            const newConnection: NewConnectionDetail = {
+                sourceNode: this._sourceNode,
+                destinationNode: e.detail.node as GraphNode,
+            };
+            this.dispatchEvent(new CustomEvent("add-connection", { detail: { newConnection }, composed: true }));
             this._sourceNode = undefined;
         }
     }
@@ -83,13 +97,17 @@ export class AudioGraphView extends LitElement {
     }
 
     private renderConnection(connection: Connection): TemplateResult {
-        return html`<connection-view .connection=${connection}></connection-view>`;
+        const source = this.domSpace?.get(connection.sourceId);
+        const dest = this.domSpace?.get(connection.destinationId);
+        return html`<connection-view .source=${source} .dest=${dest}></connection-view>`;
     }
 
     render() {
-        return html`
-            ${this.audioGraph?.graphNodes.map((node) => this.renderNodeView(node))}
-            ${this.audioGraph?.connections.map((connection) => this.renderConnection(connection))}
-        `;
+        if (this.domSpace !== undefined) {
+            return html`
+                ${this.audioGraph?.graphNodes.map((node) => this.renderNodeView(node))}
+                ${this.audioGraph?.connections.map((connection) => this.renderConnection(connection))}
+            `;
+        }
     }
 }
