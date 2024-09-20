@@ -137,13 +137,13 @@ export class ConnectionView extends LitElement {
                     );
                 }
                 if (this._getRelativePositioning().vertical === "below" && relationship.horizontal === "right") {
-                    ctx.moveTo(0, height - this.dest.offset.y / 2);
+                    ctx.moveTo(width - this.source.offset.x, height - this.source.offset.y / 2);
                     ctx.bezierCurveTo(
-                        30,
-                        height - this.dest.offset.y / 2,
-                        width - 30,
-                        this.source.offset.y / 2,
-                        width,
+                        width - this.source.offset.x - 30,
+                        height - this.source.offset.y / 2,
+                        this.dest.offset.x + 30,
+                        this.dest.offset.y / 2,
+                        this.dest.offset.x,
                         this.source.offset.y / 2
                     );
                 }
