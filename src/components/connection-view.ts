@@ -88,7 +88,6 @@ export class ConnectionView extends LitElement {
             width: `${this._styles.width}px`,
             height: `${this._styles.height}px`,
             position: `absolute`,
-            background: `red`,
         };
     }
 
@@ -100,14 +99,15 @@ export class ConnectionView extends LitElement {
             const width = Number(this._styles.width);
             const height = Number(this._styles.height);
             if (ctx !== null) {
+                ctx.strokeStyle = "#CCC";
                 ctx.beginPath();
                 if (this._getRelativePositioning().vertical === "above") {
                     ctx.moveTo(0, this.source.offset.y / 2);
-                    ctx.bezierCurveTo(width, 0, 0, height, width, height - this.dest.offset.y / 2);
+                    ctx.bezierCurveTo(0, this.source.offset.y / 2, width - width * 0.3, height, width, height - this.dest.offset.y / 2);
                 }
                 if (this._getRelativePositioning().vertical === "below") {
                     ctx.moveTo(0, height - this.source.offset.y / 2);
-                    ctx.bezierCurveTo(width, 0, 0, height, width, this.dest.offset.y / 2);
+                    ctx.bezierCurveTo(0, height - this.source.offset.y / 2, width - width * 0.3, height, width, this.dest.offset.y / 2);
                 }
                 ctx?.stroke();
             }
