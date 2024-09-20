@@ -10,7 +10,7 @@ interface ConnectionStyles extends Record<string, number | string> {
     height: number | string;
 }
 
-const relationTypes = ["above", "below", "left", "right", "unknown"] as const;
+const relationTypes = ["above", "below", "left", "right", "inside", "unknown"] as const;
 type RelationType = (typeof relationTypes)[number];
 
 const direction = ["horizontal", "vertical"] as const;
@@ -88,6 +88,7 @@ export class ConnectionView extends LitElement {
             width: `${this._styles.width}px`,
             height: `${this._styles.height}px`,
             position: `absolute`,
+            background: `red`,
         };
     }
 
@@ -122,6 +123,28 @@ export class ConnectionView extends LitElement {
                         this.dest.offset.y / 2,
                         width,
                         this.dest.offset.y / 2
+                    );
+                }
+                if (relationship.vertical === "above" && relationship.horizontal === "right") {
+                    ctx.moveTo(width - this.source.offset.x, this.source.offset.y / 2);
+                    ctx.bezierCurveTo(
+                        width - this.source.offset.x - 30,
+                        this.source.offset.y / 2,
+                        this.dest.offset.x + 30,
+                        height - this.dest.offset.y / 2,
+                        this.dest.offset.x,
+                        height - this.dest.offset.y / 2
+                    );
+                }
+                if (this._getRelativePositioning().vertical === "below" && relationship.horizontal === "right") {
+                    ctx.moveTo(0, height - this.dest.offset.y / 2);
+                    ctx.bezierCurveTo(
+                        30,
+                        height - this.dest.offset.y / 2,
+                        width - 30,
+                        this.source.offset.y / 2,
+                        width,
+                        this.source.offset.y / 2
                     );
                 }
                 ctx?.stroke();
