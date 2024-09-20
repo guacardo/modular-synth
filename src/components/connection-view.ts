@@ -98,16 +98,31 @@ export class ConnectionView extends LitElement {
             const ctx = this.canvas?.getContext("2d");
             const width = Number(this._styles.width);
             const height = Number(this._styles.height);
+            const relationship = this._getRelativePositioning();
             if (ctx !== null) {
                 ctx.strokeStyle = "#CCC";
                 ctx.beginPath();
-                if (this._getRelativePositioning().vertical === "above") {
+                if (relationship.vertical === "above" && relationship.horizontal === "left") {
                     ctx.moveTo(0, this.source.offset.y / 2);
-                    ctx.bezierCurveTo(0, this.source.offset.y / 2, width - width * 0.3, height, width, height - this.dest.offset.y / 2);
+                    ctx.bezierCurveTo(
+                        30,
+                        this.source.offset.y / 2,
+                        width - 30,
+                        height - this.dest.offset.y / 2,
+                        width,
+                        height - this.dest.offset.y / 2
+                    );
                 }
-                if (this._getRelativePositioning().vertical === "below") {
+                if (this._getRelativePositioning().vertical === "below" && relationship.horizontal === "left") {
                     ctx.moveTo(0, height - this.source.offset.y / 2);
-                    ctx.bezierCurveTo(0, height - this.source.offset.y / 2, width - width * 0.3, height, width, this.dest.offset.y / 2);
+                    ctx.bezierCurveTo(
+                        30,
+                        height - this.source.offset.y / 2,
+                        width - 30,
+                        this.dest.offset.y / 2,
+                        width,
+                        this.dest.offset.y / 2
+                    );
                 }
                 ctx?.stroke();
             }
