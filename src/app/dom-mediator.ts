@@ -1,4 +1,5 @@
 import { Cartesian2D } from "../mixins/draggable";
+import { Subject } from "./observer";
 
 export type DomSpace = {
     position: Cartesian2D;
@@ -7,21 +8,31 @@ export type DomSpace = {
 
 export type NodeDomMap = Map<string, DomSpace>;
 
-// thoughts: more TS-style singleton pattern? https://medium.com/swlh/design-patterns-in-typescript-singleton-part-1-of-5-bd3742b46589
-export class DomMediator {
-    nodeDomElements: NodeDomMap;
+// https://medium.com/swlh/design-patterns-in-typescript-singleton-part-1-of-5-bd3742b46589
+interface IDomMediator {
+    getSpace(id: string): DomSpace | undefined;
+    setSpace(id: string, space: DomSpace): void;
+    getSpaces(): DomSpace[];
+}
 
+export class DomMediator extends Subject implements IDomMediator {
     private static instance: DomMediator = new DomMediator();
 
-    constructor() {
+    protected nodeDomElements: NodeDomMap;
+
+    private constructor() {
+        super();
         this.nodeDomElements = new Map<string, DomSpace>();
     }
 
     static getInstance(): DomMediator {
+        if (!this.instance) {
+            this.instance = new DomMediator();
+        }
         return this.instance;
     }
 
-    getSpace(id: string) {
+    getSpace(id: string): DomSpace | undefined {
         return this.nodeDomElements.get(id);
     }
 
