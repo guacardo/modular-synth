@@ -10,7 +10,7 @@ interface ConnectionStyles extends Record<string, number | string> {
     height: number | string;
 }
 
-const relationTypes = ["above", "below", "left", "right", "inside", "unknown"] as const;
+const relationTypes = ["above", "below", "left", "right", "inside-left", "inside-right", "unknown"] as const;
 type RelationType = (typeof relationTypes)[number];
 
 const direction = ["horizontal", "vertical"] as const;
@@ -42,14 +42,25 @@ export class ConnectionView extends LitElement {
         if (this.source !== undefined && this.dest !== undefined) {
             if (this.source.position.y <= this.dest.position.y) {
                 relation["vertical"] = "above";
-            }
-            if (this.source.position.y > this.dest.position.y) {
+            } else if (this.source.position.y > this.dest.position.y) {
                 relation["vertical"] = "below";
             }
-            if (this.source.position.x < this.dest.position.x) {
+
+            if (
+                this.source.position.x + this.source.offset.x > this.dest.position.x &&
+                this.source.position.x < this.dest.position.x + this.dest.position.y &&
+                this.source.position.x < this.dest.position.x
+            ) {
+                relation["horizontal"] = "inside-left";
+            } else if (
+                this.dest.position.x + this.dest.offset.x > this.source.position.x &&
+                this.dest.position.x < this.source.position.x + this.source.position.y &&
+                this.dest.position.x < this.source.position.x
+            ) {
+                relation["horizontal"] = "inside-right";
+            } else if (this.source.position.x < this.dest.position.x) {
                 relation["horizontal"] = "left";
-            }
-            if (this.source.position.x + this.source.offset.x > this.dest.position.x) {
+            } else if (this.source.position.x + this.source.offset.x > this.dest.position.x) {
                 relation["horizontal"] = "right";
             }
         }
@@ -58,23 +69,26 @@ export class ConnectionView extends LitElement {
 
     private _setStyles() {
         if (this.source !== undefined && this.dest !== undefined) {
-            console.log(this._getRelativePositioning());
-            if (this._getRelativePositioning().vertical === "above") {
+            const relationship = this._getRelativePositioning();
+
+            if (relationship.vertical === "above") {
                 this._styles.top = this.source.position.y - 32;
                 this._styles.height = this.dest.position.y - (this.source.position.y - this.source.offset.y);
-            }
-
-            if (this._getRelativePositioning().vertical === "below") {
+            } else if (relationship.vertical === "below") {
                 this._styles.top = this.dest.position.y - 32;
                 this._styles.height = this.source.position.y + this.source.offset.y - this.dest.position.y;
             }
 
-            if (this._getRelativePositioning().horizontal === "left") {
+            if (relationship.horizontal === "left") {
                 this._styles.left = this.source.position.x + this.source.offset.x - 16;
                 this._styles.width = this.dest.position.x - (this.source.position.x + this.source.offset.x);
-            }
-
-            if (this._getRelativePositioning().horizontal === "right") {
+            } else if (relationship.horizontal === "right") {
+                this._styles.left = this.dest.position.x - 16;
+                this._styles.width = this.source.position.x + this.source.offset.x - this.dest.position.x;
+            } else if (relationship.horizontal === "inside-left") {
+                this._styles.left = this.source.position.x - 16;
+                this._styles.width = this.dest.position.x + this.dest.offset.x - this.source.position.x;
+            } else if (relationship.horizontal === "inside-right") {
                 this._styles.left = this.dest.position.x - 16;
                 this._styles.width = this.source.position.x + this.source.offset.x - this.dest.position.x;
             }
@@ -88,7 +102,6 @@ export class ConnectionView extends LitElement {
             width: `${this._styles.width}px`,
             height: `${this._styles.height}px`,
             position: `absolute`,
-            background: `red`,
         };
     }
 
@@ -102,6 +115,7 @@ export class ConnectionView extends LitElement {
             const relationship = this._getRelativePositioning();
             if (ctx !== null) {
                 ctx.strokeStyle = "#CCC";
+                ctx.lineWidth = 2;
                 ctx.beginPath();
                 if (relationship.vertical === "above" && relationship.horizontal === "left") {
                     ctx.moveTo(0, this.source.offset.y / 2);
@@ -113,8 +127,7 @@ export class ConnectionView extends LitElement {
                         width,
                         height - this.dest.offset.y / 2
                     );
-                }
-                if (this._getRelativePositioning().vertical === "below" && relationship.horizontal === "left") {
+                } else if (relationship.vertical === "below" && relationship.horizontal === "left") {
                     ctx.moveTo(0, height - this.source.offset.y / 2);
                     ctx.bezierCurveTo(
                         30,
@@ -124,8 +137,7 @@ export class ConnectionView extends LitElement {
                         width,
                         this.dest.offset.y / 2
                     );
-                }
-                if (relationship.vertical === "above" && relationship.horizontal === "right") {
+                } else if (relationship.vertical === "above" && relationship.horizontal === "right") {
                     ctx.moveTo(width - this.source.offset.x, this.source.offset.y / 2);
                     ctx.bezierCurveTo(
                         width - this.source.offset.x - 30,
@@ -135,8 +147,7 @@ export class ConnectionView extends LitElement {
                         this.dest.offset.x,
                         height - this.dest.offset.y / 2
                     );
-                }
-                if (this._getRelativePositioning().vertical === "below" && relationship.horizontal === "right") {
+                } else if (relationship.vertical === "below" && relationship.horizontal === "right") {
                     ctx.moveTo(width - this.source.offset.x, height - this.source.offset.y / 2);
                     ctx.bezierCurveTo(
                         width - this.source.offset.x - 30,
@@ -145,6 +156,46 @@ export class ConnectionView extends LitElement {
                         this.dest.offset.y / 2,
                         this.dest.offset.x,
                         this.source.offset.y / 2
+                    );
+                } else if (relationship.vertical === "above" && relationship.horizontal === "inside-left") {
+                    ctx.moveTo(this.source.offset.x / 2, this.source.offset.y);
+                    ctx.bezierCurveTo(
+                        this.source.offset.x / 2,
+                        this.source.offset.y + 30,
+                        width - this.dest.offset.x / 2,
+                        height - this.dest.offset.y + 30,
+                        width - this.dest.offset.x / 2,
+                        height - this.dest.offset.y
+                    );
+                } else if (relationship.vertical === "below" && relationship.horizontal === "inside-left") {
+                    ctx.moveTo(this.source.offset.x / 2, height - this.source.offset.y);
+                    ctx.bezierCurveTo(
+                        this.source.offset.x / 2,
+                        height - this.source.offset.y - 30,
+                        width - this.dest.offset.x / 2,
+                        this.dest.offset.y + 30,
+                        width - this.dest.offset.x / 2,
+                        this.dest.offset.y
+                    );
+                } else if (relationship.vertical === "above" && relationship.horizontal === "inside-right") {
+                    ctx.moveTo(width - this.source.offset.x / 2, this.source.offset.y);
+                    ctx.bezierCurveTo(
+                        width - this.source.offset.x / 2,
+                        this.source.offset.y + 30,
+                        this.dest.offset.x / 2,
+                        this.dest.offset.y + 30,
+                        this.dest.offset.x / 2,
+                        height - this.dest.offset.y
+                    );
+                } else if (relationship.vertical === "below" && relationship.horizontal === "inside-right") {
+                    ctx.moveTo(width - this.source.offset.x / 2, height - this.source.offset.y);
+                    ctx.bezierCurveTo(
+                        width - this.source.offset.x / 2,
+                        height - this.source.offset.y + 30,
+                        this.dest.offset.x / 2,
+                        this.dest.offset.y + 30,
+                        this.dest.offset.x / 2,
+                        this.dest.offset.y
                     );
                 }
                 ctx?.stroke();
