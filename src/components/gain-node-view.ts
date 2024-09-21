@@ -13,19 +13,12 @@ export interface GainChangeDetail {
 
 @customElement("gain-node-view")
 export class GainNodeView extends Draggable(LitElement) {
+    @property({ attribute: false }) node?: GraphNode;
+    @property({ type: Boolean }) isSourceNode: boolean = false;
+    @property({ type: Object }) destination?: AudioDestinationNode;
+    @state() connectedToContext: boolean = false;
+
     static styles = [graphNodeStyles];
-
-    @property({ attribute: false })
-    node?: GraphNode;
-
-    @property({ type: Boolean })
-    isSourceNode: boolean = false;
-
-    @property({ type: Object })
-    destination?: AudioDestinationNode;
-
-    @state()
-    connectedToContext: boolean = false;
 
     private _dispatchClick() {
         const node = this.node;
