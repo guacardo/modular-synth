@@ -1,4 +1,4 @@
-import { html, LitElement } from "lit";
+import { html, LitElement, PropertyValues } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
 import { DomSpace } from "../app/dom-mediator";
 import { styleMap } from "lit/directives/style-map.js";
@@ -22,17 +22,13 @@ export class ConnectionView extends LitElement {
     @property({ type: Object, attribute: false }) dest?: DomSpace;
     @query("#canvas") canvas?: HTMLCanvasElement;
 
-    private _styles: ConnectionStyles;
-    constructor() {
-        super();
-        this._styles = {
-            top: 0,
-            left: 0,
-            width: 0,
-            height: 0,
-            position: "absolute",
-        };
-    }
+    private _styles: ConnectionStyles = {
+        top: 0,
+        left: 0,
+        width: 0,
+        height: 0,
+        position: "absolute",
+    };
 
     private _getRelativePositioning(): Record<DirectionType, RelationType> {
         const relation: Record<DirectionType, RelationType> = {
@@ -201,6 +197,11 @@ export class ConnectionView extends LitElement {
                 ctx?.stroke();
             }
         }
+    }
+
+    protected firstUpdated(_changedProperties: PropertyValues): void {
+        this._setStyles();
+        this._renderCanvas();
     }
 
     render() {
