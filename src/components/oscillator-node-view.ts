@@ -5,7 +5,6 @@ import { GraphNode } from "../app/audio-graph";
 import { classMap } from "lit/directives/class-map.js";
 import { Draggable } from "../mixins/draggable";
 import { ifDefined } from "lit/directives/if-defined.js";
-import { DraggableController } from "../controllers/draggable";
 
 export interface FrequencyChangeDetail {
     node: GraphNode | undefined;
@@ -29,8 +28,6 @@ export class OscillatorNodeView extends Draggable(LitElement) {
 
     @property({ type: Boolean })
     isSourceNode: boolean = false;
-
-    private dragController = new DraggableController(this);
 
     private _dispatchClick() {
         const node = this.node;
@@ -57,7 +54,6 @@ export class OscillatorNodeView extends Draggable(LitElement) {
     }
 
     render() {
-        console.log(this.dragController);
         return this.renderDraggable(
             this.node!.id,
             html`<div
