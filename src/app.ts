@@ -2,6 +2,7 @@ import { LitElement, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { AudioGraphView, NewConnectionDetail } from "./components/audio-graph-view";
 import { AudioGraph, NodeType } from "./app/audio-graph";
+import { BiquadFilterNodeView } from "./components/biquad-filter-node-view";
 import { GainNodeView } from "./components/gain-node-view";
 import { OscillatorNodeView } from "./components/oscillator-node-view";
 import { appStyles } from "./styles/app-styles";
@@ -32,6 +33,11 @@ export class AppView extends LitElement {
         });
     }
 
+    private _debug() {
+        console.log(this._audioGraph);
+        console.log(this._domSpace);
+    }
+
     handleDomSpaceChange(e: Event) {
         const domSpaceChange = (e as CustomEvent).detail.domSpaceChange as DomSpaceChangeDetail;
         this._domSpace = new Map<string, DomSpace>(this._domSpace).set(domSpaceChange.id, domSpaceChange.space);
@@ -59,7 +65,9 @@ export class AppView extends LitElement {
             <div class="controls">
                 <button @click="${() => this.handleAddNode("osc")}">Oscillator Node</button>
                 <button @click="${() => this.handleAddNode("gain")}">Gain Node</button>
+                <button @click="${() => this.handleAddNode("biquad")}">Biquad Filter Node</button>
                 <button @click=${this._doot}>doot</button>
+                <button @click=${this._debug}>debug</button>
             </div>
             <audio-graph-view class="graph" .audioGraph=${this._audioGraph} .domSpace=${this._domSpace}></audio-graph-view>
         </div>`;
@@ -73,5 +81,6 @@ declare global {
         "gain-node-view": GainNodeView;
         "oscillator-node-view": OscillatorNodeView;
         "connection-view": ConnectionView;
+        "biquad-filter-node-view": BiquadFilterNodeView;
     }
 }

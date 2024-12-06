@@ -5,9 +5,17 @@ import { audioGraphStyles } from "../styles/audio-graph-styles";
 import { FrequencyChangeDetail, OscillatorTypeChangeDetail } from "./oscillator-node-view";
 import { GainChangeDetail } from "./gain-node-view";
 import { NodeDomMap } from "../app/dom-mediator";
+import "./biquad-filter-node-view";
 import "./gain-node-view";
 import "./oscillator-node-view";
 import "./connection-view";
+import {
+    BiquadFilterDetuneChangeDetail,
+    BiquadFilterFrequencyChangeDetail,
+    BiquadFilterGainChangeDetail,
+    BiquadFilterQChangeDetail,
+    BiquadFilterTypeChangeDetail,
+} from "./biquad-filter-node-view";
 
 export interface NewConnectionDetail {
     sourceNode: GraphNode;
@@ -54,11 +62,22 @@ export class AudioGraphView extends LitElement {
         });
     }
 
+    // TODO: dry this up with generics in combo with handleBiquadFilter
     private handleOscillatorTypeChange(e: CustomEvent) {
         const typeChange = e.detail.typeChange as OscillatorTypeChangeDetail;
         this.audioGraph?.graphNodes?.map((node) => {
             if (node === typeChange.node) {
                 (node.audioNode as OscillatorNode).type = typeChange.type;
+            }
+        });
+    }
+
+    // TODO: dry this up with generics in combo with handleOscillatorTypeChange
+    private handleBiquadFilterTypeChange(e: CustomEvent) {
+        const typeChange = e.detail.typeChange as BiquadFilterTypeChangeDetail;
+        this.audioGraph?.graphNodes?.map((node) => {
+            if (node === typeChange.node) {
+                (node.audioNode as BiquadFilterNode).type = typeChange.type;
             }
         });
     }
@@ -71,6 +90,46 @@ export class AudioGraphView extends LitElement {
                     gainChange.gain,
                     this.audioGraph?.context.currentTime! + 0.1
                 );
+            }
+        });
+    }
+
+    private handleBiquadFrequencyChange(e: CustomEvent) {
+        console.log(e.detail);
+        const frequencyChange = e.detail.frequencyChange as BiquadFilterFrequencyChangeDetail;
+        this.audioGraph?.graphNodes.map((node) => {
+            if (node === frequencyChange.node) {
+                (node.audioNode as BiquadFilterNode).frequency.setValueAtTime(
+                    frequencyChange.frequency,
+                    this.audioGraph!.context.currentTime
+                );
+            }
+        });
+    }
+
+    private handleBiquadDetuneChange(e: CustomEvent) {
+        const detuneChange = e.detail.detuneChange as BiquadFilterDetuneChangeDetail;
+        this.audioGraph?.graphNodes.map((node) => {
+            if (node === detuneChange.node) {
+                (node.audioNode as BiquadFilterNode).detune.setValueAtTime(detuneChange.detune, this.audioGraph!.context.currentTime);
+            }
+        });
+    }
+
+    private handleBiquadQChange(e: CustomEvent) {
+        const qChange = e.detail.qChange as BiquadFilterQChangeDetail;
+        this.audioGraph?.graphNodes.map((node) => {
+            if (node === qChange.node) {
+                (node.audioNode as BiquadFilterNode).detune.setValueAtTime(qChange.q, this.audioGraph!.context.currentTime);
+            }
+        });
+    }
+
+    private handleBiquadGainChange(e: CustomEvent) {
+        const gainChange = e.detail.gainChange as BiquadFilterGainChangeDetail;
+        this.audioGraph?.graphNodes.map((node) => {
+            if (node === gainChange.node) {
+                (node.audioNode as BiquadFilterNode).detune.setValueAtTime(gainChange.gain, this.audioGraph!.context.currentTime);
             }
         });
     }
@@ -93,6 +152,18 @@ export class AudioGraphView extends LitElement {
                     @frequency-change=${this.handleFrequencyChange}
                     @type-change=${this.handleOscillatorTypeChange}
                 ></oscillator-node-view>`;
+            case `biquad`:
+                return html`<biquad-filter-node-view
+                    .node=${node}
+                    .destination=${this.audioGraph?.context.destination}
+                    ?isSourceNode=${this._sourceNode === node}
+                    @node-clicked=${this.handleNodeClick}
+                    @type-change=${this.handleBiquadFilterTypeChange}
+                    @biquad-filter-frequency-change=${this.handleBiquadFrequencyChange}
+                    @biquad-filter-detune-change=${this.handleBiquadDetuneChange}
+                    @biquad-filter-q-change=${this.handleBiquadQChange}
+                    @biquad-filter-gain-change=${this.handleBiquadGainChange}
+                ></biquad-filter-node-view>`;
         }
     }
 

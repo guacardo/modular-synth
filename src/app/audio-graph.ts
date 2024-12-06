@@ -1,7 +1,7 @@
 import { Util } from "./util";
 
 // audio graph node types
-export const nodeTypes = ["osc", "gain"] as const;
+export const nodeTypes = ["osc", "gain", "biquad"] as const;
 export type NodeType = (typeof nodeTypes)[number];
 
 export interface Connection {
@@ -12,7 +12,7 @@ export interface Connection {
 export class GraphNode {
     id: string;
     type: NodeType;
-    audioNode: OscillatorNode | GainNode | AudioDestinationNode;
+    audioNode: OscillatorNode | GainNode | BiquadFilterNode | AudioDestinationNode;
 
     constructor(key: string, type: NodeType, context: AudioContext) {
         this.id = `${type}_${key}`;
@@ -24,6 +24,9 @@ export class GraphNode {
                 break;
             case `osc`:
                 this.audioNode = new OscillatorNode(context);
+                break;
+            case `biquad`:
+                this.audioNode = new BiquadFilterNode(context);
                 break;
         }
     }
