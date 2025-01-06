@@ -82,17 +82,17 @@ export class BiquadFilterNodeView extends Draggable(LitElement) {
     }
 
     private _dispatchQChange(e: Event) {
-        const qChange: BiquadFilterDetuneChangeDetail = {
+        const qChange: BiquadFilterQChangeDetail = {
             node: this.node,
-            detune: Number((e.target as HTMLInputElement).value),
+            q: Number((e.target as HTMLInputElement).value),
         };
         this.dispatchEvent(new CustomEvent("biquad-filter-q-change", { detail: { qChange }, composed: true }));
     }
 
     private _dispatchGainChange(e: Event) {
-        const gainChange: BiquadFilterDetuneChangeDetail = {
+        const gainChange: BiquadFilterGainChangeDetail = {
             node: this.node,
-            detune: Number((e.target as HTMLInputElement).value),
+            gain: Number((e.target as HTMLInputElement).value),
         };
         this.dispatchEvent(new CustomEvent("biquad-filter-gain-change", { detail: { gainChange }, composed: true }));
     }

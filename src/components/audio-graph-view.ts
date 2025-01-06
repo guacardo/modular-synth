@@ -120,7 +120,7 @@ export class AudioGraphView extends LitElement {
         const qChange = e.detail.qChange as BiquadFilterQChangeDetail;
         this.audioGraph?.graphNodes.map((node) => {
             if (node === qChange.node) {
-                (node.audioNode as BiquadFilterNode).detune.setValueAtTime(qChange.q, this.audioGraph!.context.currentTime);
+                (node.audioNode as BiquadFilterNode).Q.setValueAtTime(qChange.q, this.audioGraph!.context.currentTime);
             }
         });
     }
@@ -129,7 +129,7 @@ export class AudioGraphView extends LitElement {
         const gainChange = e.detail.gainChange as BiquadFilterGainChangeDetail;
         this.audioGraph?.graphNodes.map((node) => {
             if (node === gainChange.node) {
-                (node.audioNode as BiquadFilterNode).detune.setValueAtTime(gainChange.gain, this.audioGraph!.context.currentTime);
+                (node.audioNode as BiquadFilterNode).gain.setValueAtTime(gainChange.gain, this.audioGraph!.context.currentTime);
             }
         });
     }
