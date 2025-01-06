@@ -2,7 +2,6 @@ import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { graphNodeStyles } from "../styles/graph-node-styles";
 import { GraphNode } from "../app/audio-graph";
-import { classMap } from "lit/directives/class-map.js";
 import { ifDefined } from "lit/directives/if-defined.js";
 
 export interface FrequencyChangeDetail {
@@ -24,9 +23,6 @@ export class OscillatorNodeView extends LitElement {
 
 	@property({ attribute: false })
 	node?: GraphNode;
-
-	@property({ type: Boolean })
-	isSourceNode: boolean = false;
 
 	private _dispatchClick() {
 		const node = this.node;
@@ -53,35 +49,30 @@ export class OscillatorNodeView extends LitElement {
 	}
 
 	render() {
-		this.node!.id,
-			html`<div
-				id=${ifDefined(this.node?.id)}
-				class="${classMap({ node: true, source: this.isSourceNode })}"
-				@click=${this._dispatchClick}
-			>
-				<p>${this.node?.id}</p>
-				<input
-					type="range"
-					min="0"
-					max="2000"
-					@input=${this._dispatchFrequencyChange}
-					@click=${(e: Event) => e.stopPropagation()}
-					draggable="true"
-					@dragstart=${(e: DragEvent) => {
-						e.stopPropagation();
-						e.preventDefault();
-					}}
-				/>
-				<select @change=${this._dispatchTypeChange} @click=${(e: Event) => e.stopPropagation()}>
-					${settableOscillatorTypes.map((type) => {
-						return html`<option
-							value=${type}
-							?selected=${type === ((this.node?.audioNode as OscillatorNode).type as OscillatorType)}
-						>
-							${type}
-						</option>`;
-					})}
-				</select>
-			</div>`;
+		return html`<div id=${ifDefined(this.node?.id)} class="node" @click=${this._dispatchClick}>
+			<p>${this.node?.id}</p>
+			<input
+				type="range"
+				min="0"
+				max="2000"
+				@input=${this._dispatchFrequencyChange}
+				@click=${(e: Event) => e.stopPropagation()}
+				draggable="true"
+				@dragstart=${(e: DragEvent) => {
+					e.stopPropagation();
+					e.preventDefault();
+				}}
+			/>
+			<select @change=${this._dispatchTypeChange} @click=${(e: Event) => e.stopPropagation()}>
+				${settableOscillatorTypes.map((type) => {
+					return html`<option
+						value=${type}
+						?selected=${type === ((this.node?.audioNode as OscillatorNode).type as OscillatorType)}
+					>
+						${type}
+					</option>`;
+				})}
+			</select>
+		</div>`;
 	}
 }

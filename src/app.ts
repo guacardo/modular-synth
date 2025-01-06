@@ -48,7 +48,7 @@ export class AppView extends LitElement {
 				<button @click=${this._debug}>debug</button>
 			</div>
 			<audio-graph-view class="graph" .audioGraph=${this._audioGraph}></audio-graph-view>
-			<side-panel-view></side-panel-view>
+			<side-panel-view .audioGraph=${this._audioGraph}></side-panel-view>
 		</div>`;
 	}
 }

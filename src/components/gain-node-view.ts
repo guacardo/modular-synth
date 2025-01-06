@@ -13,7 +13,6 @@ export interface GainChangeDetail {
 @customElement("gain-node-view")
 export class GainNodeView extends LitElement {
 	@property({ attribute: false }) node?: GraphNode;
-	@property({ type: Boolean }) isSourceNode: boolean = false;
 	@property({ type: Object }) destination?: AudioDestinationNode;
 	@state() connectedToContext: boolean = false;
 
@@ -43,28 +42,27 @@ export class GainNodeView extends LitElement {
 	}
 
 	render() {
-		this.node!.id,
-			html`<div
-				id=${ifDefined(this.node?.id)}
-				class=${classMap({ node: true, connectedContext: this.connectedToContext })}
-				@click=${this._dispatchClick}
-			>
-				<p>${this.node?.id}</p>
-				<input
-					type="range"
-					min="0.001"
-					max="1.0"
-					step="0.001"
-					@input=${this._dispatchGainChange}
-					draggable="true"
-					@dragstart=${(e: DragEvent) => {
-						e.stopPropagation();
-						e.preventDefault();
-					}}
-				/>
-				${this.connectedToContext
-					? html`<p>connected</p>`
-					: html`<button @click=${(e: Event) => this._connectContextHandler(e)}>connect</button>`}
-			</div>`;
+		return html`<div
+			id=${ifDefined(this.node?.id)}
+			class=${classMap({ node: true, connectedContext: this.connectedToContext })}
+			@click=${this._dispatchClick}
+		>
+			<p>${this.node?.id}</p>
+			<input
+				type="range"
+				min="0.001"
+				max="1.0"
+				step="0.001"
+				@input=${this._dispatchGainChange}
+				draggable="true"
+				@dragstart=${(e: DragEvent) => {
+					e.stopPropagation();
+					e.preventDefault();
+				}}
+			/>
+			${this.connectedToContext
+				? html`<p>connected</p>`
+				: html`<button @click=${(e: Event) => this._connectContextHandler(e)}>connect</button>`}
+		</div>`;
 	}
 }

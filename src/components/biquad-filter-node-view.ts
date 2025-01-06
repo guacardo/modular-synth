@@ -46,7 +46,6 @@ export class BiquadFilterNodeView extends LitElement {
 	static styles = [graphNodeStyles];
 
 	@property({ attribute: false }) node?: GraphNode;
-	@property({ type: Boolean }) isSourceNode: boolean = false;
 	@property({ type: Object }) destination?: AudioDestinationNode;
 	@state() connectedToContext: boolean = false;
 
@@ -105,71 +104,70 @@ export class BiquadFilterNodeView extends LitElement {
 	}
 
 	render() {
-		this.node!.id,
-			html`<div
-				id=${ifDefined(this.node?.id)}
-				class=${classMap({ node: true, connectedContext: this.connectedToContext })}
-				@click=${this._dispatchClick}
-			>
-				<p>${this.node?.id}</p>
-				<select @change=${this._dispatchTypeChange} @click=${(e: Event) => e.stopPropagation()}>
-					${settableBiquadFilterTypes.map((type) => {
-						return html`<option
-							value=${type}
-							?selected=${type === ((this.node?.audioNode as BiquadFilterNode).type as BiquadFilterType)}
-						>
-							${type}
-						</option>`;
-					})}
-				</select>
-				<label for="${`frequency_${this.node?.id}`}">Frequency:</label>
-				<input
-					id="${`frequency_${this.node?.id}`}"
-					type="range"
-					max="10000"
-					@input=${this._dispatchFrequencyChange}
-					draggable="true"
-					@dragstart=${(e: DragEvent) => {
-						e.stopPropagation();
-						e.preventDefault();
-					}}
-				/>
-				<label for="${`detune_${this.node?.id}`}">Detune:</label>
-				<input
-					id="${`detune_${this.node?.id}`}"
-					type="range"
-					@input=${this._dispatchDetuneChange}
-					draggable="true"
-					@dragstart=${(e: DragEvent) => {
-						e.stopPropagation();
-						e.preventDefault();
-					}}
-				/>
-				<label for="${`q_${this.node?.id}`}">Q:</label>
-				<input
-					id="${`q_${this.node?.id}`}"
-					type="range"
-					@input=${this._dispatchQChange}
-					draggable="true"
-					@dragstart=${(e: DragEvent) => {
-						e.stopPropagation();
-						e.preventDefault();
-					}}
-				/>
-				<label for="${`gain_${this.node?.id}`}">Gain:</label>
-				<input
-					id="${`gain_${this.node?.id}`}"
-					type="range"
-					@input=${this._dispatchGainChange}
-					draggable="true"
-					@dragstart=${(e: DragEvent) => {
-						e.stopPropagation();
-						e.preventDefault();
-					}}
-				/>
-				${this.connectedToContext
-					? html`<p>connected</p>`
-					: html`<button @click=${(e: Event) => this._connectContextHandler(e)}>connect</button>`}
-			</div>`;
+		return html`<div
+			id=${ifDefined(this.node?.id)}
+			class=${classMap({ node: true, connectedContext: this.connectedToContext })}
+			@click=${this._dispatchClick}
+		>
+			<p>${this.node?.id}</p>
+			<select @change=${this._dispatchTypeChange} @click=${(e: Event) => e.stopPropagation()}>
+				${settableBiquadFilterTypes.map((type) => {
+					return html`<option
+						value=${type}
+						?selected=${type === ((this.node?.audioNode as BiquadFilterNode).type as BiquadFilterType)}
+					>
+						${type}
+					</option>`;
+				})}
+			</select>
+			<label for="${`frequency_${this.node?.id}`}">Frequency:</label>
+			<input
+				id="${`frequency_${this.node?.id}`}"
+				type="range"
+				max="10000"
+				@input=${this._dispatchFrequencyChange}
+				draggable="true"
+				@dragstart=${(e: DragEvent) => {
+					e.stopPropagation();
+					e.preventDefault();
+				}}
+			/>
+			<label for="${`detune_${this.node?.id}`}">Detune:</label>
+			<input
+				id="${`detune_${this.node?.id}`}"
+				type="range"
+				@input=${this._dispatchDetuneChange}
+				draggable="true"
+				@dragstart=${(e: DragEvent) => {
+					e.stopPropagation();
+					e.preventDefault();
+				}}
+			/>
+			<label for="${`q_${this.node?.id}`}">Q:</label>
+			<input
+				id="${`q_${this.node?.id}`}"
+				type="range"
+				@input=${this._dispatchQChange}
+				draggable="true"
+				@dragstart=${(e: DragEvent) => {
+					e.stopPropagation();
+					e.preventDefault();
+				}}
+			/>
+			<label for="${`gain_${this.node?.id}`}">Gain:</label>
+			<input
+				id="${`gain_${this.node?.id}`}"
+				type="range"
+				@input=${this._dispatchGainChange}
+				draggable="true"
+				@dragstart=${(e: DragEvent) => {
+					e.stopPropagation();
+					e.preventDefault();
+				}}
+			/>
+			${this.connectedToContext
+				? html`<p>connected</p>`
+				: html`<button @click=${(e: Event) => this._connectContextHandler(e)}>connect</button>`}
+		</div>`;
 	}
 }
