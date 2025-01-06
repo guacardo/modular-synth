@@ -4,9 +4,6 @@ import { AudioGraph, GraphNode } from "../app/audio-graph";
 import { audioGraphStyles } from "../styles/audio-graph-styles";
 import { FrequencyChangeDetail, OscillatorTypeChangeDetail } from "./oscillator-node-view";
 import { GainChangeDetail } from "./gain-node-view";
-import "./biquad-filter-node-view";
-import "./gain-node-view";
-import "./oscillator-node-view";
 import {
 	BiquadFilterDetuneChangeDetail,
 	BiquadFilterFrequencyChangeDetail,
@@ -14,6 +11,9 @@ import {
 	BiquadFilterQChangeDetail,
 	BiquadFilterTypeChangeDetail,
 } from "./biquad-filter-node-view";
+import "./biquad-filter-node-view";
+import "./gain-node-view";
+import "./oscillator-node-view";
 
 export interface NewConnectionDetail {
 	sourceNode: GraphNode;

@@ -6,8 +6,9 @@ import { BiquadFilterNodeView } from "./components/biquad-filter-node-view";
 import { GainNodeView } from "./components/gain-node-view";
 import { OscillatorNodeView } from "./components/oscillator-node-view";
 import { appStyles } from "./styles/app-styles";
-import "./components/audio-graph-view";
 import { SidePanelView } from "./components/side-panel-view";
+import "./components/audio-graph-view";
+import "./components/side-panel-view";
 
 @customElement("app-view")
 export class AppView extends LitElement {
@@ -47,6 +48,7 @@ export class AppView extends LitElement {
 				<button @click=${this._debug}>debug</button>
 			</div>
 			<audio-graph-view class="graph" .audioGraph=${this._audioGraph}></audio-graph-view>
+			<side-panel-view></side-panel-view>
 		</div>`;
 	}
 }
