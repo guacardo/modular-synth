@@ -1,5 +1,3 @@
-import { Util } from "./util";
-
 // audio graph node types
 export const nodeTypes = ["osc", "gain", "biquad"] as const;
 export type NodeType = (typeof nodeTypes)[number];
@@ -50,14 +48,6 @@ export class AudioGraph {
         return Object.assign(Object.create(AudioGraph.prototype), {
             ...this,
             graphNodes: [...this.graphNodes, new GraphNode(this._count.toString(), type, this.context)],
-        });
-    }
-
-    deleteNode(id: string): AudioGraph {
-        Util.graphNodeFromId(id, this.graphNodes)?.audioNode.disconnect();
-        return Object.assign(Object.create(AudioGraph.prototype), {
-            ...this,
-            graphNodes: [...this.graphNodes].filter((node) => node.id !== id),
         });
     }
 
