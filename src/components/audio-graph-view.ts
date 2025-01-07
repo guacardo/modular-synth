@@ -1,6 +1,6 @@
-import { LitElement, TemplateResult, html } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
-import { AudioGraph, GraphNode } from "../app/audio-graph";
+import { LitElement, html } from "lit";
+import { customElement, property } from "lit/decorators.js";
+import { AudioGraph } from "../app/audio-graph";
 import { audioGraphStyles } from "../styles/audio-graph-styles";
 import { FrequencyChangeDetail, OscillatorTypeChangeDetail } from "./oscillator-node-view";
 import { GainChangeDetail } from "./gain-node-view";
@@ -102,40 +102,6 @@ export class AudioGraphView extends LitElement {
 				(node.audioNode as BiquadFilterNode).gain.setValueAtTime(gainChange.gain, this.audioGraph!.context.currentTime);
 			}
 		});
-	}
-
-	private handleNodeClick() {
-		console.log("click");
-	}
-
-	private renderNodeView(node: GraphNode): TemplateResult {
-		switch (node.type) {
-			case `gain`:
-				return html`<gain-node-view
-					.node=${node}
-					.destination=${this.audioGraph?.context.destination}
-					@node-clicked=${this.handleNodeClick}
-					@gain-changed=${this.handleGainChange}
-				></gain-node-view>`;
-			case `osc`:
-				return html`<oscillator-node-view
-					.node=${node}
-					@node-clicked=${this.handleNodeClick}
-					@frequency-change=${this.handleFrequencyChange}
-					@type-change=${this.handleOscillatorTypeChange}
-				></oscillator-node-view>`;
-			case `biquad`:
-				return html`<biquad-filter-node-view
-					.node=${node}
-					.destination=${this.audioGraph?.context.destination}
-					@node-clicked=${this.handleNodeClick}
-					@type-change=${this.handleBiquadFilterTypeChange}
-					@biquad-filter-frequency-change=${this.handleBiquadFrequencyChange}
-					@biquad-filter-detune-change=${this.handleBiquadDetuneChange}
-					@biquad-filter-q-change=${this.handleBiquadQChange}
-					@biquad-filter-gain-change=${this.handleBiquadGainChange}
-				></biquad-filter-node-view>`;
-		}
 	}
 
 	render() {
