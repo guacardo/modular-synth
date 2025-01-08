@@ -2,7 +2,6 @@ import { LitElement, TemplateResult, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { sidePanelStyles } from "../styles/side-panel-styles";
 import { AudioGraph, GraphNode } from "../app/audio-graph";
-import { dispatchNumericChange } from "../app/audio-node-change";
 
 @customElement("side-panel-view")
 export class SidePanelView extends LitElement {
@@ -21,12 +20,7 @@ export class SidePanelView extends LitElement {
     private renderNodeView(node: GraphNode): TemplateResult {
         switch (node.type) {
             case `gain`:
-                return html`<gain-node-view
-                    .node=${node}
-                    .destination=${this.audioGraph?.context.destination}
-                    @gain-changed=${(e: Event) =>
-                        dispatchNumericChange({ node: node, value: Number((e.target as HTMLInputElement).value), type: "gain" })}
-                ></gain-node-view>`;
+                return html`<gain-node-view .node=${node} .destination=${this.audioGraph?.context.destination}></gain-node-view>`;
             case `osc`:
                 return html`<oscillator-node-view .node=${node}></oscillator-node-view>`;
             case `biquad`:
