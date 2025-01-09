@@ -1,7 +1,7 @@
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { graphNodeStyles } from "../styles/graph-node-styles";
-import { GraphNode } from "../app/audio-graph";
+import { graphNodeStyles } from "../../styles/graph-node-styles";
+import { GraphNode } from "../../app/audio-graph";
 import { ifDefined } from "lit/directives/if-defined.js";
 
 // export higher up? types file?

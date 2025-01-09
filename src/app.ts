@@ -1,15 +1,14 @@
 import { LitElement, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
-import { AudioGraphView } from "./components/audio-graph-view";
+import { AudioGraphView } from "./components/audio-graph/audio-graph.view";
 import { AudioGraph, NodeType } from "./app/audio-graph";
-import { BiquadFilterNodeView } from "./components/biquad-filter-node-view";
-import { GainNodeView } from "./components/gain-node-view";
-import { OscillatorNodeView } from "./components/oscillator-node-view";
+import { BiquadFilterNodeView } from "./components/biquad-filter/biquad-filter-node.view";
+import { GainNodeView } from "./components/gain-node/gain-node.view";
+import { OscillatorNodeView } from "./components/oscillator-node/oscillator-node.view";
 import { appStyles } from "./styles/app-styles";
-import { SidePanelView } from "./components/side-panel-view";
-import { updateAudioNode } from "./app.util";
-import "./components/audio-graph-view";
-import "./components/side-panel-view";
+import { SidePanelView } from "./components/side-panel/side-panel.view";
+import "./components/audio-graph/audio-graph.view";
+import "./components/side-panel/side-panel.view";
 
 @customElement("app-view")
 export class AppView extends LitElement {
@@ -39,7 +38,8 @@ export class AppView extends LitElement {
                 <button @click=${this._doot}>doot</button>
             </div>
             <audio-graph-view class="graph" .audioGraph=${this._audioGraph}></audio-graph-view>
-            <side-panel-view .audioGraph=${this._audioGraph}></side-panel-view>
+            <side-panel-view .audioGraph=${this._audioGraph} orientation="left"></side-panel-view>
+            <side-panel-view .audioGraph=${this._audioGraph} orientation="right"></side-panel-view>
         </div>`;
     }
 }

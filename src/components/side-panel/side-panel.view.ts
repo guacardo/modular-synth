@@ -1,8 +1,10 @@
 import { LitElement, TemplateResult, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { sidePanelStyles } from "../styles/side-panel-styles";
-import { AudioGraph, GraphNode } from "../app/audio-graph";
+import { sidePanelStyles } from "./side-panel.styles";
+import { AudioGraph, GraphNode } from "../../app/audio-graph";
+import { classMap } from "lit/directives/class-map.js";
 
+type Orientation = "left" | "right";
 @customElement("side-panel-view")
 export class SidePanelView extends LitElement {
     static styles = [sidePanelStyles];
@@ -10,9 +12,16 @@ export class SidePanelView extends LitElement {
     @property({ type: Object })
     audioGraph?: AudioGraph;
 
+    @property({ type: String, attribute: true })
+    orientation?: Orientation;
+
+    classes = {
+        left: this.orientation === "left" ? true : false,
+        right: this.orientation === "right" ? true : false,
+    };
+
     render() {
-        return html` <div class="side-panel-container">
-            <h1>Hello world side panel view</h1>
+        return html` <div class="side-panel-container ${classMap(this.classes)}">
             <div class="audio-graph-node-container">${this.audioGraph?.graphNodes.map((node) => this.renderNodeView(node))}</div>
         </div>`;
     }

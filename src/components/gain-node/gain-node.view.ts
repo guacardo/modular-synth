@@ -1,7 +1,7 @@
 import { LitElement, html } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
-import { graphNodeStyles } from "../styles/graph-node-styles";
-import { GraphNode } from "../app/audio-graph";
+import { graphNodeStyles } from "../../styles/graph-node-styles";
+import { GraphNode } from "../../app/audio-graph";
 import { ifDefined } from "lit/directives/if-defined.js";
 import { classMap } from "lit/directives/class-map.js";
 
