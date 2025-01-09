@@ -61,17 +61,11 @@ export class AudioGraph {
         });
     }
 
-    updateAudioNode<T extends AudioNode>(
-        node: T,
-        properties: Partial<Record<keyof T, number | string | [number, number]>>,
-        context: AudioContext
-    ): void {
+    updateAudioNode<T extends AudioNode>(node: T, properties: Partial<Record<keyof T, number | string | [number, number]>>): void {
         if (!node || typeof node !== "object" || !properties) {
             console.error("Invalid node or properties");
             return;
         }
-
-        const currentTime = context.currentTime;
 
         for (const [property, value] of Object.entries(properties)) {
             if (property in node) {
@@ -82,9 +76,9 @@ export class AudioGraph {
 
                     if (Array.isArray(value)) {
                         const [targetValue, rampTime] = value;
-                        audioParam.linearRampToValueAtTime(targetValue, currentTime + rampTime);
+                        audioParam.linearRampToValueAtTime(targetValue, this.context.currentTime + rampTime);
                     } else if (typeof value === "number") {
-                        audioParam.setValueAtTime(value, currentTime);
+                        audioParam.setValueAtTime(value, this.context.currentTime);
                     } else {
                         console.error(`Invalid value for AudioParam ${value}`);
                     }
