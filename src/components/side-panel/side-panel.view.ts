@@ -15,13 +15,12 @@ export class SidePanelView extends LitElement {
     @property({ type: String, attribute: true })
     orientation?: Orientation;
 
-    classes = {
-        left: this.orientation === "left" ? true : false,
-        right: this.orientation === "right" ? true : false,
-    };
-
     render() {
-        return html` <div class="side-panel-container ${classMap(this.classes)}">
+        const classes = {
+            left: this.orientation === "left" ? true : false,
+            right: this.orientation === "right" ? true : false,
+        };
+        return html` <div class="side-panel-container${classMap(classes)}">
             <div class="audio-graph-node-container">${this.audioGraph?.graphNodes.map((node) => this.renderNodeView(node))}</div>
         </div>`;
     }

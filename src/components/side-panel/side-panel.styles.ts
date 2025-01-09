@@ -5,8 +5,16 @@ export const sidePanelStyles = css`
         position: fixed;
         top: 0;
         height: 100vh;
-        right: 0;
-        width: 300px;
+        width: 20vw;
         background-color: #333;
+        overflow-y: scroll;
+    }
+
+    .left {
+        left: 0;
+    }
+
+    .right {
+        right: 0;
     }
 `;
