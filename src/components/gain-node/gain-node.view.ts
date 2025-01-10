@@ -12,7 +12,6 @@ export class GainNodeView extends LitElement {
     static styles = [graphNodeStyles];
 
     render() {
-        console.dir(this.gainNode);
         return html`<div class="node">
             <p>gain</p>
             <input

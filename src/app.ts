@@ -19,7 +19,6 @@ export class AppView extends LitElement {
 
     readonly handleAddNode = (node: AudioNode) => {
         this._audioGraph = this._audioGraph.addNode(node);
-        console.log(this._audioGraph);
     };
 
     render() {

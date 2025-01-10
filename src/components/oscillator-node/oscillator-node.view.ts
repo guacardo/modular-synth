@@ -12,7 +12,6 @@ export class OscillatorNodeView extends LitElement {
     @property({ attribute: false }) oscillatorNode: OscillatorNode;
 
     render() {
-        console.log(this.oscillatorNode);
         return html`<div class="node">
             <p>oscillator</p>
             <input

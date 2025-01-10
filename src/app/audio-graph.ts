@@ -27,7 +27,6 @@ export class AudioGraph {
             return;
         }
 
-        console.log(node, properties);
         for (const [property, value] of Object.entries(properties)) {
             if (property in node) {
                 const propKey = property as keyof T;
@@ -40,6 +39,7 @@ export class AudioGraph {
                         audioParam.linearRampToValueAtTime(targetValue, this.context.currentTime + rampTime);
                     } else if (typeof value === "number") {
                         audioParam.setValueAtTime(value, this.context.currentTime);
+                        console.log(node);
                     } else {
                         console.error(`Invalid value for AudioParam ${value}`);
                     }

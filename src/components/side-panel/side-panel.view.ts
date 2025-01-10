@@ -26,7 +26,6 @@ export class SidePanelView extends LitElement {
     }
 
     private renderNodeView(node: AudioNode): TemplateResult {
-        console.log(node);
         if (node instanceof GainNode) {
             return html`<gain-node-view
                 .gainNode=${node}
