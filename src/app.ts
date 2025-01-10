@@ -1,15 +1,14 @@
 import { LitElement, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
-import { AudioGraphView, NewConnectionDetail } from "./components/audio-graph-view";
-import { AudioGraph, NodeType } from "./app/audio-graph";
-import { BiquadFilterNodeView } from "./components/biquad-filter-node-view";
-import { GainNodeView } from "./components/gain-node-view";
-import { OscillatorNodeView } from "./components/oscillator-node-view";
+import { AudioGraphView } from "./components/audio-graph/audio-graph.view";
+import { AudioGraph } from "./app/audio-graph";
+import { BiquadFilterNodeView } from "./components/biquad-filter/biquad-filter-node.view";
+import { GainNodeView } from "./components/gain-node/gain-node.view";
+import { OscillatorNodeView } from "./components/oscillator-node/oscillator-node.view";
 import { appStyles } from "./styles/app-styles";
-import { ConnectionView } from "./components/connection-view";
-import { DomSpaceChangeDetail } from "./mixins/draggable";
-import { DomSpace, NodeDomMap } from "./app/dom-mediator";
-import "./components/audio-graph-view";
+import { SidePanelView } from "./components/side-panel/side-panel.view";
+import "./components/audio-graph/audio-graph.view";
+import "./components/side-panel/side-panel.view";
 
 @customElement("app-view")
 export class AppView extends LitElement {
@@ -18,58 +17,20 @@ export class AppView extends LitElement {
     @state()
     private accessor _audioGraph = new AudioGraph();
 
-    @state()
-    private _domSpace: NodeDomMap = new Map<string, DomSpace>();
-
-    readonly handleAddNode = (type: NodeType) => {
-        this._audioGraph = this._audioGraph.addNode(type);
+    readonly handleAddNode = (node: AudioNode) => {
+        this._audioGraph = this._audioGraph.addNode(node);
     };
-
-    private _doot() {
-        this._audioGraph.graphNodes.map((node) => {
-            if (node.type === `osc`) {
-                (node.audioNode as OscillatorNode).start();
-            }
-        });
-    }
-
-    private _debug() {
-        console.log(this._audioGraph);
-        console.log(this._domSpace);
-    }
-
-    handleDomSpaceChange(e: Event) {
-        const domSpaceChange = (e as CustomEvent).detail.domSpaceChange as DomSpaceChangeDetail;
-        this._domSpace = new Map<string, DomSpace>(this._domSpace).set(domSpaceChange.id, domSpaceChange.space);
-    }
-
-    handleAddConnection(e: Event) {
-        const addConnection = (e as CustomEvent).detail.newConnection as NewConnectionDetail;
-        this._audioGraph = this._audioGraph?.addConnection(addConnection.sourceNode, addConnection.destinationNode);
-    }
-
-    connectedCallback(): void {
-        super.connectedCallback();
-        this.addEventListener("dom-space-change", (e) => this.handleDomSpaceChange(e));
-        this.addEventListener("add-connection", (e) => this.handleAddConnection(e));
-    }
-
-    disconnectedCallback(): void {
-        super.disconnectedCallback();
-        this.removeEventListener("dom-space-change", (e) => this.handleDomSpaceChange(e));
-        this.removeEventListener("add-connection", (e) => this.handleAddConnection(e));
-    }
 
     render() {
         return html` <div class="app">
             <div class="controls">
-                <button @click="${() => this.handleAddNode("osc")}">Oscillator Node</button>
-                <button @click="${() => this.handleAddNode("gain")}">Gain Node</button>
-                <button @click="${() => this.handleAddNode("biquad")}">Biquad Filter Node</button>
-                <button @click=${this._doot}>doot</button>
-                <button @click=${this._debug}>debug</button>
+                <button @click="${() => this.handleAddNode(new OscillatorNode(this._audioGraph.context))}">Oscillator Node</button>
+                <button @click="${() => this.handleAddNode(new GainNode(this._audioGraph.context))}">Gain Node</button>
+                <button @click="${() => this.handleAddNode(new BiquadFilterNode(this._audioGraph.context))}">Biquad Filter Node</button>
             </div>
-            <audio-graph-view class="graph" .audioGraph=${this._audioGraph} .domSpace=${this._domSpace}></audio-graph-view>
+            <audio-graph-view class="graph" .audioGraph=${this._audioGraph}></audio-graph-view>
+            <side-panel-view .audioGraph=${this._audioGraph} orientation="left"></side-panel-view>
+            <side-panel-view .audioGraph=${this._audioGraph} orientation="right"></side-panel-view>
         </div>`;
     }
 }
@@ -80,7 +41,7 @@ declare global {
         "audio-graph-view": AudioGraphView;
         "gain-node-view": GainNodeView;
         "oscillator-node-view": OscillatorNodeView;
-        "connection-view": ConnectionView;
         "biquad-filter-node-view": BiquadFilterNodeView;
+        "side-panel-view": SidePanelView;
     }
 }
