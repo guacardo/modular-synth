@@ -7,6 +7,11 @@ export interface Connection {
     destinationId: string;
 }
 
+export interface AudioChangeDetail {
+    node: GraphNode;
+    value: number | string | [number, number];
+}
+
 export class GraphNode {
     id: string;
     type: NodeType;
@@ -67,6 +72,7 @@ export class AudioGraph {
             return;
         }
 
+        console.log(node, properties);
         for (const [property, value] of Object.entries(properties)) {
             if (property in node) {
                 const propKey = property as keyof T;
@@ -77,7 +83,7 @@ export class AudioGraph {
                     if (Array.isArray(value)) {
                         const [targetValue, rampTime] = value;
                         audioParam.linearRampToValueAtTime(targetValue, this.context.currentTime + rampTime);
-                    } else if (typeof value === "number") {
+                    } else if (typeof Number(value) === "number") {
                         audioParam.setValueAtTime(value, this.context.currentTime);
                     } else {
                         console.error(`Invalid value for AudioParam ${value}`);

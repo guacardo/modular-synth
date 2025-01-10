@@ -28,7 +28,11 @@ export class SidePanelView extends LitElement {
     private renderNodeView(node: GraphNode): TemplateResult {
         switch (node.type) {
             case `gain`:
-                return html`<gain-node-view .node=${node} .destination=${this.audioGraph?.context.destination}></gain-node-view>`;
+                return html`<gain-node-view
+                    .node=${node}
+                    .destination=${this.audioGraph?.context.destination}
+                    .audioGraph=${this.audioGraph}
+                ></gain-node-view>`;
             case `osc`:
                 return html`<oscillator-node-view .node=${node}></oscillator-node-view>`;
             case `biquad`:
