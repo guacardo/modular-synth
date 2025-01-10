@@ -1,7 +1,7 @@
 import { LitElement, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { AudioGraphView } from "./components/audio-graph/audio-graph.view";
-import { AudioGraph, NodeType } from "./app/audio-graph";
+import { AudioGraph } from "./app/audio-graph";
 import { BiquadFilterNodeView } from "./components/biquad-filter/biquad-filter-node.view";
 import { GainNodeView } from "./components/gain-node/gain-node.view";
 import { OscillatorNodeView } from "./components/oscillator-node/oscillator-node.view";
@@ -17,25 +17,16 @@ export class AppView extends LitElement {
     @state()
     private accessor _audioGraph = new AudioGraph();
 
-    readonly handleAddNode = (type: NodeType) => {
-        this._audioGraph = this._audioGraph.addNode(type);
+    readonly handleAddNode = (node: AudioNode) => {
+        this._audioGraph = this._audioGraph.addNode(node);
     };
-
-    private _doot() {
-        this._audioGraph.graphNodes.map((node) => {
-            if (node.type === `osc`) {
-                (node.audioNode as OscillatorNode).start();
-            }
-        });
-    }
 
     render() {
         return html` <div class="app">
             <div class="controls">
-                <button @click="${() => this.handleAddNode("osc")}">Oscillator Node</button>
-                <button @click="${() => this.handleAddNode("gain")}">Gain Node</button>
-                <button @click="${() => this.handleAddNode("biquad")}">Biquad Filter Node</button>
-                <button @click=${this._doot}>doot</button>
+                <button @click="${() => this.handleAddNode(new OscillatorNode(this._audioGraph.context))}">Oscillator Node</button>
+                <button @click="${() => this.handleAddNode(new GainNode(this._audioGraph.context))}">Gain Node</button>
+                <button @click="${() => this.handleAddNode(new BiquadFilterNode(this._audioGraph.context))}">Biquad Filter Node</button>
             </div>
             <audio-graph-view class="graph" .audioGraph=${this._audioGraph}></audio-graph-view>
             <side-panel-view .audioGraph=${this._audioGraph} orientation="left"></side-panel-view>
