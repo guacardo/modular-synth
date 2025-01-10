@@ -10,10 +10,10 @@ export class SidePanelView extends LitElement {
     static styles = [sidePanelStyles];
 
     @property({ type: Object })
-    audioGraph?: AudioGraph;
+    audioGraph: AudioGraph;
 
     @property({ type: String, attribute: true })
-    orientation?: Orientation;
+    orientation: Orientation;
 
     render() {
         const classes = {
@@ -21,26 +21,27 @@ export class SidePanelView extends LitElement {
             right: this.orientation === "right" ? true : false,
         };
         return html` <div class="side-panel-container${classMap(classes)}">
-            <div class="audio-graph-node-container">${this.audioGraph?.audioNodes.map((node) => this.renderNodeView(node))}</div>
+            <div class="audio-graph-node-container">${this.audioGraph.audioNodes.map((node) => this.renderNodeView(node))}</div>
         </div>`;
     }
 
     private renderNodeView(node: AudioNode): TemplateResult {
-        return html`<p>audio node ${node}</p>`;
-        // switch (node.type) {
-        //     case `gain`:
-        //         return html`<gain-node-view
-        //             .node=${node}
-        //             .destination=${this.audioGraph?.context.destination}
-        //             .audioGraph=${this.audioGraph}
-        //         ></gain-node-view>`;
-        //     case `osc`:
-        //         return html`<oscillator-node-view .node=${node}></oscillator-node-view>`;
-        //     case `biquad`:
-        //         return html`<biquad-filter-node-view
-        //             .node=${node}
-        //             .destination=${this.audioGraph?.context.destination}
-        //         ></biquad-filter-node-view>`;
-        // }
+        console.log(node);
+        if (node instanceof GainNode) {
+            return html`<gain-node-view
+                .gainNode=${node}
+                .destination=${this.audioGraph.context.destination}
+                .audioGraph=${this.audioGraph}
+            ></gain-node-view>`;
+        } else if (node instanceof OscillatorNode) {
+            return html`<oscillator-node-view .oscillatorNode=${node}></oscillator-node-view>`;
+        } else if (node instanceof BiquadFilterNode) {
+            return html`<biquad-filter-node-view
+                .biquadFilterNode=${node}
+                .destination=${this.audioGraph?.context.destination}
+            ></biquad-filter-node-view>`;
+        } else {
+            return html`<p>ERroR: nOT a n Audio Noooode</p>`;
+        }
     }
 }

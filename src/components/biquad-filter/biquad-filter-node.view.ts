@@ -18,13 +18,13 @@ const settableBiquadFilterTypes: readonly BiquadFilterType[] = [
 export class BiquadFilterNodeView extends LitElement {
     static styles = [graphNodeStyles];
 
-    @property({ attribute: false }) audioNode: AudioNode;
-    @property({ type: Object }) destination?: AudioDestinationNode;
+    @property({ attribute: false }) biquadFilterNode: BiquadFilterNode;
+    @property({ type: Object }) destination: AudioDestinationNode;
     @state() connectedToContext: boolean = false;
 
     render() {
         return html`<div class=${classMap({ node: true, connectedContext: this.connectedToContext })}>
-            <p>${typeof this.audioNode}</p>
+            <p>${typeof this.biquadFilterNode}</p>
             <select
                 @change=${(e: Event) => {
                     console.log(e);
@@ -32,9 +32,7 @@ export class BiquadFilterNodeView extends LitElement {
                 @click=${(e: Event) => e.stopPropagation()}
             >
                 ${settableBiquadFilterTypes.map((type) => {
-                    return html`<option value=${type} ?selected=${type === ((this.audioNode as BiquadFilterNode).type as BiquadFilterType)}>
-                        ${type}
-                    </option>`;
+                    return html`<option value=${type} ?selected=${type === this.biquadFilterNode.type}>${type}</option>`;
                 })}
             </select>
             <label>Frequency:</label>

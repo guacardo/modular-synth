@@ -9,9 +9,10 @@ const settableOscillatorTypes: readonly OscillatorType[] = ["sawtooth", "sine", 
 export class OscillatorNodeView extends LitElement {
     static styles = [graphNodeStyles];
 
-    @property({ attribute: false }) audioNode: AudioNode;
+    @property({ attribute: false }) oscillatorNode: OscillatorNode;
 
     render() {
+        console.log(this.oscillatorNode);
         return html`<div class="node">
             <p>oscillator</p>
             <input
@@ -35,9 +36,7 @@ export class OscillatorNodeView extends LitElement {
                 @click=${(e: Event) => e.stopPropagation()}
             >
                 ${settableOscillatorTypes.map((type) => {
-                    return html`<option value=${type} ?selected=${type === ((this.audioNode as OscillatorNode).type as OscillatorType)}>
-                        ${type}
-                    </option>`;
+                    return html`<option value=${type} ?selected=${type === this.oscillatorNode.type}>${type}</option>`;
                 })}
             </select>
         </div>`;
