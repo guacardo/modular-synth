@@ -32,7 +32,6 @@ export class SidePanelView extends LitElement {
         if (node instanceof GainNode) {
             return html`<gain-node-view
                 .gainNode=${node}
-                .destination=${this.audioGraph.context.destination}
                 .audioGraph=${this.audioGraph}
                 .handleUpdateNode=${this.handleUpdateNode}
             ></gain-node-view>`;

@@ -6,7 +6,11 @@ import { newNodeStyles } from "./new-node.styles";
 export class NewNodeView extends LitElement {
     static styles = [newNodeStyles];
 
+    handleClick() {
+        console.log("click");
+    }
+
     render() {
-        html`<div class="container">ADD +</div>`;
+        return html`<div class="container" @click=${this.handleClick}>ADD +</div>`;
     }
 }

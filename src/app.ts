@@ -7,7 +7,12 @@ import { GainNodeView } from "./components/gain-node/gain-node.view";
 import { OscillatorNodeView } from "./components/oscillator-node/oscillator-node.view";
 import { appStyles } from "./styles/app-styles";
 import { SidePanelView } from "./components/side-panel/side-panel.view";
+import { NewNodeView } from "./components/new-node/new-node.view";
 import "./components/audio-graph/audio-graph.view";
+import "./components/biquad-filter/biquad-filter-node.view";
+import "./components/gain-node/gain-node.view";
+import "./components/oscillator-node/oscillator-node.view";
+import "./components/new-node/new-node.view";
 import "./components/side-panel/side-panel.view";
 
 @customElement("app-view")
@@ -18,6 +23,7 @@ export class AppView extends LitElement {
     private accessor _audioGraph = new AudioGraph();
 
     private handleAddNode = (node: AudioNode) => {
+        node.connect(this._audioGraph.context.destination);
         this._audioGraph = this._audioGraph.addNode(node);
     };
 
@@ -56,5 +62,6 @@ declare global {
         "oscillator-node-view": OscillatorNodeView;
         "biquad-filter-node-view": BiquadFilterNodeView;
         "side-panel-view": SidePanelView;
+        "new-node-view": NewNodeView;
     }
 }
