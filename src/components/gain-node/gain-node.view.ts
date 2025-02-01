@@ -13,18 +13,18 @@ export class GainNodeView extends LitElement {
     static styles = [graphNodeStyles];
 
     private updateGain(value: number) {
-        console.log("updateGain", value);
         this.handleUpdateNode(this.gainNode as GainNode, { gain: value });
     }
 
     render() {
         return html`<div class="node">
-            <p>gain</p>
+            <p>Gain ${this.gainNode.gain.value.toFixed(3)}</p>
             <input
                 type="range"
                 min="0.001"
                 max="1.0"
                 step="0.001"
+                value="${this.gainNode.gain.value}"
                 @input="${(e: Event) => {
                     // this.audioGraph.updateAudioNode(this.gainNode, { gain: Number((e.target as HTMLInputElement).value) });
                     this.updateGain(Number((e.target as HTMLInputElement).value));

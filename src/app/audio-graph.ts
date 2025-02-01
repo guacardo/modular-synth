@@ -18,15 +18,16 @@ export class AudioGraph {
         });
     }
 
-    setAudioNodes(audioNodes: AudioNode[]): AudioGraph {
-        console.log("audioGraph.setAudioNodes", audioNodes);
+    findOrAddNode(node?: AudioNode): AudioGraph {
+        const index = this.audioNodes.findIndex((n) => n === node);
+
         return Object.assign(Object.create(AudioGraph.prototype), {
             ...this,
-            audioNodes,
+            audioNodes: this.audioNodes.map((n, i) => (i === index ? node : n)),
         });
     }
 
-    updateAudioNode<T extends AudioNode>(
+    updateAudioParamValue<T extends AudioNode>(
         node: T,
         properties: Partial<Record<keyof T, number | string | [number, number]>>
     ): AudioNode | undefined {
@@ -44,6 +45,7 @@ export class AudioGraph {
                         node[propKey].linearRampToValueAtTime(targetValue, this.context.currentTime + rampTime);
                     } else if (typeof value === "number") {
                         node[propKey].setValueAtTime(value, this.context.currentTime);
+                        node[propKey].value = value;
                     } else {
                         console.error(`Invalid value for AudioParam ${value}`);
                     }
