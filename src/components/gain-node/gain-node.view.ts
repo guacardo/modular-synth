@@ -8,8 +8,14 @@ export class GainNodeView extends LitElement {
     @property({ type: Object }) gainNode: GainNode;
     @property({ type: Object }) destination: AudioDestinationNode;
     @property({ type: Object }) audioGraph: AudioGraph;
+    @property() handleUpdateNode: (node: AudioNode, properties: Partial<Record<keyof GainNode, number>>) => void;
 
     static styles = [graphNodeStyles];
+
+    private updateGain(value: number) {
+        console.log("updateGain", value);
+        this.handleUpdateNode(this.gainNode as GainNode, { gain: value });
+    }
 
     render() {
         return html`<div class="node">
@@ -20,7 +26,8 @@ export class GainNodeView extends LitElement {
                 max="1.0"
                 step="0.001"
                 @input="${(e: Event) => {
-                    this.audioGraph?.updateAudioNode(this.gainNode, { gain: Number((e.target as HTMLInputElement).value) });
+                    // this.audioGraph.updateAudioNode(this.gainNode, { gain: Number((e.target as HTMLInputElement).value) });
+                    this.updateGain(Number((e.target as HTMLInputElement).value));
                 }}"
             />
         </div>`;

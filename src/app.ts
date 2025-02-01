@@ -17,8 +17,16 @@ export class AppView extends LitElement {
     @state()
     private accessor _audioGraph = new AudioGraph();
 
-    readonly handleAddNode = (node: AudioNode) => {
+    private handleAddNode = (node: AudioNode) => {
         this._audioGraph = this._audioGraph.addNode(node);
+    };
+
+    private handleUpdateNode = (node: AudioNode, properties: Partial<Record<keyof AudioNode, number | string | [number, number]>>) => {
+        const updateAudioNode = this._audioGraph.updateAudioNode(node, properties);
+        console.log("node", updateAudioNode);
+        // const updatedAudioGraph = this._audioGraph.setAudioNodes(updateAudioNode);
+        // console.log("graph", this._audioGraph);
+        // this._audioGraph = updatedAudioGraph;
     };
 
     render() {
@@ -29,8 +37,16 @@ export class AppView extends LitElement {
                 <button @click="${() => this.handleAddNode(new BiquadFilterNode(this._audioGraph.context))}">Biquad Filter Node</button>
             </div>
             <audio-graph-view class="graph" .audioGraph=${this._audioGraph}></audio-graph-view>
-            <side-panel-view .audioGraph=${this._audioGraph} orientation="left"></side-panel-view>
-            <side-panel-view .audioGraph=${this._audioGraph} orientation="right"></side-panel-view>
+            <side-panel-view
+                .audioGraph=${this._audioGraph}
+                .handleUpdateNode=${this.handleUpdateNode}
+                orientation="left"
+            ></side-panel-view>
+            <side-panel-view
+                .audioGraph=${this._audioGraph}
+                .handleUpdateNode=${this.handleUpdateNode}
+                orientation="right"
+            ></side-panel-view>
         </div>`;
     }
 }

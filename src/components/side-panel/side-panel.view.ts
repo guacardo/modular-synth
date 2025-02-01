@@ -15,6 +15,9 @@ export class SidePanelView extends LitElement {
     @property({ type: String, attribute: true })
     orientation: Orientation;
 
+    @property()
+    handleUpdateNode: (node: AudioNode, properties: Partial<Record<keyof AudioNode, number | string | [number, number]>>) => void;
+
     render() {
         const classes = {
             left: this.orientation === "left" ? true : false,
@@ -31,6 +34,7 @@ export class SidePanelView extends LitElement {
                 .gainNode=${node}
                 .destination=${this.audioGraph.context.destination}
                 .audioGraph=${this.audioGraph}
+                .handleUpdateNode=${this.handleUpdateNode}
             ></gain-node-view>`;
         } else if (node instanceof OscillatorNode) {
             return html`<oscillator-node-view .oscillatorNode=${node}></oscillator-node-view>`;

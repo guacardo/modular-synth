@@ -11,7 +11,7 @@ export class AudioGraphView extends LitElement {
     static styles = [audioGraphStyles];
 
     @property({ type: Object })
-    audioGraph?: AudioGraph;
+    audioGraph: AudioGraph;
 
     render() {
         return html`<div>graph view</div>`;
