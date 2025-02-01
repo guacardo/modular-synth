@@ -1,7 +1,3 @@
-// audio graph node types
-export const nodeTypes = ["osc", "gain", "biquad"] as const;
-export type NodeType = (typeof nodeTypes)[number];
-
 export class AudioGraph {
     readonly audioNodes: AudioNode[];
     readonly context: AudioContext;
@@ -11,7 +7,9 @@ export class AudioGraph {
         this.audioNodes = [];
     }
 
-    addNode(node: AudioNode): AudioGraph {
+    addNode(nodeConstructor: new (context: AudioContext) => AudioNode): AudioGraph {
+        const node = new nodeConstructor(this.context);
+        console.log(typeof node);
         return Object.assign(Object.create(AudioGraph.prototype), {
             ...this,
             audioNodes: [...this.audioNodes, node],

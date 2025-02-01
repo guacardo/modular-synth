@@ -22,9 +22,8 @@ export class AppView extends LitElement {
     @state()
     private accessor _audioGraph = new AudioGraph();
 
-    private handleAddNode = (node: AudioNode) => {
-        node.connect(this._audioGraph.context.destination);
-        this._audioGraph = this._audioGraph.addNode(node);
+    private handleAddNode = (nodeConstructor: new (context: AudioContext) => AudioNode) => {
+        this._audioGraph = this._audioGraph.addNode(nodeConstructor);
     };
 
     private handleUpdateNode = (node: AudioNode, properties: Partial<Record<keyof AudioNode, number | string | [number, number]>>) => {
@@ -34,12 +33,7 @@ export class AppView extends LitElement {
 
     render() {
         return html` <div class="app">
-            <div class="controls">
-                <button @click="${() => this.handleAddNode(new OscillatorNode(this._audioGraph.context))}">Oscillator Node</button>
-                <button @click="${() => this.handleAddNode(new GainNode(this._audioGraph.context))}">Gain Node</button>
-                <button @click="${() => this.handleAddNode(new BiquadFilterNode(this._audioGraph.context))}">Biquad Filter Node</button>
-            </div>
-            <audio-graph-view class="graph" .audioGraph=${this._audioGraph}></audio-graph-view>
+            <audio-graph-view class="graph" .audioGraph=${this._audioGraph} .handleAddNode=${this.handleAddNode}></audio-graph-view>
             <side-panel-view
                 .audioGraph=${this._audioGraph}
                 .handleUpdateNode=${this.handleUpdateNode}

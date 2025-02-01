@@ -7,13 +7,12 @@ import { audioGraphStyles } from "./audio-graph.styles";
 export class AudioGraphView extends LitElement {
     static styles = [audioGraphStyles];
 
-    @property({ type: Object })
-    audioGraph: AudioGraph;
+    @property({ type: Object }) private audioGraph: AudioGraph;
+    @property() private handleAddNode: (node: AudioNode) => void;
 
     render() {
         return html`<div>
-            <p>graph view</p>
-            <new-node-view>asdf</new-node-view>
+            <new-node-view .handleAddNode=${this.handleAddNode}>asdf</new-node-view>
         </div>`;
     }
 }
