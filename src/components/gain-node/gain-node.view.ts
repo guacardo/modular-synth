@@ -23,7 +23,7 @@ export class GainNodeView extends LitElement {
                 min="0.001"
                 max="1.0"
                 step="0.001"
-                value="${this.gainNode.gain.value}"
+                .value="${this.gainNode.gain.value.toString()}"
                 @input="${(e: Event) => {
                     this.updateGain((e.target as HTMLInputElement).valueAsNumber);
                 }}"

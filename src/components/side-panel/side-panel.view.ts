@@ -15,8 +15,10 @@ export class SidePanelView extends LitElement {
     @property({ type: String, attribute: true })
     orientation: Orientation;
 
-    @property()
-    handleUpdateNode: (node: AudioNode, properties: Partial<Record<keyof AudioNode, number | string | [number, number]>>) => void;
+    @property() handleUpdateNode: (
+        node: AudioNode,
+        properties: Partial<Record<keyof AudioNode, number | string | [number, number]>>
+    ) => void;
 
     render() {
         const classes = {
@@ -28,6 +30,7 @@ export class SidePanelView extends LitElement {
         </div>`;
     }
 
+    // todo: put this in a shareable util (audio-graph.view.ts)
     private renderNodeView(node: AudioNode): TemplateResult {
         if (node instanceof GainNode) {
             return html`<gain-node-view

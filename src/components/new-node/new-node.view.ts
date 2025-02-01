@@ -7,20 +7,30 @@ export class NewNodeView extends LitElement {
     static styles = [newNodeStyles];
 
     @state() private currentPanel = 0;
+    @state() private selectedNodeType = "";
 
     @property() private handleAddNode: (nodeConstructor: new (context: AudioContext) => AudioNode) => void;
 
     private handleNext() {
-        this.currentPanel = (this.currentPanel + 1) % this.panels.length;
+        if (this.currentPanel + 1 < this.panels().length) {
+            this.currentPanel = this.currentPanel + 1;
+        }
     }
 
     private handlePrev() {
-        this.currentPanel = (this.currentPanel - 1 + this.panels.length) % this.panels.length;
+        if (this.currentPanel > 0) {
+            this.currentPanel = this.currentPanel - 1;
+        }
+    }
+
+    private handleReset() {
+        this.currentPanel = 0;
+        this.selectedNodeType = "";
     }
 
     private handleNodeChange(e: Event) {
-        const nodeType = (e.target as HTMLSelectElement).value;
-        switch (nodeType) {
+        this.selectedNodeType = (e.target as HTMLSelectElement).value;
+        switch (this.selectedNodeType) {
             case "oscillator":
                 this.handleAddNode(OscillatorNode);
                 break;
@@ -34,10 +44,10 @@ export class NewNodeView extends LitElement {
                 throw new Error("Unknown node type");
         }
 
-        this.handleNext();
+        this.handleReset();
     }
 
-    private panels: TemplateResult[] = [
+    private panels = (): TemplateResult[] => [
         html`<div class="panel" @click=${this.handleNext}>ADD +</div>`,
         html`<div class="panel">
             <h6>Node Type</h6>
@@ -50,13 +60,14 @@ export class NewNodeView extends LitElement {
             </select>
         </div>`,
         html`<div class="panel">
-            <p>Selected Audio Node</p>
+            <p>${this.selectedNodeType}</p>
         </div>`,
     ];
 
     render() {
+        console.log(this.selectedNodeType);
         return html`<div class="new-node-container">
-            <div class="panel-content" style="transform: translateX(-${this.currentPanel * 100}%);">${this.panels}</div>
+            <div class="panel-content" style="transform: translateX(-${this.currentPanel * 100}%);">${this.panels()}</div>
         </div>`;
     }
 }
