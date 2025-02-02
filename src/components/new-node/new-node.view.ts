@@ -65,7 +65,6 @@ export class NewNodeView extends LitElement {
     ];
 
     render() {
-        console.log(this.selectedNodeType);
         return html`<div class="new-node-container">
             <div class="panel-content" style="transform: translateX(-${this.currentPanel * 100}%);">${this.panels()}</div>
         </div>`;

@@ -1,18 +1,23 @@
+import { AudioNodeWithId } from "./util";
+
 export class AudioGraph {
     readonly audioNodes: AudioNode[];
     readonly context: AudioContext;
+    createIndex: number;
 
     constructor() {
         this.context = new AudioContext();
         this.audioNodes = [];
+        this.createIndex = 0;
     }
 
-    addNode(nodeConstructor: new (context: AudioContext) => AudioNode): AudioGraph;
+    addNode(nodeConstructor: new (context: AudioContext) => AudioNodeWithId): AudioGraph;
     addNode(node: AudioNode): AudioGraph;
     addNode(arg: any): AudioGraph {
-        let node: AudioNode;
+        let node: AudioNodeWithId;
         if (typeof arg === "function") {
             node = new arg(this.context);
+            node.id = (++this.createIndex).toString();
         } else {
             node = arg;
         }

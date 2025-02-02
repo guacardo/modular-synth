@@ -14,6 +14,7 @@ import "./components/gain-node/gain-node.view";
 import "./components/oscillator-node/oscillator-node.view";
 import "./components/new-node/new-node.view";
 import "./components/side-panel/side-panel.view";
+import { AudioNodeWithId } from "./app/util";
 
 @customElement("app-view")
 export class AppView extends LitElement {
@@ -22,7 +23,7 @@ export class AppView extends LitElement {
     @state()
     private accessor _audioGraph = new AudioGraph();
 
-    private handleAddNode = (nodeConstructor: new (context: AudioContext) => AudioNode) => {
+    private handleAddNode = (nodeConstructor: new (context: AudioContext) => AudioNodeWithId) => {
         this._audioGraph = this._audioGraph.addNode(nodeConstructor);
     };
 
@@ -31,22 +32,9 @@ export class AppView extends LitElement {
         this._audioGraph = this._audioGraph.findOrAddNode(nodeCopy);
     };
 
-    private doot() {
-        const oscillatorNode = new OscillatorNode(this._audioGraph.context);
-        const gainNode = new GainNode(this._audioGraph.context);
-
-        oscillatorNode.connect(gainNode);
-        gainNode.connect(this._audioGraph.context.destination);
-
-        oscillatorNode.start();
-
-        this._audioGraph = this._audioGraph.addNode(oscillatorNode);
-        this._audioGraph = this._audioGraph.addNode(gainNode);
-    }
-
     render() {
+        console.log(this._audioGraph.audioNodes);
         return html` <div class="app">
-            <button @click=${this.doot}>doot</button>
             <audio-graph-view
                 class="graph"
                 .audioGraph=${this._audioGraph}
