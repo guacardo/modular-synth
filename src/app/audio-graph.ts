@@ -9,7 +9,6 @@ export class AudioGraph {
 
     addNode(nodeConstructor: new (context: AudioContext) => AudioNode): AudioGraph {
         const node = new nodeConstructor(this.context);
-        console.log(typeof node);
         return Object.assign(Object.create(AudioGraph.prototype), {
             ...this,
             audioNodes: [...this.audioNodes, node],
