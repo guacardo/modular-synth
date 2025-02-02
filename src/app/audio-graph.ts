@@ -12,7 +12,7 @@ export class AudioGraph {
     }
 
     addNode(nodeConstructor: new (context: AudioContext) => AudioNodeWithId): AudioGraph;
-    addNode(node: AudioNode): AudioGraph;
+    addNode(node: AudioNodeWithId): AudioGraph;
     addNode(arg: any): AudioGraph {
         let node: AudioNodeWithId;
         if (typeof arg === "function") {

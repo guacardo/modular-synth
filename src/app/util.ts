@@ -1,31 +1,40 @@
-export class AudioNodeWithId extends AudioNode {
+export class AudioNodeWithId {
     id: string;
+    node: AudioNode;
 
-    constructor(id: string) {
-        super();
+    constructor(id: string, node: AudioNode) {
         this.id = id;
-    }
-}
-export class OscillatorNodeWithId extends OscillatorNode implements AudioNodeWithId {
-    readonly id: string;
-    constructor(context: AudioContext, id: string) {
-        super(context);
-        this.id = id;
+        this.node = node;
     }
 }
 
-export class GainNodeWithId extends GainNode implements AudioNodeWithId {
-    readonly id: string;
+export class OscillatorNodeWithId extends AudioNodeWithId {
+    node: OscillatorNode;
+
     constructor(context: AudioContext, id: string) {
-        super(context);
-        this.id = id;
+        const node = context.createOscillator();
+        super(id, node);
+        this.node = node;
     }
 }
 
-export class BiquadFilterNodeWithId extends BiquadFilterNode implements AudioNodeWithId {
-    readonly id: string;
+export class GainNodeWithId extends AudioNodeWithId {
+    node: GainNode;
+
     constructor(context: AudioContext, id: string) {
-        super(context);
-        this.id = id;
+        console.log("heyyyyy");
+        const node = context.createGain();
+        super(id, node);
+        this.node = node;
+    }
+}
+
+export class BiquadFilterNodeWithId extends AudioNodeWithId {
+    node: BiquadFilterNode;
+
+    constructor(context: AudioContext, id: string) {
+        const node = context.createBiquadFilter();
+        super(id, node);
+        this.node = node;
     }
 }

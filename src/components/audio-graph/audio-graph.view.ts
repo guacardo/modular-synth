@@ -2,6 +2,7 @@ import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { AudioGraph } from "../../app/audio-graph";
 import { audioGraphStyles } from "./audio-graph.styles";
+import { GainNodeWithId } from "../../app/util";
 
 @customElement("audio-graph-view")
 export class AudioGraphView extends LitElement {
@@ -18,7 +19,7 @@ export class AudioGraphView extends LitElement {
         // todo: put this in a shareable util (side-panel.view.ts)
         return html`<div>
             ${this.audioGraph.audioNodes.map((node) => {
-                if (node instanceof GainNode) {
+                if (node instanceof GainNodeWithId) {
                     return html`<gain-node-view
                         .gainNode=${node}
                         .audioGraph=${this.audioGraph}
