@@ -5,6 +5,10 @@ import { AudioGraph } from "../../app/audio-graph";
 
 @customElement("gain-node-view")
 export class GainNodeView extends LitElement {
+    /*
+      seems like audioGraph property is what is triggering the re-render and not gainNode, should clean this up since doesn't
+      look like an audioGraph is needed in here.
+    */
     @property({ type: Object }) gainNode: GainNode;
     @property({ type: Object }) audioGraph: AudioGraph;
     @property() handleUpdateNode: (node: AudioNode, properties: Partial<Record<keyof GainNode, number>>) => void;

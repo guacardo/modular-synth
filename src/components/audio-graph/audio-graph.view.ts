@@ -25,7 +25,11 @@ export class AudioGraphView extends LitElement {
                         .handleUpdateNode=${this.handleUpdateNode}
                     ></gain-node-view>`;
                 } else if (node instanceof OscillatorNode) {
-                    return html`<oscillator-node-view .oscillatorNode=${node}></oscillator-node-view>`;
+                    return html`<oscillator-node-view
+                        .oscillatorNode=${node}
+                        .audioGraph=${this.audioGraph}
+                        .handleUpdateNode=${this.handleUpdateNode}
+                    ></oscillator-node-view>`;
                 } else if (node instanceof BiquadFilterNode) {
                     return html`<biquad-filter-node-view
                         .biquadFilterNode=${node}
