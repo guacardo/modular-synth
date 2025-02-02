@@ -2,7 +2,7 @@ import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { AudioGraph } from "../../app/audio-graph";
 import { audioGraphStyles } from "./audio-graph.styles";
-import { GainNodeWithId } from "../../app/util";
+import { BiquadFilterNodeWithId, GainNodeWithId, OscillatorNodeWithId } from "../../app/util";
 
 @customElement("audio-graph-view")
 export class AudioGraphView extends LitElement {
@@ -25,13 +25,13 @@ export class AudioGraphView extends LitElement {
                         .audioGraph=${this.audioGraph}
                         .handleUpdateNode=${this.handleUpdateNode}
                     ></gain-node-view>`;
-                } else if (node instanceof OscillatorNode) {
+                } else if (node instanceof OscillatorNodeWithId) {
                     return html`<oscillator-node-view
                         .oscillatorNode=${node}
                         .audioGraph=${this.audioGraph}
                         .handleUpdateNode=${this.handleUpdateNode}
                     ></oscillator-node-view>`;
-                } else if (node instanceof BiquadFilterNode) {
+                } else if (node instanceof BiquadFilterNodeWithId) {
                     return html`<biquad-filter-node-view
                         .biquadFilterNode=${node}
                         .destination=${this.audioGraph?.context.destination}

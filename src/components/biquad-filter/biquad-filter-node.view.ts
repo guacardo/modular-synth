@@ -2,6 +2,7 @@ import { LitElement, html } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { graphNodeStyles } from "../../styles/graph-node-styles";
 import { classMap } from "lit/directives/class-map.js";
+import { BiquadFilterNodeWithId } from "../../app/util";
 
 const settableBiquadFilterTypes: readonly BiquadFilterType[] = [
     "allpass",
@@ -18,7 +19,7 @@ const settableBiquadFilterTypes: readonly BiquadFilterType[] = [
 export class BiquadFilterNodeView extends LitElement {
     static styles = [graphNodeStyles];
 
-    @property({ attribute: false }) biquadFilterNode: BiquadFilterNode;
+    @property({ attribute: false }) biquadFilterNode: BiquadFilterNodeWithId;
     @property({ type: Object }) destination: AudioDestinationNode;
     @state() connectedToContext: boolean = false;
 
@@ -32,7 +33,7 @@ export class BiquadFilterNodeView extends LitElement {
                 @click=${(e: Event) => e.stopPropagation()}
             >
                 ${settableBiquadFilterTypes.map((type) => {
-                    return html`<option value=${type} ?selected=${type === this.biquadFilterNode.type}>${type}</option>`;
+                    return html`<option value=${type} ?selected=${type === this.biquadFilterNode.node.type}>${type}</option>`;
                 })}
             </select>
             <label>Frequency:</label>
