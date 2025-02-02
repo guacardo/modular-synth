@@ -27,12 +27,26 @@ export class AppView extends LitElement {
     };
 
     private handleUpdateNode = (node: AudioNode, properties: Partial<Record<keyof AudioNode, number | string | [number, number]>>) => {
-        const newNode = this._audioGraph.updateAudioParamValue(node, properties);
-        this._audioGraph = this._audioGraph.findOrAddNode(newNode);
+        const nodeCopy = this._audioGraph.updateAudioParamValue(node, properties);
+        this._audioGraph = this._audioGraph.findOrAddNode(nodeCopy);
     };
+
+    private doot() {
+        const oscillatorNode = new OscillatorNode(this._audioGraph.context);
+        const gainNode = new GainNode(this._audioGraph.context);
+
+        oscillatorNode.connect(gainNode);
+        gainNode.connect(this._audioGraph.context.destination);
+
+        oscillatorNode.start();
+
+        this._audioGraph = this._audioGraph.addNode(oscillatorNode);
+        this._audioGraph = this._audioGraph.addNode(gainNode);
+    }
 
     render() {
         return html` <div class="app">
+            <button @click=${this.doot}>doot</button>
             <audio-graph-view
                 class="graph"
                 .audioGraph=${this._audioGraph}

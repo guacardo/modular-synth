@@ -7,8 +7,15 @@ export class AudioGraph {
         this.audioNodes = [];
     }
 
-    addNode(nodeConstructor: new (context: AudioContext) => AudioNode): AudioGraph {
-        const node = new nodeConstructor(this.context);
+    addNode(nodeConstructor: new (context: AudioContext) => AudioNode): AudioGraph;
+    addNode(node: AudioNode): AudioGraph;
+    addNode(arg: any): AudioGraph {
+        let node: AudioNode;
+        if (typeof arg === "function") {
+            node = new arg(this.context);
+        } else {
+            node = arg;
+        }
         return Object.assign(Object.create(AudioGraph.prototype), {
             ...this,
             audioNodes: [...this.audioNodes, node],
