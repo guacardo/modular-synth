@@ -6,7 +6,7 @@ export const audioGridStyles = css`
         background-color: red;
         border: 1px solid yellow;
         position: fixed;
-        top: 50vh;
+        top: 16px;
         bottom: 16px;
         left: calc(20vw + 16px);
         right: calc(20vw + 16px);

@@ -67,7 +67,7 @@ export class NewNodeView extends LitElement {
     ];
 
     render() {
-        return html`<div class="new-node-container">
+        return html`<div class="new-node-container" style="grid-row: ${this.position[0] + 1}; grid-column: ${this.position[1] + 1};">
             <div class="panel-content" style="transform: translateX(-${this.currentPanel * 100}%);">${this.panels()}</div>
         </div>`;
     }
