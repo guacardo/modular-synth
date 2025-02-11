@@ -1,7 +1,8 @@
 import { LitElement, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
-import { AudioGraph } from "./app/audio-graph";
+import { AudioGraphStore } from "./components/audio-graph/audio-graph.store";
 import { AudioGraphView } from "./components/audio-graph/audio-graph.view";
+import { AudioGridStore } from "./components/audio-grid/audio-grid.store";
 import { AudioGridView } from "./components/audio-grid/audio-grid.view";
 import { AudioNodeProperties, AudioNodeWithId } from "./app/util";
 import { BiquadFilterNodeView } from "./components/biquad-filter/biquad-filter-node.view";
@@ -22,11 +23,19 @@ import "./components/side-panel/side-panel.view";
 export class AppView extends LitElement {
     static styles = [appStyles];
 
-    @state()
-    private accessor _audioGraph = new AudioGraph();
+    @state() private _audioGraph = new AudioGraphStore();
+    @state() private _audioGrid = new AudioGridStore();
 
-    private handleAddNode = (nodeConstructor: new (context: AudioContext) => AudioNodeWithId) => {
-        this._audioGraph = this._audioGraph.addNode(nodeConstructor);
+    private handleAddNode = (nodeConstructor: new (context: AudioContext) => AudioNodeWithId, position: [number, number]) => {
+        const node = this._audioGraph.addNode(nodeConstructor);
+        this._audioGraph = Object.assign(Object.create(AudioGraphStore.prototype), {
+            ...this._audioGraph,
+            audioNodes: [...this._audioGraph.audioNodes, node],
+        });
+        this._audioGrid = Object.assign(Object.create(AudioGridStore.prototype), {
+            ...this._audioGrid,
+            gridItems: [...this._audioGrid.gridItems, { id: node.id, position }],
+        });
     };
 
     private handleUpdateNode = (node: AudioNodeWithId, properties: AudioNodeProperties) => {
@@ -38,7 +47,6 @@ export class AppView extends LitElement {
     };
 
     render() {
-        console.log(this._audioGraph.audioNodes);
         return html` <div class="app">
             <audio-graph-view
                 class="graph"
@@ -46,7 +54,7 @@ export class AppView extends LitElement {
                 .handleAddNode=${this.handleAddNode}
                 .handleUpdateNode=${this.handleUpdateNode}
             ></audio-graph-view>
-            <audio-grid-view .audioGraphNodes=${this._audioGraph.audioNodes}></audio-grid-view>
+            <audio-grid-view .audioGridItems=${this._audioGrid.gridItems} .audioGraphNodes=${this._audioGraph.audioNodes}></audio-grid-view>
             <side-panel-view
                 .audioGraph=${this._audioGraph}
                 .handleUpdateNode=${this.handleUpdateNode}

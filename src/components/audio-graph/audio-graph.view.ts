@@ -1,6 +1,6 @@
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { AudioGraph } from "../../app/audio-graph";
+import { AudioGraphStore } from "./audio-graph.store";
 import { audioGraphStyles } from "./audio-graph.styles";
 import { AudioNodeProperties, AudioNodeWithId, BiquadFilterNodeWithId, GainNodeWithId, OscillatorNodeWithId } from "../../app/util";
 
@@ -8,7 +8,7 @@ import { AudioNodeProperties, AudioNodeWithId, BiquadFilterNodeWithId, GainNodeW
 export class AudioGraphView extends LitElement {
     static styles = [audioGraphStyles];
 
-    @property({ type: Object }) private audioGraph: AudioGraph;
+    @property({ type: Object }) private audioGraph: AudioGraphStore;
     @property() private handleAddNode: (node: AudioNode) => void;
     @property() handleUpdateNode: (node: AudioNodeWithId, properties: AudioNodeProperties) => void;
 

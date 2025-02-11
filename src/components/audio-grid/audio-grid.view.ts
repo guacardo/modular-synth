@@ -1,29 +1,25 @@
-import { LitElement, html } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { LitElement, TemplateResult, html } from "lit";
+import { customElement, property } from "lit/decorators.js";
 import { AudioNodeWithId } from "../../app/util";
 import { audioGridStyles } from "./audio-grid.styles";
+import { AudioGridItem } from "./audio-grid.store";
 
-type AudioGridItem = {
-    id: string;
-    position: [number, number];
-};
 @customElement("audio-grid-view")
 export class AudioGridView extends LitElement {
     static styles = [audioGridStyles];
 
-    @state() private audioGridItems: AudioGridItem[];
+    @property({ type: Array }) private audioGridItems: AudioGridItem[];
     @property({ type: Array }) private audioGraphNodes: AudioNodeWithId[];
 
-    renderAudioGraphNodeView() {
-        console.log(this.audioGridItems);
-        console.log(this.audioGraphNodes);
+    renderAudioGraphNodeView(gridItem: AudioGridItem): TemplateResult {
+        console.log(gridItem);
+        return html`<div class="audio-grid-item">hey</div>`;
     }
 
     render() {
         return html`<div class="grid">
-            hey
-            ${this.audioGraphNodes.map(() => {
-                this.renderAudioGraphNodeView();
+            ${this.audioGridItems.map((item) => {
+                return this.renderAudioGraphNodeView(item);
             })}
         </div>`;
     }

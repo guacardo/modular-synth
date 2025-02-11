@@ -1,6 +1,6 @@
-import { AudioNodeProperties, AudioNodeWithId } from "./util";
+import { AudioNodeProperties, AudioNodeWithId } from "../../app/util";
 
-export class AudioGraph {
+export class AudioGraphStore {
     readonly audioNodes: AudioNodeWithId[];
     readonly context: AudioContext;
     createIndex: number;
@@ -11,9 +11,9 @@ export class AudioGraph {
         this.createIndex = 0;
     }
 
-    addNode(nodeConstructor: new (context: AudioContext) => AudioNodeWithId): AudioGraph;
-    addNode(node: AudioNodeWithId): AudioGraph;
-    addNode(arg: any): AudioGraph {
+    addNode(nodeConstructor: new (context: AudioContext) => AudioNodeWithId): AudioNodeWithId;
+    addNode(node: AudioNodeWithId): AudioNodeWithId;
+    addNode(arg: any): AudioNodeWithId {
         let node: AudioNodeWithId;
         if (typeof arg === "function") {
             node = new arg(this.context);
@@ -21,16 +21,14 @@ export class AudioGraph {
         } else {
             node = arg;
         }
-        return Object.assign(Object.create(AudioGraph.prototype), {
-            ...this,
-            audioNodes: [...this.audioNodes, node],
-        });
+
+        return node;
     }
 
-    findOrAddNode(node?: AudioNodeWithId): AudioGraph {
+    findOrAddNode(node?: AudioNodeWithId): AudioGraphStore {
         const index = this.audioNodes.findIndex((n) => n === node);
 
-        return Object.assign(Object.create(AudioGraph.prototype), {
+        return Object.assign(Object.create(AudioGraphStore.prototype), {
             ...this,
             audioNodes: this.audioNodes.map((n, i) => (i === index ? node : n)),
         });

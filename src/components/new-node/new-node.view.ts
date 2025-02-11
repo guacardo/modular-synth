@@ -10,6 +10,7 @@ export class NewNodeView extends LitElement {
     @state() private currentPanel = 0;
     @state() private selectedNodeType = "";
 
+    @property({ type: Array }) private position: [number, number];
     @property() private handleAddNode: (nodeConstructor: new (context: AudioContext, id: string) => AudioNodeWithId) => void;
 
     private handleNext() {

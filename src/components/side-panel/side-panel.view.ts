@@ -1,7 +1,7 @@
 import { LitElement, TemplateResult, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { sidePanelStyles } from "./side-panel.styles";
-import { AudioGraph } from "../../app/audio-graph";
+import { AudioGraphStore } from "../audio-graph/audio-graph.store";
 import { classMap } from "lit/directives/class-map.js";
 import { AudioNodeProperties, AudioNodeWithId, BiquadFilterNodeWithId, GainNodeWithId, OscillatorNodeWithId } from "../../app/util";
 
@@ -11,7 +11,7 @@ export class SidePanelView extends LitElement {
     static styles = [sidePanelStyles];
 
     @property({ type: Object })
-    audioGraph: AudioGraph;
+    audioGraph: AudioGraphStore;
 
     @property({ type: String, attribute: true })
     orientation: Orientation;

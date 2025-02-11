@@ -1,7 +1,7 @@
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { graphNodeStyles } from "../../styles/graph-node-styles";
-import { AudioGraph } from "../../app/audio-graph";
+import { AudioGraph } from "../audio-graph/audio-graph.store";
 import { AudioNodeWithId, GainNodeWithId } from "../../app/util";
 
 @customElement("gain-node-view")

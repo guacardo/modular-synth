@@ -1,7 +1,7 @@
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { graphNodeStyles } from "../../styles/graph-node-styles";
-import { AudioGraph } from "../../app/audio-graph";
+import { AudioGraphStore } from "../audio-graph/audio-graph.store";
 import { AudioNodeWithId, OscillatorNodeWithId } from "../../app/util";
 
 // export higher up? types file?
@@ -12,7 +12,7 @@ export class OscillatorNodeView extends LitElement {
     static styles = [graphNodeStyles];
 
     @property({ type: Object }) oscillatorNode: OscillatorNodeWithId;
-    @property({ type: Object }) audioGraph: AudioGraph;
+    @property({ type: Object }) audioGraph: AudioGraphStore;
     @property() handleUpdateNode: (
         node: AudioNodeWithId,
         properties: Partial<Record<keyof OscillatorNode, number | OscillatorType>>
