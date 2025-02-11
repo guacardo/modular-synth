@@ -2,14 +2,21 @@ import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { AudioGraphStore } from "./audio-graph.store";
 import { audioGraphStyles } from "./audio-graph.styles";
-import { AudioNodeProperties, AudioNodeWithId, BiquadFilterNodeWithId, GainNodeWithId, OscillatorNodeWithId } from "../../app/util";
+import {
+    AddNodeHandler,
+    AudioNodeProperties,
+    AudioNodeWithId,
+    BiquadFilterNodeWithId,
+    GainNodeWithId,
+    OscillatorNodeWithId,
+} from "../../app/util";
 
 @customElement("audio-graph-view")
 export class AudioGraphView extends LitElement {
     static styles = [audioGraphStyles];
 
     @property({ type: Object }) private audioGraph: AudioGraphStore;
-    @property() private handleAddNode: (node: AudioNode) => void;
+    @property() private handleAddNode: AddNodeHandler;
     @property() handleUpdateNode: (node: AudioNodeWithId, properties: AudioNodeProperties) => void;
 
     render() {
@@ -37,7 +44,7 @@ export class AudioGraphView extends LitElement {
                     return html`<p>ERroR: nOT a n Audio Noooode</p>`;
                 }
             })}
-            <new-node-view .handleAddNode=${this.handleAddNode}></new-node-view>
+            <new-node-view .handleAddNode=${this.handleAddNode} .position=${[0, 0]}></new-node-view>
         </div>`;
     }
 }

@@ -1,4 +1,8 @@
 export type AudioNodeProperties = Partial<Record<keyof AudioNode, number | string | [number, number]>>;
+export type AddNodeHandler = (
+    nodeConstructor: new (context: AudioContext, id: string) => AudioNodeWithId,
+    position: [number, number]
+) => void;
 export class AudioNodeWithId {
     id: string;
     node: AudioNode;

@@ -1,7 +1,7 @@
 import { LitElement, TemplateResult, html } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { newNodeStyles } from "./new-node.styles";
-import { AudioNodeWithId, BiquadFilterNodeWithId, GainNodeWithId, OscillatorNodeWithId } from "../../app/util";
+import { AddNodeHandler, BiquadFilterNodeWithId, GainNodeWithId, OscillatorNodeWithId } from "../../app/util";
 
 @customElement("new-node-view")
 export class NewNodeView extends LitElement {
@@ -11,7 +11,7 @@ export class NewNodeView extends LitElement {
     @state() private selectedNodeType = "";
 
     @property({ type: Array }) private position: [number, number];
-    @property() private handleAddNode: (nodeConstructor: new (context: AudioContext, id: string) => AudioNodeWithId) => void;
+    @property() private handleAddNode: AddNodeHandler;
 
     private handleNext() {
         if (this.currentPanel + 1 < this.panels().length) {
@@ -34,13 +34,13 @@ export class NewNodeView extends LitElement {
         this.selectedNodeType = (e.target as HTMLSelectElement).value;
         switch (this.selectedNodeType) {
             case "oscillator":
-                this.handleAddNode(OscillatorNodeWithId);
+                this.handleAddNode(OscillatorNodeWithId, this.position);
                 break;
             case "gain":
-                this.handleAddNode(GainNodeWithId);
+                this.handleAddNode(GainNodeWithId, this.position);
                 break;
             case "biquad-filter":
-                this.handleAddNode(BiquadFilterNodeWithId);
+                this.handleAddNode(BiquadFilterNodeWithId, this.position);
                 break;
             default:
                 throw new Error("Unknown node type");

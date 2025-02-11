@@ -1,17 +1,20 @@
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { graphNodeStyles } from "../../styles/graph-node-styles";
-import { AudioGraph } from "../audio-graph/audio-graph.store";
+import { AudioGraphStore } from "../audio-graph/audio-graph.store";
 import { AudioNodeWithId, GainNodeWithId } from "../../app/util";
 
 @customElement("gain-node-view")
 export class GainNodeView extends LitElement {
     /*
+        TODO:
       seems like audioGraph property is what is triggering the re-render and not gainNode, should clean this up since doesn't
       look like an audioGraph is needed in here.
+
+      Feb 10: is still true?
     */
     @property({ type: Object }) gainNode: GainNodeWithId;
-    @property({ type: Object }) audioGraph: AudioGraph;
+    @property({ type: Object }) audioGraph: AudioGraphStore;
     @property() handleUpdateNode: (node: AudioNodeWithId, properties: Partial<Record<keyof GainNode, number>>) => void;
 
     static styles = [graphNodeStyles];
