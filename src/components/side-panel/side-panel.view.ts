@@ -3,7 +3,7 @@ import { customElement, property } from "lit/decorators.js";
 import { sidePanelStyles } from "./side-panel.styles";
 import { AudioGraph } from "../../app/audio-graph";
 import { classMap } from "lit/directives/class-map.js";
-import { BiquadFilterNodeWithId, GainNodeWithId, OscillatorNodeWithId } from "../../app/util";
+import { AudioNodeWithId, BiquadFilterNodeWithId, GainNodeWithId, OscillatorNodeWithId } from "../../app/util";
 
 type Orientation = "left" | "right";
 @customElement("side-panel-view")
@@ -17,7 +17,7 @@ export class SidePanelView extends LitElement {
     orientation: Orientation;
 
     @property() handleUpdateNode: (
-        node: AudioNode,
+        node: AudioNodeWithId,
         properties: Partial<Record<keyof AudioNode, number | string | [number, number]>>
     ) => void;
 
@@ -32,7 +32,7 @@ export class SidePanelView extends LitElement {
     }
 
     // todo: put this in a shareable util (audio-graph.view.ts)
-    private renderNodeView(node: AudioNode): TemplateResult {
+    private renderNodeView(node: AudioNodeWithId): TemplateResult {
         if (node instanceof GainNodeWithId) {
             return html`<gain-node-view
                 .gainNode=${node}

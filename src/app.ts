@@ -27,9 +27,15 @@ export class AppView extends LitElement {
         this._audioGraph = this._audioGraph.addNode(nodeConstructor);
     };
 
-    private handleUpdateNode = (node: AudioNode, properties: Partial<Record<keyof AudioNode, number | string | [number, number]>>) => {
-        const nodeCopy = this._audioGraph.updateAudioParamValue(node, properties);
-        this._audioGraph = this._audioGraph.findOrAddNode(nodeCopy);
+    private handleUpdateNode = (
+        node: AudioNodeWithId,
+        properties: Partial<Record<keyof AudioNode, number | string | [number, number]>>
+    ) => {
+        const nodeWithIdCopy: AudioNodeWithId = {
+            id: node.id,
+            node: this._audioGraph.updateAudioParamValue(node.node, properties) || node.node,
+        };
+        this._audioGraph = this._audioGraph.findOrAddNode(nodeWithIdCopy);
     };
 
     render() {

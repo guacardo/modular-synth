@@ -2,7 +2,7 @@ import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { graphNodeStyles } from "../../styles/graph-node-styles";
 import { AudioGraph } from "../../app/audio-graph";
-import { GainNodeWithId } from "../../app/util";
+import { AudioNodeWithId, GainNodeWithId } from "../../app/util";
 
 @customElement("gain-node-view")
 export class GainNodeView extends LitElement {
@@ -12,12 +12,12 @@ export class GainNodeView extends LitElement {
     */
     @property({ type: Object }) gainNode: GainNodeWithId;
     @property({ type: Object }) audioGraph: AudioGraph;
-    @property() handleUpdateNode: (node: AudioNode, properties: Partial<Record<keyof GainNode, number>>) => void;
+    @property() handleUpdateNode: (node: AudioNodeWithId, properties: Partial<Record<keyof GainNode, number>>) => void;
 
     static styles = [graphNodeStyles];
 
     private updateGain(value: number) {
-        this.handleUpdateNode(this.gainNode.node, { gain: value });
+        this.handleUpdateNode(this.gainNode, { gain: value });
     }
 
     render() {

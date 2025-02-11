@@ -1,7 +1,6 @@
 import { LitElement, html } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { AudioGraph } from "../../app/audio-graph";
-import { AudioNodeWithId } from "../../app/util";
 
 type AudioGridItem = {
     id: string;
@@ -14,8 +13,7 @@ export class AudioGridView extends LitElement {
 
     renderAudioGraphNodeView(gridItem: AudioGridItem) {
         console.log(gridItem);
-        // const node = this.audioGraph.audioNodes.find((node) => node. === gridItem.id);
-        // console.log(node);
+        console.log(this.audioGraph);
     }
 
     render() {

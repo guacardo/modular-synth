@@ -1,7 +1,7 @@
 import { AudioNodeWithId } from "./util";
 
 export class AudioGraph {
-    readonly audioNodes: AudioNode[];
+    readonly audioNodes: AudioNodeWithId[];
     readonly context: AudioContext;
     createIndex: number;
 
@@ -27,7 +27,7 @@ export class AudioGraph {
         });
     }
 
-    findOrAddNode(node?: AudioNode): AudioGraph {
+    findOrAddNode(node?: AudioNodeWithId): AudioGraph {
         const index = this.audioNodes.findIndex((n) => n === node);
 
         return Object.assign(Object.create(AudioGraph.prototype), {
