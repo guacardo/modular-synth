@@ -3,7 +3,7 @@ import { customElement, property } from "lit/decorators.js";
 import { sidePanelStyles } from "./side-panel.styles";
 import { AudioGraph } from "../../app/audio-graph";
 import { classMap } from "lit/directives/class-map.js";
-import { AudioNodeWithId, BiquadFilterNodeWithId, GainNodeWithId, OscillatorNodeWithId } from "../../app/util";
+import { AudioNodeProperties, AudioNodeWithId, BiquadFilterNodeWithId, GainNodeWithId, OscillatorNodeWithId } from "../../app/util";
 
 type Orientation = "left" | "right";
 @customElement("side-panel-view")
@@ -16,10 +16,7 @@ export class SidePanelView extends LitElement {
     @property({ type: String, attribute: true })
     orientation: Orientation;
 
-    @property() handleUpdateNode: (
-        node: AudioNodeWithId,
-        properties: Partial<Record<keyof AudioNode, number | string | [number, number]>>
-    ) => void;
+    @property() handleUpdateNode: (node: AudioNodeWithId, properties: AudioNodeProperties) => void;
 
     render() {
         const classes = {

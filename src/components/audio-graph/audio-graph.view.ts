@@ -2,7 +2,7 @@ import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { AudioGraph } from "../../app/audio-graph";
 import { audioGraphStyles } from "./audio-graph.styles";
-import { AudioNodeWithId, BiquadFilterNodeWithId, GainNodeWithId, OscillatorNodeWithId } from "../../app/util";
+import { AudioNodeProperties, AudioNodeWithId, BiquadFilterNodeWithId, GainNodeWithId, OscillatorNodeWithId } from "../../app/util";
 
 @customElement("audio-graph-view")
 export class AudioGraphView extends LitElement {
@@ -10,10 +10,7 @@ export class AudioGraphView extends LitElement {
 
     @property({ type: Object }) private audioGraph: AudioGraph;
     @property() private handleAddNode: (node: AudioNode) => void;
-    @property() handleUpdateNode: (
-        node: AudioNodeWithId,
-        properties: Partial<Record<keyof AudioNode, number | string | [number, number]>>
-    ) => void;
+    @property() handleUpdateNode: (node: AudioNodeWithId, properties: AudioNodeProperties) => void;
 
     render() {
         // todo: put this in a shareable util (side-panel.view.ts)

@@ -1,3 +1,4 @@
+export type AudioNodeProperties = Partial<Record<keyof AudioNode, number | string | [number, number]>>;
 export class AudioNodeWithId {
     id: string;
     node: AudioNode;
@@ -22,7 +23,6 @@ export class GainNodeWithId extends AudioNodeWithId {
     node: GainNode;
 
     constructor(context: AudioContext, id: string) {
-        console.log("heyyyyy");
         const node = context.createGain();
         super(id, node);
         this.node = node;

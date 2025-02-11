@@ -21,7 +21,7 @@ export const appStyles = css`
         border-radius: 4px;
         position: fixed;
         top: 32px;
-        bottom: 16px;
+        bottom: 50vh;
         left: calc(20vw + 16px);
         right: calc(20vw + 16px);
         background-size: 40px 40px;

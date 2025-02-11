@@ -1,4 +1,4 @@
-import { AudioNodeWithId } from "./util";
+import { AudioNodeProperties, AudioNodeWithId } from "./util";
 
 export class AudioGraph {
     readonly audioNodes: AudioNodeWithId[];
@@ -36,10 +36,7 @@ export class AudioGraph {
         });
     }
 
-    updateAudioParamValue<T extends AudioNode>(
-        node: T,
-        properties: Partial<Record<keyof T, number | string | [number, number]>>
-    ): AudioNode | undefined {
+    updateAudioParamValue<T extends AudioNode>(node: T, properties: AudioNodeProperties): AudioNode | undefined {
         if (!node || typeof node !== "object" || !properties) {
             console.error("Invalid node or properties");
             return;
