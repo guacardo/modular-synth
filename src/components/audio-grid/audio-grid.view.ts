@@ -8,33 +8,33 @@ import { AudioGridItem } from "./audio-grid.store";
 export class AudioGridView extends LitElement {
     static styles = [audioGridStyles];
 
-    @property({ type: Array }) private audioGridItems: AudioGridItem[];
-    @property({ type: Array }) private audioGraphNodes: AudioNodeWithId[];
+    @property({ type: Array }) private gridItems: AudioGridItem[];
+    @property({ type: Array }) private graphNodes: AudioNodeWithId[];
     @property() private handleAddNode: AddNodeHandler;
 
     private getHighestRowPosition(): number {
         let max: number;
-        if (this.audioGridItems.length === 0) {
+        if (this.gridItems.length === 0) {
             max = 0;
         } else {
-            max = Math.max(...this.audioGridItems.map((item) => item.position[0]));
+            max = Math.max(...this.gridItems.map((item) => item.position[0]));
         }
         return max;
     }
 
     private getHighestColumnPosition(): number {
         let max: number;
-        if (this.audioGridItems.length === 0) {
+        if (this.gridItems.length === 0) {
             max = -1;
         } else {
-            max = Math.max(...this.audioGridItems.map((item) => item.position[1]));
+            max = Math.max(...this.gridItems.map((item) => item.position[1]));
         }
         console.log(max + 1);
         return max + 1;
     }
 
     renderAudioGraphNodeView(gridItem: AudioGridItem): TemplateResult {
-        const node = this.audioGraphNodes.find((audioNode) => audioNode.id === gridItem.id) || { id: "oof", node: null };
+        const node = this.graphNodes.find((audioNode) => audioNode.id === gridItem.id) || { id: "oof", node: null };
         let type: string = "unknown";
         if (node instanceof GainNodeWithId) {
             type = "gain";
@@ -55,7 +55,7 @@ export class AudioGridView extends LitElement {
 
     render() {
         return html`<div class="grid">
-            ${this.audioGridItems.map((item) => {
+            ${this.gridItems.map((item) => {
                 return this.renderAudioGraphNodeView(item);
             })}
             ${this.renderAddNewNodeView()}

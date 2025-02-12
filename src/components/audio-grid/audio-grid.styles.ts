@@ -10,7 +10,7 @@ export const audioGridStyles = css`
         bottom: 16px;
         left: calc(20vw + 16px);
         right: calc(20vw + 16px);
-        grid-template-columns: auto;
-        grid-template-rows: auto;
+        grid-template-columns: repeat(10, 1fr);
+        grid-template-rows: repeat(10, 1fr);
     }
 `;
