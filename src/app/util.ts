@@ -3,6 +3,7 @@ export type AddNodeHandler = (
     nodeConstructor: new (context: AudioContext, id: string) => AudioNodeWithId,
     position: [number, number]
 ) => void;
+export type Position = [number, number];
 export class AudioNodeWithId {
     id: string;
     node: AudioNode;

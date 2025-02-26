@@ -1,8 +1,7 @@
 import { LitElement, TemplateResult, html } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { newNodeStyles } from "./new-node.styles";
-import { AddNodeHandler, BiquadFilterNodeWithId, GainNodeWithId, OscillatorNodeWithId } from "../../app/util";
-import { Position } from "../empty-node/empty-node.view";
+import { AddNodeHandler, BiquadFilterNodeWithId, GainNodeWithId, OscillatorNodeWithId, Position } from "../../app/util";
 
 @customElement("new-node-view")
 export class NewNodeView extends LitElement {
@@ -68,7 +67,7 @@ export class NewNodeView extends LitElement {
     ];
 
     render() {
-        return html`<div class="new-node-container" style="grid-row: ${this.position[0] + 1}; grid-column: ${this.position[1] + 1};">
+        return html`<div class="new-node-container">
             <div class="panel-content" style="transform: translateX(-${this.currentPanel * 100}%);">${this.panels()}</div>
         </div>`;
     }

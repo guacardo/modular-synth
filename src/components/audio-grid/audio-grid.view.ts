@@ -2,8 +2,9 @@ import { LitElement, html } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { audioGridStyles } from "./audio-grid.styles";
 import { AudioGridItem } from "./audio-grid.store";
-import { EmptyNodeView, Position } from "../empty-node/empty-node.view";
+import { EmptyNodeView } from "../empty-node/empty-node.view";
 import { NewNodeView } from "../new-node/new-node.view";
+import { Position } from "../../app/util";
 
 @customElement("audio-grid-view")
 export class AudioGridView extends LitElement {
@@ -57,7 +58,6 @@ export class AudioGridView extends LitElement {
                                 if (node instanceof EmptyNodeView) {
                                     return html`
                                         <empty-node-view
-                                            class="cell"
                                             key=${colIndex}
                                             .position=${position}
                                             .handleSwapToNewNodeView=${this.swapToNewNodeView.bind(this)}
