@@ -2,6 +2,7 @@ import { LitElement, TemplateResult, html } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { newNodeStyles } from "./new-node.styles";
 import { AddNodeHandler, BiquadFilterNodeWithId, GainNodeWithId, OscillatorNodeWithId } from "../../app/util";
+import { Position } from "../empty-node/empty-node.view";
 
 @customElement("new-node-view")
 export class NewNodeView extends LitElement {
@@ -10,7 +11,7 @@ export class NewNodeView extends LitElement {
     @state() private currentPanel = 0;
     @state() private selectedNodeType = "";
 
-    @property({ type: Array }) private position: [number, number];
+    @property({ type: Array }) private position: Position;
     @property() private handleAddNode: AddNodeHandler;
 
     private handleNext() {

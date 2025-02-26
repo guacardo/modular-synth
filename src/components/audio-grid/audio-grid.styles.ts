@@ -3,8 +3,7 @@ import { css } from "lit";
 export const audioGridStyles = css`
     .grid {
         display: grid;
-        background-color: red;
-        border: 1px solid yellow;
+        border: 1px solid white;
         position: fixed;
         top: 16px;
         bottom: 16px;

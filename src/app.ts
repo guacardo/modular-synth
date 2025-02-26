@@ -6,6 +6,7 @@ import { AudioGridStore } from "./components/audio-grid/audio-grid.store";
 import { AudioGridView } from "./components/audio-grid/audio-grid.view";
 import { AudioNodeProperties, AudioNodeWithId } from "./app/util";
 import { BiquadFilterNodeView } from "./components/biquad-filter/biquad-filter-node.view";
+import { EmptyNodeView } from "./components/empty-node/empty-node.view";
 import { GainNodeView } from "./components/gain-node/gain-node.view";
 import { OscillatorNodeView } from "./components/oscillator-node/oscillator-node.view";
 import { appStyles } from "./styles/app-styles";
@@ -14,6 +15,7 @@ import { NewNodeView } from "./components/new-node/new-node.view";
 import "./components/audio-graph/audio-graph.view";
 import "./components/audio-grid/audio-grid.view";
 import "./components/biquad-filter/biquad-filter-node.view";
+import "./components/empty-node/empty-node.view";
 import "./components/gain-node/gain-node.view";
 import "./components/oscillator-node/oscillator-node.view";
 import "./components/new-node/new-node.view";
@@ -72,10 +74,11 @@ declare global {
         "app-view": AppView;
         "audio-graph-view": AudioGraphView;
         "audio-grid-view": AudioGridView;
-        "gain-node-view": GainNodeView;
-        "oscillator-node-view": OscillatorNodeView;
         "biquad-filter-node-view": BiquadFilterNodeView;
-        "side-panel-view": SidePanelView;
+        "empty-node-view": EmptyNodeView;
+        "gain-node-view": GainNodeView;
         "new-node-view": NewNodeView;
+        "oscillator-node-view": OscillatorNodeView;
+        "side-panel-view": SidePanelView;
     }
 }

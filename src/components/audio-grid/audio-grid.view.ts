@@ -1,64 +1,76 @@
-import { LitElement, TemplateResult, html } from "lit";
-import { customElement, property } from "lit/decorators.js";
-import { AddNodeHandler, AudioNodeWithId, BiquadFilterNodeWithId, GainNodeWithId, OscillatorNodeWithId } from "../../app/util";
+import { LitElement, html } from "lit";
+import { customElement, property, state } from "lit/decorators.js";
 import { audioGridStyles } from "./audio-grid.styles";
 import { AudioGridItem } from "./audio-grid.store";
+import { EmptyNodeView, Position } from "../empty-node/empty-node.view";
+import { NewNodeView } from "../new-node/new-node.view";
 
 @customElement("audio-grid-view")
 export class AudioGridView extends LitElement {
     static styles = [audioGridStyles];
 
     @property({ type: Array }) private gridItems: AudioGridItem[];
-    @property({ type: Array }) private graphNodes: AudioNodeWithId[];
-    @property() private handleAddNode: AddNodeHandler;
 
-    private getHighestRowPosition(): number {
-        let max: number;
-        if (this.gridItems.length === 0) {
-            max = 0;
-        } else {
-            max = Math.max(...this.gridItems.map((item) => item.position[0]));
-        }
-        return max;
+    @state() private _grid: Map<number, LitElement[]>;
+
+    constructor() {
+        super();
+        this._buildEmptyGrid();
     }
 
-    private getHighestColumnPosition(): number {
-        let max: number;
-        if (this.gridItems.length === 0) {
-            max = -1;
-        } else {
-            max = Math.max(...this.gridItems.map((item) => item.position[1]));
+    private _buildEmptyGrid() {
+        const newGrid = new Map<number, LitElement[]>();
+        for (let i = 0; i < 10; i++) {
+            const emptyNodeArray: LitElement[] = [];
+            for (let j = 0; j < 10; j++) {
+                emptyNodeArray.push(document.createElement("empty-node-view") as EmptyNodeView);
+            }
+            newGrid.set(i, emptyNodeArray);
         }
-        console.log(max + 1);
-        return max + 1;
+        this._grid = newGrid;
+        this.requestUpdate();
     }
 
-    renderAudioGraphNodeView(gridItem: AudioGridItem): TemplateResult {
-        const node = this.graphNodes.find((audioNode) => audioNode.id === gridItem.id) || { id: "oof", node: null };
-        let type: string = "unknown";
-        if (node instanceof GainNodeWithId) {
-            type = "gain";
-        } else if (node instanceof OscillatorNodeWithId) {
-            type = "oscillator";
-        } else if (node instanceof BiquadFilterNodeWithId) {
-            type = "biquad-filter";
+    private swapToNewNodeView(position: Position) {
+        console.log(this);
+        const [rowIndex, colIndex] = position;
+        const row = this._grid.get(rowIndex);
+        if (row) {
+            const newNodeView = document.createElement("new-node-view") as NewNodeView;
+            const newRow = [...row];
+            newRow[colIndex] = newNodeView;
+            const newGrid = new Map(this._grid);
+            newGrid.set(rowIndex, newRow);
+            this._grid = newGrid;
+            this.requestUpdate();
         }
-
-        return html`<div class="audio-grid-item" style="grid-row: ${gridItem.position[0] + 1}; grid-column: ${gridItem.position[1] + 1};">
-            ${type}
-        </div>`;
-    }
-
-    renderAddNewNodeView(): TemplateResult {
-        return html`<new-node-view .handleAddNode=${this.handleAddNode} .position=${[0, this.getHighestColumnPosition()]}></new-node-view>`;
     }
 
     render() {
-        return html`<div class="grid">
-            ${this.gridItems.map((item) => {
-                return this.renderAudioGraphNodeView(item);
-            })}
-            ${this.renderAddNewNodeView()}
-        </div>`;
+        return html`
+            <div class="grid">
+                ${Array.from(this._grid.values()).map(
+                    (row, rowIndex) => html`
+                        <div class="row" key=${rowIndex}>
+                            ${row.map((node, colIndex) => {
+                                const position: Position = [rowIndex, colIndex];
+                                if (node instanceof EmptyNodeView) {
+                                    return html`
+                                        <empty-node-view
+                                            class="cell"
+                                            key=${colIndex}
+                                            .position=${position}
+                                            .handleSwapToNewNodeView=${this.swapToNewNodeView.bind(this)}
+                                        ></empty-node-view>
+                                    `;
+                                } else if (node instanceof NewNodeView) {
+                                    return html`<new-node-view .position=${position}></new-node-view>`;
+                                }
+                            })}
+                        </div>
+                    `
+                )}
+            </div>
+        `;
     }
 }
