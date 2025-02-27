@@ -13,13 +13,13 @@ export class NewNodeView extends LitElement {
     @property({ type: Array }) private position: Position;
     @property() private handleAddNode: AddNodeHandler;
 
-    private handleNext() {
+    private moveToNextPanel() {
         if (this.currentPanel + 1 < this.panels().length) {
             this.currentPanel = this.currentPanel + 1;
         }
     }
 
-    private handlePrev() {
+    private moveToPrevPanel() {
         if (this.currentPanel > 0) {
             this.currentPanel = this.currentPanel - 1;
         }
@@ -50,10 +50,10 @@ export class NewNodeView extends LitElement {
     }
 
     private panels = (): TemplateResult[] => [
-        html`<div class="panel" @click=${this.handleNext}>ADD +</div>`,
+        html`<div class="panel" @click=${this.moveToNextPanel}>ADD +</div>`,
         html`<div class="panel">
             <h6>Node Type</h6>
-            <button @click=${this.handlePrev}>x</button>
+            <button @click=${this.moveToPrevPanel}>x</button>
             <select @change=${this.handleNodeChange}>
                 <option value="" disabled selected>Select Node Type</option>
                 <option value="oscillator">Oscillator</option>

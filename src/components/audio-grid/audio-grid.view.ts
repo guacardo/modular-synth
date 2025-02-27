@@ -4,13 +4,15 @@ import { audioGridStyles } from "./audio-grid.styles";
 import { AudioGridItem } from "./audio-grid.store";
 import { EmptyNodeView } from "../empty-node/empty-node.view";
 import { NewNodeView } from "../new-node/new-node.view";
-import { Position } from "../../app/util";
+import { AddNodeHandler, AudioNodeWithId, Position } from "../../app/util";
 
 @customElement("audio-grid-view")
 export class AudioGridView extends LitElement {
     static styles = [audioGridStyles];
 
-    @property({ type: Array }) private gridItems: AudioGridItem[];
+    @property({ type: Array }) private audioGridItems: AudioGridItem[];
+    @property({ type: Array }) private audioGraphNodes: AudioNodeWithId[];
+    @property() private handleAddNode: AddNodeHandler;
 
     @state() private _grid: Map<number, LitElement[]>;
 
@@ -33,7 +35,6 @@ export class AudioGridView extends LitElement {
     }
 
     private swapToNewNodeView(position: Position) {
-        console.log(this);
         const [rowIndex, colIndex] = position;
         const row = this._grid.get(rowIndex);
         if (row) {
@@ -48,6 +49,8 @@ export class AudioGridView extends LitElement {
     }
 
     render() {
+        console.log(this.audioGridItems);
+        console.log(this.audioGraphNodes);
         return html`
             <div class="grid">
                 ${Array.from(this._grid.values()).map(
@@ -64,7 +67,7 @@ export class AudioGridView extends LitElement {
                                         ></empty-node-view>
                                     `;
                                 } else if (node instanceof NewNodeView) {
-                                    return html`<new-node-view .position=${position}></new-node-view>`;
+                                    return html`<new-node-view .handleAddNode=${this.handleAddNode} .position=${position}></new-node-view>`;
                                 }
                             })}
                         </div>
