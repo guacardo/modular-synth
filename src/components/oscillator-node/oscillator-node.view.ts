@@ -2,7 +2,7 @@ import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { graphNodeStyles } from "../../styles/graph-node-styles";
 import { AudioGraphStore } from "../audio-graph/audio-graph.store";
-import { AudioNodeWithId, OscillatorNodeWithId } from "../../app/util";
+import { GridAudioNode, GridOscillatorNode } from "../../app/util";
 
 // export higher up? types file?
 const settableOscillatorTypes: readonly OscillatorType[] = ["sawtooth", "sine", "square", "triangle"] as const;
@@ -11,12 +11,9 @@ const settableOscillatorTypes: readonly OscillatorType[] = ["sawtooth", "sine", 
 export class OscillatorNodeView extends LitElement {
     static styles = [graphNodeStyles];
 
-    @property({ type: Object }) oscillatorNode: OscillatorNodeWithId;
+    @property({ type: Object }) oscillatorNode: GridOscillatorNode;
     @property({ type: Object }) audioGraph: AudioGraphStore;
-    @property() handleUpdateNode: (
-        node: AudioNodeWithId,
-        properties: Partial<Record<keyof OscillatorNode, number | OscillatorType>>
-    ) => void;
+    @property() handleUpdateNode: (node: GridAudioNode, properties: Partial<Record<keyof OscillatorNode, number | OscillatorType>>) => void;
 
     private updateFrequency(value: number) {
         this.handleUpdateNode(this.oscillatorNode, { frequency: value });

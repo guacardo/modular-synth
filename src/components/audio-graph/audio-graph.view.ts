@@ -2,14 +2,7 @@ import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { AudioGraphStore } from "./audio-graph.store";
 import { audioGraphStyles } from "./audio-graph.styles";
-import {
-    AddNodeHandler,
-    AudioNodeProperties,
-    AudioNodeWithId,
-    BiquadFilterNodeWithId,
-    GainNodeWithId,
-    OscillatorNodeWithId,
-} from "../../app/util";
+import { AddNodeHandler, AudioNodeProperties, GridAudioNode, GridBiquadFilterNode, GridGainNode, GridOscillatorNode } from "../../app/util";
 
 @customElement("audio-graph-view")
 export class AudioGraphView extends LitElement {
@@ -17,25 +10,25 @@ export class AudioGraphView extends LitElement {
 
     @property({ type: Object }) private audioGraph: AudioGraphStore;
     @property() private handleAddNode: AddNodeHandler;
-    @property() handleUpdateNode: (node: AudioNodeWithId, properties: AudioNodeProperties) => void;
+    @property() handleUpdateNode: (node: GridAudioNode, properties: AudioNodeProperties) => void;
 
     render() {
         // todo: put this in a shareable util (side-panel.view.ts)
         return html`<div>
-            ${this.audioGraph.audioNodes.map((node) => {
-                if (node instanceof GainNodeWithId) {
+            ${this.audioGraph.gridAudioNodes.map((node) => {
+                if (node instanceof GridGainNode) {
                     return html`<gain-node-view
                         .gainNode=${node}
                         .audioGraph=${this.audioGraph}
                         .handleUpdateNode=${this.handleUpdateNode}
                     ></gain-node-view>`;
-                } else if (node instanceof OscillatorNodeWithId) {
+                } else if (node instanceof GridOscillatorNode) {
                     return html`<oscillator-node-view
                         .oscillatorNode=${node}
                         .audioGraph=${this.audioGraph}
                         .handleUpdateNode=${this.handleUpdateNode}
                     ></oscillator-node-view>`;
-                } else if (node instanceof BiquadFilterNodeWithId) {
+                } else if (node instanceof GridBiquadFilterNode) {
                     return html`<biquad-filter-node-view
                         .biquadFilterNode=${node}
                         .destination=${this.audioGraph?.context.destination}

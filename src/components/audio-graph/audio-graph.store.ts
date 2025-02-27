@@ -1,23 +1,25 @@
-import { AudioNodeProperties, AudioNodeWithId } from "../../app/util";
+import { AudioNodeProperties, GridAudioNode, Position } from "../../app/util";
 
 export class AudioGraphStore {
-    readonly audioNodes: AudioNodeWithId[];
+    readonly gridAudioNodes: GridAudioNode[];
     readonly context: AudioContext;
     createIndex: number;
 
     constructor() {
         this.context = new AudioContext();
-        this.audioNodes = [];
+        this.gridAudioNodes = [];
         this.createIndex = 0;
     }
 
-    addNode(nodeConstructor: new (context: AudioContext) => AudioNodeWithId): AudioNodeWithId;
-    addNode(node: AudioNodeWithId): AudioNodeWithId;
-    addNode(arg: any): AudioNodeWithId {
-        let node: AudioNodeWithId;
+    addNode(nodeConstructor: new (context: AudioContext) => GridAudioNode, position: Position): GridAudioNode;
+    addNode(node: GridAudioNode, position: Position): GridAudioNode;
+    addNode(arg: any, position: Position): GridAudioNode {
+        console.log(arg);
+        let node: GridAudioNode;
         if (typeof arg === "function") {
             node = new arg(this.context);
             node.id = (++this.createIndex).toString();
+            node.position = position;
         } else {
             node = arg;
         }
@@ -25,12 +27,12 @@ export class AudioGraphStore {
         return node;
     }
 
-    findOrAddNode(node?: AudioNodeWithId): AudioGraphStore {
-        const index = this.audioNodes.findIndex((n) => n === node);
+    findOrAddNode(node?: GridAudioNode): AudioGraphStore {
+        const index = this.gridAudioNodes.findIndex((n) => n === node);
 
         return Object.assign(Object.create(AudioGraphStore.prototype), {
             ...this,
-            audioNodes: this.audioNodes.map((n, i) => (i === index ? node : n)),
+            audioNodes: this.gridAudioNodes.map((n, i) => (i === index ? node : n)),
         });
     }
 

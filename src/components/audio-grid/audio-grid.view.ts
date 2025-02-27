@@ -1,17 +1,15 @@
 import { LitElement, html } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { audioGridStyles } from "./audio-grid.styles";
-import { AudioGridItem } from "./audio-grid.store";
 import { EmptyNodeView } from "../empty-node/empty-node.view";
 import { NewNodeView } from "../new-node/new-node.view";
-import { AddNodeHandler, AudioNodeWithId, Position } from "../../app/util";
+import { AddNodeHandler, GridAudioNode, Position } from "../../app/util";
 
 @customElement("audio-grid-view")
 export class AudioGridView extends LitElement {
     static styles = [audioGridStyles];
 
-    @property({ type: Array }) private audioGridItems: AudioGridItem[];
-    @property({ type: Array }) private audioGraphNodes: AudioNodeWithId[];
+    @property({ type: Array }) private gridAudioNodes: GridAudioNode[];
     @property() private handleAddNode: AddNodeHandler;
 
     @state() private _grid: Map<number, LitElement[]>;
@@ -49,8 +47,7 @@ export class AudioGridView extends LitElement {
     }
 
     render() {
-        console.log(this.audioGridItems);
-        console.log(this.audioGraphNodes);
+        console.log(this.gridAudioNodes);
         return html`
             <div class="grid">
                 ${Array.from(this._grid.values()).map(

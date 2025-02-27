@@ -1,7 +1,7 @@
 import { LitElement, TemplateResult, html } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { newNodeStyles } from "./new-node.styles";
-import { AddNodeHandler, BiquadFilterNodeWithId, GainNodeWithId, OscillatorNodeWithId, Position } from "../../app/util";
+import { AddNodeHandler, GridBiquadFilterNode, GridGainNode, GridOscillatorNode, Position } from "../../app/util";
 
 @customElement("new-node-view")
 export class NewNodeView extends LitElement {
@@ -34,13 +34,13 @@ export class NewNodeView extends LitElement {
         this.selectedNodeType = (e.target as HTMLSelectElement).value;
         switch (this.selectedNodeType) {
             case "oscillator":
-                this.handleAddNode(OscillatorNodeWithId, this.position);
+                this.handleAddNode(GridOscillatorNode, this.position);
                 break;
             case "gain":
-                this.handleAddNode(GainNodeWithId, this.position);
+                this.handleAddNode(GridGainNode, this.position);
                 break;
             case "biquad-filter":
-                this.handleAddNode(BiquadFilterNodeWithId, this.position);
+                this.handleAddNode(GridBiquadFilterNode, this.position);
                 break;
             default:
                 throw new Error("Unknown node type");

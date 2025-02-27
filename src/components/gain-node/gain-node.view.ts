@@ -2,7 +2,7 @@ import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { graphNodeStyles } from "../../styles/graph-node-styles";
 import { AudioGraphStore } from "../audio-graph/audio-graph.store";
-import { AudioNodeWithId, GainNodeWithId } from "../../app/util";
+import { GridAudioNode, GridGainNode } from "../../app/util";
 
 @customElement("gain-node-view")
 export class GainNodeView extends LitElement {
@@ -13,9 +13,9 @@ export class GainNodeView extends LitElement {
 
       Feb 10: is still true?
     */
-    @property({ type: Object }) gainNode: GainNodeWithId;
+    @property({ type: Object }) gainNode: GridGainNode;
     @property({ type: Object }) audioGraph: AudioGraphStore;
-    @property() handleUpdateNode: (node: AudioNodeWithId, properties: Partial<Record<keyof GainNode, number>>) => void;
+    @property() handleUpdateNode: (node: GridAudioNode, properties: Partial<Record<keyof GainNode, number>>) => void;
 
     static styles = [graphNodeStyles];
 

@@ -2,9 +2,8 @@ import { LitElement, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { AudioGraphStore } from "./components/audio-graph/audio-graph.store";
 import { AudioGraphView } from "./components/audio-graph/audio-graph.view";
-import { AudioGridStore } from "./components/audio-grid/audio-grid.store";
 import { AudioGridView } from "./components/audio-grid/audio-grid.view";
-import { AudioNodeProperties, AudioNodeWithId } from "./app/util";
+import { AudioNodeProperties, GridAudioNode, Position } from "./app/util";
 import { BiquadFilterNodeView } from "./components/biquad-filter/biquad-filter-node.view";
 import { EmptyNodeView } from "./components/empty-node/empty-node.view";
 import { GainNodeView } from "./components/gain-node/gain-node.view";
@@ -26,35 +25,28 @@ export class AppView extends LitElement {
     static styles = [appStyles];
 
     @state() private _audioGraph = new AudioGraphStore();
-    @state() private _audioGrid = new AudioGridStore();
 
-    private handleAddNode = (nodeConstructor: new (context: AudioContext) => AudioNodeWithId, position: [number, number]) => {
-        const node = this._audioGraph.addNode(nodeConstructor);
+    private handleAddNode = (nodeConstructor: new (context: AudioContext) => GridAudioNode, position: Position) => {
+        const node = this._audioGraph.addNode(nodeConstructor, position);
         this._audioGraph = Object.assign(Object.create(AudioGraphStore.prototype), {
             ...this._audioGraph,
-            audioNodes: [...this._audioGraph.audioNodes, node],
+            gridAudioNodes: [...this._audioGraph.gridAudioNodes, node],
         });
-        this._audioGrid = Object.assign(Object.create(AudioGridStore.prototype), {
-            ...this._audioGrid,
-            gridItems: [...this._audioGrid.gridItems, { id: node.id, position }],
-        });
+        console.log(this._audioGraph);
     };
 
-    private handleUpdateNode = (node: AudioNodeWithId, properties: AudioNodeProperties) => {
-        const nodeWithIdCopy: AudioNodeWithId = {
+    private handleUpdateNode = (node: GridAudioNode, properties: AudioNodeProperties) => {
+        const gridNodeCopy: GridAudioNode = {
             id: node.id,
+            position: node.position,
             node: this._audioGraph.updateAudioParamValue(node.node, properties) || node.node,
         };
-        this._audioGraph = this._audioGraph.findOrAddNode(nodeWithIdCopy);
+        this._audioGraph = this._audioGraph.findOrAddNode(gridNodeCopy);
     };
 
     render() {
         return html` <div class="app">
-            <audio-grid-view
-                .audioGridItems=${this._audioGrid.gridItems}
-                .audioGraphNodes=${this._audioGraph.audioNodes}
-                .handleAddNode=${this.handleAddNode}
-            ></audio-grid-view>
+            <audio-grid-view .gridAudioNodes=${this._audioGraph.gridAudioNodes} .handleAddNode=${this.handleAddNode}></audio-grid-view>
             <side-panel-view
                 .audioGraph=${this._audioGraph}
                 .handleUpdateNode=${this.handleUpdateNode}
