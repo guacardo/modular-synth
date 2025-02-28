@@ -28,6 +28,10 @@ export class AppView extends LitElement {
 
     private handleAddNode = (nodeConstructor: new (context: AudioContext) => GridAudioNode, position: Position) => {
         const node = this._audioGraph.addNode(nodeConstructor, position);
+        /* 
+            todo: i do not like that there is no type safety to properties you can add
+            when using Object.assign. Need to find alternative.
+        */
         this._audioGraph = Object.assign(Object.create(AudioGraphStore.prototype), {
             ...this._audioGraph,
             gridAudioNodes: [...this._audioGraph.gridAudioNodes, node],

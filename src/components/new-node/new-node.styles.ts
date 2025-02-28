@@ -24,5 +24,9 @@ export const newNodeStyles = css`
             height: 100%;
             flex-shrink: 0;
         }
+
+        .node-select-type {
+            width: 50px;
+        }
     }
 `;

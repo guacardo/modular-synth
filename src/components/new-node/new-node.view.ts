@@ -54,7 +54,7 @@ export class NewNodeView extends LitElement {
         html`<div class="panel">
             <h6>Node Type</h6>
             <button @click=${this.moveToPrevPanel}>x</button>
-            <select @change=${this.handleNodeChange}>
+            <select @change=${this.handleNodeChange} class="node-select-type">
                 <option value="" disabled selected>Select Node Type</option>
                 <option value="oscillator">Oscillator</option>
                 <option value="gain">Gain</option>
