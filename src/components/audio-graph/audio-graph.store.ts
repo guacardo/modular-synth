@@ -14,7 +14,6 @@ export class AudioGraphStore {
     addNode(nodeConstructor: new (context: AudioContext) => GridAudioNode, position: Position): GridAudioNode;
     addNode(node: GridAudioNode, position: Position): GridAudioNode;
     addNode(arg: any, position: Position): GridAudioNode {
-        console.log(arg);
         let node: GridAudioNode;
         if (typeof arg === "function") {
             node = new arg(this.context);
@@ -29,7 +28,6 @@ export class AudioGraphStore {
 
     findOrAddNode(node?: GridAudioNode): AudioGraphStore {
         const index = this.gridAudioNodes.findIndex((n) => n === node);
-
         /* 
             todo: i do not like that there is no type safety to properties you can add
             when using Object.assign. Need to find alternative.

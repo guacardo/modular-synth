@@ -50,7 +50,7 @@ export class AppView extends LitElement {
 
     render() {
         return html` <div class="app">
-            <audio-grid-view .gridAudioNodes=${this._audioGraph.gridAudioNodes} .handleAddNode=${this.handleAddNode}></audio-grid-view>
+            <audio-grid-view .audioGraph=${this._audioGraph} .handleAddNode=${this.handleAddNode}></audio-grid-view>
             <side-panel-view
                 .audioGraph=${this._audioGraph}
                 .handleUpdateNode=${this.handleUpdateNode}

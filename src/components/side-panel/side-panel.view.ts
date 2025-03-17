@@ -10,12 +10,8 @@ type Orientation = "left" | "right";
 export class SidePanelView extends LitElement {
     static styles = [sidePanelStyles];
 
-    @property({ type: Object })
-    audioGraph: AudioGraphStore;
-
-    @property({ type: String, attribute: true })
-    orientation: Orientation;
-
+    @property({ type: Object }) audioGraph: AudioGraphStore;
+    @property({ type: String, attribute: true }) orientation: Orientation;
     @property() handleUpdateNode: (node: GridAudioNode, properties: AudioNodeProperties) => void;
 
     render() {
