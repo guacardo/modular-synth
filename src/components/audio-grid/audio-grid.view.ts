@@ -30,7 +30,7 @@ export class AudioGridView extends LitElement {
     }
 
     private _fileNew() {
-        const foo = new Array();
+        const foo: LitElement[][] = [];
         foo[0][0] = document.createElement("empty-node-view") as EmptyNodeView;
     }
 
