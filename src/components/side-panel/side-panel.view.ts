@@ -12,20 +12,21 @@ export class SidePanelView extends LitElement {
 
     @property({ type: Array }) audioGraph: AudioGraphNode[];
     @property({ type: String, attribute: true }) orientation: Orientation;
-    @property() addNode: (type: AudioNodeType) => void;
+    @property({ attribute: false }) addNode: (type: AudioNodeType) => void;
+    @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
 
     connectedCallback(): void {
         super.connectedCallback();
         console.log("connected: side-panel-view", this);
     }
 
-    private renderNodeView(node: AudioGraphNode): TemplateResult {
-        if (node.node instanceof GainNode) {
-            return html`<gain-node-view .gainNode=${node}></gain-node-view>`;
-        } else if (node.node instanceof OscillatorNode) {
-            return html`<oscillator-node-view .oscillatorNode=${node}></oscillator-node-view>`;
-        } else if (node instanceof BiquadFilterNode) {
-            return html`<biquad-filter-node-view .biquadFilterNode=${node}></biquad-filter-node-view>`;
+    private renderNodeView(graphNode: AudioGraphNode): TemplateResult {
+        if (graphNode.node instanceof GainNode) {
+            return html`<gain-node-view .graphNode=${graphNode} .updateNode=${this.updateNode}></gain-node-view>`;
+        } else if (graphNode.node instanceof OscillatorNode) {
+            return html`<oscillator-node-view .node=${graphNode.node}></oscillator-node-view>`;
+        } else if (graphNode instanceof BiquadFilterNode) {
+            return html`<biquad-filter-node-view .node=${graphNode.node}></biquad-filter-node-view>`;
         } else {
             return html`<p>ERroR: nOT a n Audio Noooode</p>`;
         }
