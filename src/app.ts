@@ -24,7 +24,6 @@ export class AppView extends LitElement {
 
     connectedCallback(): void {
         super.connectedCallback();
-        console.log("connected: app-view", this);
     }
 
     readonly handleAddNode = (type: AudioNodeType) => {
@@ -52,11 +51,9 @@ export class AppView extends LitElement {
 
     readonly handleUpdateNode = (node: AudioGraphNode) => {
         this.AUDIO_GRAPH = this.AUDIO_GRAPH.map((n) => (n.id === node.id ? { ...n, ...node } : n));
-        console.log("Updated AUDIO_GRAPH:", this.AUDIO_GRAPH);
     };
 
     render() {
-        console.log(this.AUDIO_GRAPH);
         return html` <div class="app">
             <button @click=${() => console.log(this.AUDIO_GRAPH)}>Log Audio Graph</button>
             <audio-graph-view .audioGraph=${this.AUDIO_GRAPH}></audio-graph-view>

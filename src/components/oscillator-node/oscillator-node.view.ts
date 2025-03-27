@@ -1,26 +1,35 @@
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { graphNodeStyles } from "../../styles/graph-node-styles";
-import { AudioGraphStore } from "../audio-graph/audio-graph.store";
-import { GridAudioNode, GridOscillatorNode } from "../../app/util";
+import { AudioGraphNode, updateAudioParamValue } from "../../app/util";
 
-// export higher up? types file?
-const settableOscillatorTypes: readonly OscillatorType[] = ["sawtooth", "sine", "square", "triangle"] as const;
+export const settableOscillatorTypes: readonly OscillatorType[] = ["sawtooth", "sine", "square", "triangle"] as const;
 
 @customElement("oscillator-node-view")
 export class OscillatorNodeView extends LitElement {
     static styles = [graphNodeStyles];
 
-    @property({ type: Object }) oscillatorNode: GridOscillatorNode;
-    @property({ type: Object }) audioGraph: AudioGraphStore;
-    @property() handleUpdateNode: (node: GridAudioNode, properties: Partial<Record<keyof OscillatorNode, number | OscillatorType>>) => void;
+    @property({ type: Object, attribute: false }) graphNode: AudioGraphNode;
+    @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
 
     private updateFrequency(value: number) {
-        this.handleUpdateNode(this.oscillatorNode, { frequency: value });
+        const node = updateAudioParamValue(
+            this.graphNode.node as OscillatorNode,
+            { frequency: value } as Partial<Record<keyof OscillatorNode, number>>,
+            this.graphNode.node?.context as AudioContext
+        );
+        const newAudioGraphNode = { ...this.graphNode, node };
+        this.updateNode(newAudioGraphNode);
     }
 
     private updateType(value: OscillatorType) {
-        this.handleUpdateNode(this.oscillatorNode, { type: value });
+        const node = updateAudioParamValue(
+            this.graphNode.node as OscillatorNode,
+            { type: value } as Partial<Record<keyof OscillatorNode, string>>,
+            this.graphNode.node?.context as AudioContext
+        );
+        const newAudioGraphNode = { ...this.graphNode, node };
+        this.updateNode(newAudioGraphNode);
     }
 
     render() {
@@ -30,19 +39,19 @@ export class OscillatorNodeView extends LitElement {
                 type="range"
                 min="0"
                 max="2000"
-                .value="${this.oscillatorNode.node.frequency.value.toString()}"
+                .value="${(this.graphNode.node as OscillatorNode).frequency.value.toString()}"
                 @input=${(e: Event) => {
                     this.updateFrequency((e.target as HTMLInputElement).valueAsNumber);
                 }}
             />
             <select
-                .value=${this.oscillatorNode.node.type}
+                .value=${(this.graphNode.node as OscillatorNode).type}
                 @change=${(e: Event) => {
                     this.updateType((e.target as HTMLSelectElement).value as OscillatorType);
                 }}
             >
                 ${settableOscillatorTypes.map((type) => {
-                    return html`<option value=${type} ?selected=${type === this.oscillatorNode.node.type}>${type}</option>`;
+                    return html`<option value=${type} ?selected=${type === (this.graphNode.node as OscillatorNode).type}>${type}</option>`;
                 })}
             </select>
         </div>`;

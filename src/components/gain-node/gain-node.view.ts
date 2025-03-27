@@ -5,10 +5,10 @@ import { AudioGraphNode, updateAudioParamValue } from "../../app/util";
 
 @customElement("gain-node-view")
 export class GainNodeView extends LitElement {
+    static styles = [graphNodeStyles];
+
     @property({ type: Object, attribute: false }) graphNode: AudioGraphNode;
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
-
-    static styles = [graphNodeStyles];
 
     private updateGain(value: number) {
         const node = updateAudioParamValue(

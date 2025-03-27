@@ -24,9 +24,9 @@ export class SidePanelView extends LitElement {
         if (graphNode.node instanceof GainNode) {
             return html`<gain-node-view .graphNode=${graphNode} .updateNode=${this.updateNode}></gain-node-view>`;
         } else if (graphNode.node instanceof OscillatorNode) {
-            return html`<oscillator-node-view .node=${graphNode.node}></oscillator-node-view>`;
+            return html`<oscillator-node-view .graphNode=${graphNode} .updateNode=${this.updateNode}></oscillator-node-view>`;
         } else if (graphNode instanceof BiquadFilterNode) {
-            return html`<biquad-filter-node-view .node=${graphNode.node}></biquad-filter-node-view>`;
+            return html`<biquad-filter-node-view .node=${graphNode.node} .updateNode=${this.updateNode}></biquad-filter-node-view>`;
         } else {
             return html`<p>ERroR: nOT a n Audio Noooode</p>`;
         }
