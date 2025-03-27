@@ -1,47 +1,48 @@
-export type AudioNodeProperties = Partial<Record<keyof AudioNode, number | string | [number, number]>>;
-export type AddNodeHandler = (
-    nodeConstructor: new (context: AudioContext, id: string, position: Position) => GridAudioNode,
-    position: [number, number]
-) => void;
 export type Position = [number, number];
-export class GridAudioNode {
+export type AudioNodeType = "oscillator" | "gain" | "biquad-filter";
+export type AudioNodeProperties = Partial<Record<keyof AudioNode, number | string | [number, number]>>;
+export class AudioGraphNode {
     id: string;
     position: Position;
-    node: AudioNode;
+    node?: AudioNode;
 
-    constructor(id: string, position: Position, node: AudioNode) {
+    constructor(id: string, position: Position, node?: AudioNode) {
         this.id = id;
-        this.node = node;
         this.position = position;
-    }
-}
-
-export class GridOscillatorNode extends GridAudioNode {
-    node: OscillatorNode;
-
-    constructor(context: AudioContext, id: string, position: Position) {
-        const node = context.createOscillator();
-        super(id, position, node);
         this.node = node;
     }
 }
 
-export class GridGainNode extends GridAudioNode {
-    node: GainNode;
-
-    constructor(context: AudioContext, id: string, position: Position) {
-        const node = context.createGain();
-        super(id, position, node);
-        this.node = node;
+export function updateAudioParamValue<T extends AudioNode>(
+    node: T,
+    properties: AudioNodeOptions,
+    context: AudioContext
+): AudioNode | undefined {
+    if (!node || typeof node !== "object" || !properties) {
+        console.error("Invalid node or properties");
+        return;
     }
-}
 
-export class GridBiquadFilterNode extends GridAudioNode {
-    node: BiquadFilterNode;
-
-    constructor(context: AudioContext, id: string, position: Position) {
-        const node = context.createBiquadFilter();
-        super(id, position, node);
-        this.node = node;
+    for (const [property, value] of Object.entries(properties)) {
+        if (property in node) {
+            const propKey = property as keyof T;
+            if (node[propKey] instanceof AudioParam) {
+                if (Array.isArray(value)) {
+                    const [targetValue, rampTime] = value;
+                    node[propKey].linearRampToValueAtTime(targetValue, context.currentTime + rampTime);
+                } else if (typeof value === "number") {
+                    node[propKey].setValueAtTime(value, context.currentTime);
+                    node[propKey].value = value;
+                } else {
+                    console.error(`Invalid value for AudioParam ${value}`);
+                }
+            } else {
+                node[propKey] = value as any;
+            }
+        } else {
+            console.warn(`Property ${property} not found on node`);
+        }
     }
+
+    return node;
 }

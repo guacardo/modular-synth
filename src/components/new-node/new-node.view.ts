@@ -1,7 +1,7 @@
 import { LitElement, TemplateResult, html } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { newNodeStyles } from "./new-node.styles";
-import { AddNodeHandler, GridBiquadFilterNode, GridGainNode, GridOscillatorNode, Position } from "../../app/util";
+import { Position } from "../../app/util";
 
 @customElement("new-node-view")
 export class NewNodeView extends LitElement {
@@ -11,7 +11,11 @@ export class NewNodeView extends LitElement {
     @state() private selectedNodeType = "";
 
     @property({ type: Array }) private position: Position;
-    @property() private handleAddNode: AddNodeHandler;
+
+    connectedCallback(): void {
+        super.connectedCallback();
+        console.log("connected: new-node-view", this, this.position);
+    }
 
     private moveToNextPanel() {
         if (this.currentPanel + 1 < this.panels().length) {
@@ -25,32 +29,12 @@ export class NewNodeView extends LitElement {
         }
     }
 
-    private handleReset() {
-        this.currentPanel = 0;
-        this.selectedNodeType = "";
-    }
-
     private handleNodeChange(e: Event) {
-        this.selectedNodeType = (e.target as HTMLSelectElement).value;
-        switch (this.selectedNodeType) {
-            case "oscillator":
-                this.handleAddNode(GridOscillatorNode, this.position);
-                break;
-            case "gain":
-                this.handleAddNode(GridGainNode, this.position);
-                break;
-            case "biquad-filter":
-                this.handleAddNode(GridBiquadFilterNode, this.position);
-                break;
-            default:
-                throw new Error("Unknown node type");
-        }
-
-        this.handleReset();
+        console.log(this, e);
     }
 
     private panels = (): TemplateResult[] => [
-        html`<div class="panel" @click=${this.moveToNextPanel}>ADD +</div>`,
+        html`<div class="panel" @click=${this.moveToNextPanel}>+</div>`,
         html`<div class="panel">
             <h6>Node Type</h6>
             <button @click=${this.moveToPrevPanel}>x</button>

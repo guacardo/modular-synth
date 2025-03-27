@@ -1,18 +1,20 @@
-import { LitElement, TemplateResult, html } from "lit";
+import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { sidePanelStyles } from "./side-panel.styles";
-import { AudioGraphStore } from "../audio-graph/audio-graph.store";
 import { classMap } from "lit/directives/class-map.js";
-import { AudioNodeProperties, GridAudioNode, GridBiquadFilterNode, GridGainNode, GridOscillatorNode } from "../../app/util";
 
 type Orientation = "left" | "right";
+
 @customElement("side-panel-view")
 export class SidePanelView extends LitElement {
     static styles = [sidePanelStyles];
 
-    @property({ type: Object }) audioGraph: AudioGraphStore;
     @property({ type: String, attribute: true }) orientation: Orientation;
-    @property() handleUpdateNode: (node: GridAudioNode, properties: AudioNodeProperties) => void;
+
+    connectedCallback(): void {
+        super.connectedCallback();
+        console.log("connected: side-panel-view", this);
+    }
 
     render() {
         const classes = {
@@ -20,31 +22,8 @@ export class SidePanelView extends LitElement {
             right: this.orientation === "right" ? true : false,
         };
         return html` <div class="side-panel-container${classMap(classes)}">
-            <div class="audio-graph-node-container">${this.audioGraph.gridAudioNodes.map((node) => this.renderNodeView(node))}</div>
+            <p>HELLO SIDE WORLD</p>
+            <button @click=${() => console.log("side panel clicked")}>Click me</button>
         </div>`;
-    }
-
-    // todo: put this in a shareable util (audio-graph.view.ts)
-    private renderNodeView(node: GridAudioNode): TemplateResult {
-        if (node instanceof GridGainNode) {
-            return html`<gain-node-view
-                .gainNode=${node}
-                .audioGraph=${this.audioGraph}
-                .handleUpdateNode=${this.handleUpdateNode}
-            ></gain-node-view>`;
-        } else if (node instanceof GridOscillatorNode) {
-            return html`<oscillator-node-view
-                .oscillatorNode=${node}
-                .audioGraph=${this.audioGraph}
-                .handleUpdateNode=${this.handleUpdateNode}
-            ></oscillator-node-view>`;
-        } else if (node instanceof GridBiquadFilterNode) {
-            return html`<biquad-filter-node-view
-                .biquadFilterNode=${node}
-                .destination=${this.audioGraph?.context.destination}
-            ></biquad-filter-node-view>`;
-        } else {
-            return html`<p>ERroR: nOT a n Audio Noooode</p>`;
-        }
     }
 }
