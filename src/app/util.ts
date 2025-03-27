@@ -15,7 +15,7 @@ export class AudioGraphNode {
 
 export function updateAudioParamValue<T extends AudioNode>(
     node: T,
-    properties: AudioNodeOptions,
+    properties: AudioNodeProperties,
     context: AudioContext
 ): AudioNode | undefined {
     if (!node || typeof node !== "object" || !properties) {

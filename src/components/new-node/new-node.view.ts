@@ -1,7 +1,7 @@
 import { LitElement, TemplateResult, html } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { newNodeStyles } from "./new-node.styles";
-import { Position } from "../../app/util";
+import { AudioNodeType, Position } from "../../app/util";
 
 @customElement("new-node-view")
 export class NewNodeView extends LitElement {
@@ -11,6 +11,7 @@ export class NewNodeView extends LitElement {
     @state() private selectedNodeType = "";
 
     @property({ type: Array }) private position: Position;
+    @property() addNode: (type: AudioNodeType) => void;
 
     connectedCallback(): void {
         super.connectedCallback();
@@ -30,7 +31,7 @@ export class NewNodeView extends LitElement {
     }
 
     private handleNodeChange(e: Event) {
-        console.log(this, e);
+        this.addNode((e.target as HTMLSelectElement).value as AudioNodeType);
     }
 
     private panels = (): TemplateResult[] => [

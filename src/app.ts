@@ -6,7 +6,7 @@ import { OscillatorNodeView } from "./components/oscillator-node/oscillator-node
 import { appStyles } from "./styles/app-styles";
 import { SidePanelView } from "./components/side-panel/side-panel.view";
 import { NewNodeView } from "./components/new-node/new-node.view";
-import { AudioGraphNode } from "./app/util";
+import { AudioGraphNode, AudioNodeType } from "./app/util";
 import "./components/biquad-filter/biquad-filter-node.view";
 import "./components/gain-node/gain-node.view";
 import "./components/oscillator-node/oscillator-node.view";
@@ -20,17 +20,43 @@ export class AppView extends LitElement {
     @state()
     AUDIO_GRAPH: AudioGraphNode[] = [];
 
+    audioContext = new AudioContext();
+
     connectedCallback(): void {
         super.connectedCallback();
         console.log("connected: app-view", this);
     }
 
+    readonly handleAddNode = (type: AudioNodeType) => {
+        switch (type) {
+            case "oscillator":
+                this.AUDIO_GRAPH = [
+                    ...this.AUDIO_GRAPH,
+                    new AudioGraphNode((this.AUDIO_GRAPH.length + 1).toString(), [0, 0], this.audioContext.createOscillator()),
+                ];
+                break;
+            case "gain":
+                this.AUDIO_GRAPH = [
+                    ...this.AUDIO_GRAPH,
+                    new AudioGraphNode((this.AUDIO_GRAPH.length + 1).toString(), [0, 0], this.audioContext.createGain()),
+                ];
+                break;
+            case "biquad-filter":
+                this.AUDIO_GRAPH = [
+                    ...this.AUDIO_GRAPH,
+                    new AudioGraphNode((this.AUDIO_GRAPH.length + 1).toString(), [0, 0], this.audioContext.createBiquadFilter()),
+                ];
+                break;
+        }
+    };
+
     render() {
+        console.log(this.AUDIO_GRAPH);
         return html` <div class="app">
             <button @click=${() => console.log(this.AUDIO_GRAPH)}>Log Audio Graph</button>
             <audio-graph-view .audioGraph=${this.AUDIO_GRAPH}></audio-graph-view>
-            <side-panel-view orientation="left" .audioGraph=${this.AUDIO_GRAPH}></side-panel-view>
-            <side-panel-view orientation="right" .audioGraph=${this.AUDIO_GRAPH}></side-panel-view>
+            <side-panel-view orientation="left" .audioGraph=${this.AUDIO_GRAPH} .addNode=${this.handleAddNode}></side-panel-view>
+            <side-panel-view orientation="right" .audioGraph=${this.AUDIO_GRAPH} .addNode=${this.handleAddNode}></side-panel-view>
         </div>`;
     }
 }
