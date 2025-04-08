@@ -9,6 +9,7 @@ export class GainNodeView extends LitElement {
 
     @property({ type: Object, attribute: false }) graphNode: AudioGraphNode;
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
+    @property({ attribute: false }) connectToContext: () => void;
 
     private updateGain(value: number) {
         const node = updateAudioParamValue(
@@ -33,6 +34,7 @@ export class GainNodeView extends LitElement {
                     this.updateGain((e.target as HTMLInputElement).valueAsNumber);
                 }}"
             />
+            <button type="button" @click=${this.connectToContext}>Connect to Context</button>
         </div>`;
     }
 }

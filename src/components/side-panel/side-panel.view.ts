@@ -33,9 +33,9 @@ export class SidePanelView extends LitElement {
                 .updateNode=${this.updateNode}
                 .connectToContext=${this.connectToContext}
             ></oscillator-node-view>`;
-        } else if (graphNode instanceof BiquadFilterNode) {
+        } else if (graphNode.node instanceof BiquadFilterNode) {
             return html`<biquad-filter-node-view
-                .node=${graphNode.node}
+                .graphNode=${graphNode}
                 .updateNode=${this.updateNode}
                 .connectToContext=${this.connectToContext}
             ></biquad-filter-node-view>`;

@@ -1,8 +1,8 @@
 import { LitElement, html } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import { graphNodeStyles } from "../../styles/graph-node-styles";
 import { classMap } from "lit/directives/class-map.js";
-import { BiquadFilterNodeWithId } from "../../app/util";
+import { AudioGraphNode, updateAudioParamValue } from "../../app/util";
 
 const settableBiquadFilterTypes: readonly BiquadFilterType[] = [
     "allpass",
@@ -19,52 +19,71 @@ const settableBiquadFilterTypes: readonly BiquadFilterType[] = [
 export class BiquadFilterNodeView extends LitElement {
     static styles = [graphNodeStyles];
 
-    @property({ attribute: false }) biquadFilterNode: BiquadFilterNodeWithId;
-    @property({ type: Object }) destination: AudioDestinationNode;
-    @state() connectedToContext: boolean = false;
+    @property({ attribute: false }) graphNode: AudioGraphNode;
+    @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
+    @property({ attribute: false }) connectToContext: () => void;
+
+    private updateType(value: BiquadFilterType) {
+        const node = updateAudioParamValue(
+            this.graphNode.node as BiquadFilterNode,
+            { type: value } as Partial<Record<keyof BiquadFilterNode, string>>,
+            this.graphNode.node?.context as AudioContext
+        );
+        const newAudioGraphNode = { ...this.graphNode, node };
+        this.updateNode(newAudioGraphNode);
+    }
 
     render() {
-        return html`<div class=${classMap({ node: true, connectedContext: this.connectedToContext })}>
-            <p>${typeof this.biquadFilterNode}</p>
+        return html`<div class=${classMap({ node: true })}>
             <select
+                .value=${(this.graphNode.node as BiquadFilterNode).type}
                 @change=${(e: Event) => {
-                    console.log(e);
+                    this.updateType((e.target as HTMLSelectElement).value as BiquadFilterType);
                 }}
-                @click=${(e: Event) => e.stopPropagation()}
             >
                 ${settableBiquadFilterTypes.map((type) => {
-                    return html`<option value=${type} ?selected=${type === this.biquadFilterNode.node.type}>${type}</option>`;
+                    return html`<option value=${type} ?selected=${type === (this.graphNode.node as BiquadFilterNode).type}
+                        >${type}</option
+                    >`;
                 })}
             </select>
-            <label>Frequency:</label>
-            <input
-                type="range"
-                max="10000"
-                @input=${(e: Event) => {
-                    console.log(e);
-                }}
-            />
-            <label>Detune:</label>
-            <input
-                type="range"
-                @input=${(e: Event) => {
-                    console.log(e);
-                }}
-            />
-            <label>Q:</label>
-            <input
-                type="range"
-                @input=${(e: Event) => {
-                    console.log(e);
-                }}
-            />
-            <label>Gain:</label>
-            <input
-                type="range"
-                @input=${(e: Event) => {
-                    console.log(e);
-                }}
-            />
+            <div class="slider-container">
+                <label>Frequency:</label>
+                <input
+                    type="range"
+                    max="10000"
+                    @input=${(e: Event) => {
+                        console.log(e);
+                    }}
+                />
+            </div>
+            <div class="slider-container">
+                <label>Detune:</label>
+                <input
+                    type="range"
+                    @input=${(e: Event) => {
+                        console.log(e);
+                    }}
+                />
+            </div>
+            <div class="slider-container">
+                <label>Q:</label>
+                <input
+                    type="range"
+                    @input=${(e: Event) => {
+                        console.log(e);
+                    }}
+                />
+            </div>
+            <div class="slider-container">
+                <label>Gain:</label>
+                <input
+                    type="range"
+                    @input=${(e: Event) => {
+                        console.log(e);
+                    }}
+                />
+            </div>
         </div>`;
     }
 }

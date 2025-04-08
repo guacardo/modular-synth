@@ -17,8 +17,9 @@ import "./components/side-panel/side-panel.view";
 export class AppView extends LitElement {
     static styles = [appStyles];
 
-    @state()
-    AUDIO_GRAPH: AudioGraphNode[] = [];
+    @state() AUDIO_GRAPH: AudioGraphNode[] = [];
+    @state() currRow: number = 0;
+    @state() currCol: number = 0;
 
     audioContext = new AudioContext();
 
@@ -27,27 +28,34 @@ export class AppView extends LitElement {
     }
 
     readonly handleAddNode = (type: AudioNodeType) => {
+        let nodeToConnect: AudioGraphNode | undefined;
         switch (type) {
             case "oscillator":
                 const newOscillator = new AudioGraphNode(
                     (this.AUDIO_GRAPH.length + 1).toString(),
-                    [0, 0],
+                    [++this.currRow, this.currCol],
                     this.audioContext.createOscillator()
                 );
                 this.AUDIO_GRAPH = [...this.AUDIO_GRAPH, newOscillator];
                 break;
             case "gain":
-                const newGain = new AudioGraphNode((this.AUDIO_GRAPH.length + 1).toString(), [0, 0], this.audioContext.createGain());
-                this.AUDIO_GRAPH[this.AUDIO_GRAPH.length - 1].node?.connect(newGain.node as GainNode);
+                const newGain = new AudioGraphNode(
+                    (this.AUDIO_GRAPH.length + 1).toString(),
+                    [++this.currRow, this.currCol],
+                    this.audioContext.createGain()
+                );
+                nodeToConnect = this.AUDIO_GRAPH.find((n) => n.position[0] === this.currRow - 1 && n.position[1] === this.currCol);
+                nodeToConnect?.node?.connect(newGain.node as GainNode);
                 this.AUDIO_GRAPH = [...this.AUDIO_GRAPH, newGain];
                 break;
             case "biquad-filter":
                 const newBiquadFilter = new AudioGraphNode(
                     (this.AUDIO_GRAPH.length + 1).toString(),
-                    [0, 0],
+                    [++this.currRow, this.currCol],
                     this.audioContext.createBiquadFilter()
                 );
-                this.AUDIO_GRAPH[this.AUDIO_GRAPH.length - 1].node?.connect(newBiquadFilter.node as BiquadFilterNode);
+                nodeToConnect = this.AUDIO_GRAPH.find((n) => n.position[0] === this.currRow - 1 && n.position[1] === this.currCol);
+                nodeToConnect?.node?.connect(newBiquadFilter.node as BiquadFilterNode);
                 this.AUDIO_GRAPH = [...this.AUDIO_GRAPH, newBiquadFilter];
                 break;
         }

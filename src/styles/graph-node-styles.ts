@@ -12,4 +12,11 @@ export const graphNodeStyles = css`
     .source {
         border: 1px solid #98fb98;
     }
+
+    .slider-container {
+        width: 100%;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+    }
 `;
