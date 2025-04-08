@@ -17,7 +17,6 @@ export class SidePanelView extends LitElement {
 
     connectedCallback(): void {
         super.connectedCallback();
-        console.log("connected: side-panel-view", this);
     }
 
     private renderNodeView(graphNode: AudioGraphNode): TemplateResult {
@@ -38,8 +37,8 @@ export class SidePanelView extends LitElement {
             right: this.orientation === "right" ? true : false,
         };
         return html` <div class="side-panel-container${classMap(classes)}">
-            <new-node-view .addNode=${this.addNode}></new-node-view>
             <div class="audio-graph-node-container">${this.audioGraph.map((node) => this.renderNodeView(node))}</div>
+            <new-node-view .addNode=${this.addNode} .audioGraph=${this.audioGraph}></new-node-view>
         </div>`;
     }
 }

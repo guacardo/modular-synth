@@ -1,7 +1,7 @@
 import { LitElement, TemplateResult, html } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { newNodeStyles } from "./new-node.styles";
-import { AudioNodeType, Position } from "../../app/util";
+import { AudioGraphNode, AudioNodeType, Position } from "../../app/util";
 
 @customElement("new-node-view")
 export class NewNodeView extends LitElement {
@@ -10,12 +10,12 @@ export class NewNodeView extends LitElement {
     @state() private currentPanel = 0;
     @state() private selectedNodeType = "";
 
-    @property({ type: Array }) private position: Position;
+    @property({ type: Array }) audioGraph: AudioGraphNode[];
+    @property({ type: Array }) position: Position;
     @property() addNode: (type: AudioNodeType) => void;
 
     connectedCallback(): void {
         super.connectedCallback();
-        console.log("connected: new-node-view", this, this.position);
     }
 
     private moveToNextPanel() {
@@ -34,16 +34,32 @@ export class NewNodeView extends LitElement {
         this.addNode((e.target as HTMLSelectElement).value as AudioNodeType);
     }
 
+    /*
+        @description We must start building our audio graph with an audio source node.
+        If we have an audio source node, we can add audio processing nodes.
+        @returns {TemplateResult[]} An array of `<option>` of viable audio node types.
+    */
+    private filteredOptions(): TemplateResult[] {
+        const audioSourceNodes: AudioNodeType[] = ["oscillator"];
+        const audioProcessingNodes: AudioNodeType[] = ["gain", "biquad-filter"];
+        let options: AudioNodeType[] = [];
+        if (this.audioGraph.length) {
+            options = audioProcessingNodes;
+            return options.map((option) => html`<option value=${option}>${option}</option>`);
+        } else {
+            options = audioSourceNodes;
+            return options.map((option) => html`<option value=${option}>${option}</option>`);
+        }
+    }
+
     private panels = (): TemplateResult[] => [
-        html`<div class="panel" @click=${this.moveToNextPanel}>+</div>`,
+        html`<div class="panel" @click=${this.moveToNextPanel}><button type="button">+</button></div>`,
         html`<div class="panel">
             <h6>Node Type</h6>
             <button @click=${this.moveToPrevPanel}>x</button>
             <select @change=${this.handleNodeChange} class="node-select-type">
                 <option value="" disabled selected>Select Node Type</option>
-                <option value="oscillator">Oscillator</option>
-                <option value="gain">Gain</option>
-                <option value="biquad-filter">Biquad Filter</option>
+                ${this.filteredOptions()}
             </select>
         </div>`,
         html`<div class="panel">

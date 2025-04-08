@@ -1,12 +1,10 @@
 import { css } from "lit";
 
 export const newNodeStyles = css`
-    :host {
-        flex: 1 1 0px;
-        border: 1px solid white;
-    }
-
     .new-node-container {
+        width: 100%;
+        height: 160px;
+        border: 1px solid #ffffff;
         cursor: pointer;
         position: relative;
         overflow: hidden;
@@ -23,10 +21,6 @@ export const newNodeStyles = css`
             width: 100%;
             height: 100%;
             flex-shrink: 0;
-        }
-
-        .node-select-type {
-            width: 50px;
         }
     }
 `;

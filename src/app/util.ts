@@ -34,10 +34,8 @@ export function updateAudioParamValue<T extends AudioNode>(
                     node[propKey].setValueAtTime(value, context.currentTime);
                     node[propKey].value = value;
                 } else {
-                    console.error(`Invalid value for AudioParam ${value}`);
+                    console.warn(`Invalid value for AudioParam ${value}`);
                 }
-            } else {
-                node[propKey] = value as any;
             }
         } else {
             console.warn(`Property ${property} not found on node`);

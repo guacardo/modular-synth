@@ -21,7 +21,6 @@ export class GainNodeView extends LitElement {
     }
 
     render() {
-        console.log(this.graphNode);
         return html`<div class="node">
             <p>Gain ${(this.graphNode.node as GainNode).gain.value.toFixed(3)}</p>
             <input
