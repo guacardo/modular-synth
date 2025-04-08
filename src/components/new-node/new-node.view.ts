@@ -31,7 +31,10 @@ export class NewNodeView extends LitElement {
     }
 
     private handleNodeChange(e: Event) {
+        const selectElement = e.target as HTMLSelectElement;
         this.addNode((e.target as HTMLSelectElement).value as AudioNodeType);
+        selectElement.selectedIndex = 0;
+        this.currentPanel = 0;
     }
 
     /*

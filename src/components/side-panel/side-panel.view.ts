@@ -14,6 +14,7 @@ export class SidePanelView extends LitElement {
     @property({ type: String, attribute: true }) orientation: Orientation;
     @property({ attribute: false }) addNode: (type: AudioNodeType) => void;
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
+    @property({ attribute: false }) connectToContext: () => void;
 
     connectedCallback(): void {
         super.connectedCallback();
@@ -21,11 +22,23 @@ export class SidePanelView extends LitElement {
 
     private renderNodeView(graphNode: AudioGraphNode): TemplateResult {
         if (graphNode.node instanceof GainNode) {
-            return html`<gain-node-view .graphNode=${graphNode} .updateNode=${this.updateNode}></gain-node-view>`;
+            return html`<gain-node-view
+                .graphNode=${graphNode}
+                .updateNode=${this.updateNode}
+                .connectToContext=${this.connectToContext}
+            ></gain-node-view>`;
         } else if (graphNode.node instanceof OscillatorNode) {
-            return html`<oscillator-node-view .graphNode=${graphNode} .updateNode=${this.updateNode}></oscillator-node-view>`;
+            return html`<oscillator-node-view
+                .graphNode=${graphNode}
+                .updateNode=${this.updateNode}
+                .connectToContext=${this.connectToContext}
+            ></oscillator-node-view>`;
         } else if (graphNode instanceof BiquadFilterNode) {
-            return html`<biquad-filter-node-view .node=${graphNode.node} .updateNode=${this.updateNode}></biquad-filter-node-view>`;
+            return html`<biquad-filter-node-view
+                .node=${graphNode.node}
+                .updateNode=${this.updateNode}
+                .connectToContext=${this.connectToContext}
+            ></biquad-filter-node-view>`;
         } else {
             return html`<p>ERroR: nOT a n Audio Noooode</p>`;
         }

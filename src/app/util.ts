@@ -24,6 +24,7 @@ export function updateAudioParamValue<T extends AudioNode>(
     }
 
     for (const [property, value] of Object.entries(properties)) {
+        console.log(property, value);
         if (property in node) {
             const propKey = property as keyof T;
             if (node[propKey] instanceof AudioParam) {
@@ -34,8 +35,10 @@ export function updateAudioParamValue<T extends AudioNode>(
                     node[propKey].setValueAtTime(value, context.currentTime);
                     node[propKey].value = value;
                 } else {
-                    console.warn(`Invalid value for AudioParam ${value}`);
+                    console.error(`Invalid value for AudioParam ${value}`);
                 }
+            } else if (property === "type" && value) {
+                node[propKey] = value as any;
             }
         } else {
             console.warn(`Property ${property} not found on node`);

@@ -29,23 +29,34 @@ export class AppView extends LitElement {
     readonly handleAddNode = (type: AudioNodeType) => {
         switch (type) {
             case "oscillator":
-                this.AUDIO_GRAPH = [
-                    ...this.AUDIO_GRAPH,
-                    new AudioGraphNode((this.AUDIO_GRAPH.length + 1).toString(), [0, 0], this.audioContext.createOscillator()),
-                ];
+                const newOscillator = new AudioGraphNode(
+                    (this.AUDIO_GRAPH.length + 1).toString(),
+                    [0, 0],
+                    this.audioContext.createOscillator()
+                );
+                this.AUDIO_GRAPH = [...this.AUDIO_GRAPH, newOscillator];
                 break;
             case "gain":
-                this.AUDIO_GRAPH = [
-                    ...this.AUDIO_GRAPH,
-                    new AudioGraphNode((this.AUDIO_GRAPH.length + 1).toString(), [0, 0], this.audioContext.createGain()),
-                ];
+                const newGain = new AudioGraphNode((this.AUDIO_GRAPH.length + 1).toString(), [0, 0], this.audioContext.createGain());
+                this.AUDIO_GRAPH[this.AUDIO_GRAPH.length - 1].node?.connect(newGain.node as GainNode);
+                this.AUDIO_GRAPH = [...this.AUDIO_GRAPH, newGain];
                 break;
             case "biquad-filter":
-                this.AUDIO_GRAPH = [
-                    ...this.AUDIO_GRAPH,
-                    new AudioGraphNode((this.AUDIO_GRAPH.length + 1).toString(), [0, 0], this.audioContext.createBiquadFilter()),
-                ];
+                const newBiquadFilter = new AudioGraphNode(
+                    (this.AUDIO_GRAPH.length + 1).toString(),
+                    [0, 0],
+                    this.audioContext.createBiquadFilter()
+                );
+                this.AUDIO_GRAPH[this.AUDIO_GRAPH.length - 1].node?.connect(newBiquadFilter.node as BiquadFilterNode);
+                this.AUDIO_GRAPH = [...this.AUDIO_GRAPH, newBiquadFilter];
                 break;
+        }
+    };
+
+    readonly handleConnectToContext = () => {
+        console.log("Connecting graph to context");
+        if (this.AUDIO_GRAPH.length > 0) {
+            this.AUDIO_GRAPH[this.AUDIO_GRAPH.length - 1].node?.connect(this.audioContext.destination);
         }
     };
 
@@ -62,12 +73,14 @@ export class AppView extends LitElement {
                 .audioGraph=${this.AUDIO_GRAPH}
                 .addNode=${this.handleAddNode}
                 .updateNode=${this.handleUpdateNode}
+                .connectToContext=${this.handleConnectToContext}
             ></side-panel-view>
             <side-panel-view
                 orientation="right"
                 .audioGraph=${this.AUDIO_GRAPH}
                 .addNode=${this.handleAddNode}
                 .updateNode=${this.handleUpdateNode}
+                .connectToContext=${this.handleConnectToContext}
             ></side-panel-view>
         </div>`;
     }
