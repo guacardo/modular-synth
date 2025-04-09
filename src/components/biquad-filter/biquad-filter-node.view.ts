@@ -23,10 +23,10 @@ export class BiquadFilterNodeView extends LitElement {
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
     @property({ attribute: false }) connectToContext: () => void;
 
-    private updateType(value: BiquadFilterType) {
+    private updateBiquadFilterParam<T extends keyof BiquadFilterNode>(param: T, value: BiquadFilterType | number) {
         const node = updateAudioParamValue(
             this.graphNode.node as BiquadFilterNode,
-            { type: value } as Partial<Record<keyof BiquadFilterNode, string>>,
+            { [param]: value } as Partial<Record<keyof BiquadFilterNode, string>>,
             this.graphNode.node?.context as AudioContext
         );
         const newAudioGraphNode = { ...this.graphNode, node };
@@ -38,7 +38,7 @@ export class BiquadFilterNodeView extends LitElement {
             <select
                 .value=${(this.graphNode.node as BiquadFilterNode).type}
                 @change=${(e: Event) => {
-                    this.updateType((e.target as HTMLSelectElement).value as BiquadFilterType);
+                    this.updateBiquadFilterParam("type", (e.target as HTMLSelectElement).value as BiquadFilterType);
                 }}
             >
                 ${settableBiquadFilterTypes.map((type) => {
@@ -51,9 +51,13 @@ export class BiquadFilterNodeView extends LitElement {
                 <label>Frequency:</label>
                 <input
                     type="range"
-                    max="10000"
+                    min="10"
+                    max="22050"
+                    default="440"
+                    step="1"
+                    .value="${(this.graphNode.node as BiquadFilterNode).frequency.value.toString()}"
                     @input=${(e: Event) => {
-                        console.log(e);
+                        this.updateBiquadFilterParam("frequency", (e.target as HTMLInputElement).valueAsNumber);
                     }}
                 />
             </div>
@@ -61,8 +65,13 @@ export class BiquadFilterNodeView extends LitElement {
                 <label>Detune:</label>
                 <input
                     type="range"
+                    min="-4800"
+                    max="4800"
+                    default="0"
+                    step="1"
+                    .value="${(this.graphNode.node as BiquadFilterNode).detune.value.toString()}"
                     @input=${(e: Event) => {
-                        console.log(e);
+                        this.updateBiquadFilterParam("detune", (e.target as HTMLInputElement).valueAsNumber);
                     }}
                 />
             </div>
@@ -70,8 +79,13 @@ export class BiquadFilterNodeView extends LitElement {
                 <label>Q:</label>
                 <input
                     type="range"
+                    min="0.0001"
+                    max="1000"
+                    default="1"
+                    step="1"
+                    .value="${(this.graphNode.node as BiquadFilterNode).Q.value.toString()}"
                     @input=${(e: Event) => {
-                        console.log(e);
+                        this.updateBiquadFilterParam("Q", (e.target as HTMLInputElement).valueAsNumber);
                     }}
                 />
             </div>
@@ -79,11 +93,16 @@ export class BiquadFilterNodeView extends LitElement {
                 <label>Gain:</label>
                 <input
                     type="range"
+                    min="0.001"
+                    max="1.0"
+                    step="0.001"
+                    .value="${(this.graphNode.node as BiquadFilterNode).gain.value.toString()}"
                     @input=${(e: Event) => {
-                        console.log(e);
+                        this.updateBiquadFilterParam("gain", (e.target as HTMLInputElement).valueAsNumber);
                     }}
                 />
             </div>
+            <button type="button" @click=${this.connectToContext}>Connect to Context</button>
         </div>`;
     }
 }

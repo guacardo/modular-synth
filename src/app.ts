@@ -45,7 +45,7 @@ export class AppView extends LitElement {
                     this.audioContext.createGain()
                 );
                 nodeToConnect = this.AUDIO_GRAPH.find((n) => n.position[0] === this.currRow - 1 && n.position[1] === this.currCol);
-                nodeToConnect?.node?.connect(newGain.node as GainNode);
+                nodeToConnect?.node.connect(newGain.node as GainNode);
                 this.AUDIO_GRAPH = [...this.AUDIO_GRAPH, newGain];
                 break;
             case "biquad-filter":
@@ -55,7 +55,7 @@ export class AppView extends LitElement {
                     this.audioContext.createBiquadFilter()
                 );
                 nodeToConnect = this.AUDIO_GRAPH.find((n) => n.position[0] === this.currRow - 1 && n.position[1] === this.currCol);
-                nodeToConnect?.node?.connect(newBiquadFilter.node as BiquadFilterNode);
+                nodeToConnect?.node.connect(newBiquadFilter.node as BiquadFilterNode);
                 this.AUDIO_GRAPH = [...this.AUDIO_GRAPH, newBiquadFilter];
                 break;
         }
@@ -64,7 +64,7 @@ export class AppView extends LitElement {
     readonly handleConnectToContext = () => {
         console.log("Connecting graph to context");
         if (this.AUDIO_GRAPH.length > 0) {
-            this.AUDIO_GRAPH[this.AUDIO_GRAPH.length - 1].node?.connect(this.audioContext.destination);
+            this.AUDIO_GRAPH[this.AUDIO_GRAPH.length - 1].node.connect(this.audioContext.destination);
         }
     };
 

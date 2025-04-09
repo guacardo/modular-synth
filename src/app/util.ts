@@ -4,27 +4,17 @@ export type AudioNodeProperties = Partial<Record<keyof AudioNode, number | strin
 export class AudioGraphNode {
     id: string;
     position: Position;
-    node?: AudioNode;
+    node: AudioNode;
 
-    constructor(id: string, position: Position, node?: AudioNode) {
+    constructor(id: string, position: Position, node: AudioNode) {
         this.id = id;
         this.position = position;
         this.node = node;
     }
 }
 
-export function updateAudioParamValue<T extends AudioNode>(
-    node: T,
-    properties: AudioNodeProperties,
-    context: AudioContext
-): AudioNode | undefined {
-    if (!node || typeof node !== "object" || !properties) {
-        console.error("Invalid node or properties");
-        return;
-    }
-
+export function updateAudioParamValue<T extends AudioNode>(node: T, properties: AudioNodeProperties, context: AudioContext): AudioNode {
     for (const [property, value] of Object.entries(properties)) {
-        console.log(property, value);
         if (property in node) {
             const propKey = property as keyof T;
             if (node[propKey] instanceof AudioParam) {

@@ -20,7 +20,7 @@ export class OscillatorNodeView extends LitElement {
         const node = updateAudioParamValue(
             this.graphNode.node as OscillatorNode,
             { frequency: value } as Partial<Record<keyof OscillatorNode, number>>,
-            this.graphNode.node?.context as AudioContext
+            this.graphNode.node.context as AudioContext
         );
         const newAudioGraphNode = { ...this.graphNode, node };
         this.updateNode(newAudioGraphNode);
@@ -30,7 +30,7 @@ export class OscillatorNodeView extends LitElement {
         const node = updateAudioParamValue(
             this.graphNode.node as OscillatorNode,
             { type: value } as Partial<Record<keyof OscillatorNode, string>>,
-            this.graphNode.node?.context as AudioContext
+            this.graphNode.node.context as AudioContext
         );
         const newAudioGraphNode = { ...this.graphNode, node };
         this.updateNode(newAudioGraphNode);
