@@ -7,17 +7,16 @@ export const graphNodeStyles = css`
         padding: 8px 16px;
         background-color: #333;
         cursor: pointer;
-        position: absolute;
-        z-index: 2;
-        top: 0;
-        left: 0;
     }
 
     .source {
         border: 1px solid #98fb98;
     }
 
-    .connectedContext {
-        border: 1px solid red;
+    .slider-container {
+        width: 100%;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
     }
 `;
