@@ -2,6 +2,7 @@ import { LitElement, TemplateResult, html } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { newNodeStyles } from "./new-node.styles";
 import { AudioGraphNode, AudioNodeType, Position } from "../../app/util";
+import { classMap } from "lit/directives/class-map.js";
 
 @customElement("new-node-view")
 export class NewNodeView extends LitElement {
@@ -13,6 +14,7 @@ export class NewNodeView extends LitElement {
     @property({ type: Array }) audioGraph: AudioGraphNode[];
     @property({ type: Array }) position: Position;
     @property() addNode: (type: AudioNodeType) => void;
+    @property({ type: Boolean }) red: boolean = false;
 
     connectedCallback(): void {
         super.connectedCallback();
@@ -56,7 +58,7 @@ export class NewNodeView extends LitElement {
     }
 
     private panels = (): TemplateResult[] => [
-        html`<div class="panel" @click=${this.moveToNextPanel}><button type="button">+</button></div>`,
+        html`<div class="panel empty-node-container" @click=${this.moveToNextPanel}><button>+</button></div>`,
         html`<div class="panel">
             <h6>Node Type</h6>
             <button @click=${this.moveToPrevPanel}>x</button>

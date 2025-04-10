@@ -7,11 +7,13 @@ import { appStyles } from "./styles/app-styles";
 import { SidePanelView } from "./components/side-panel/side-panel.view";
 import { NewNodeView } from "./components/new-node/new-node.view";
 import { AudioGraphNode, AudioNodeType } from "./app/util";
+import "./components/audio-graph-view/audio-graph-view.view";
 import "./components/biquad-filter/biquad-filter-node.view";
 import "./components/gain-node/gain-node.view";
 import "./components/oscillator-node/oscillator-node.view";
 import "./components/new-node/new-node.view";
 import "./components/side-panel/side-panel.view";
+import { AudioGraphView } from "./components/audio-graph-view/audio-graph-view.view";
 
 @customElement("app-view")
 export class AppView extends LitElement {
@@ -74,15 +76,7 @@ export class AppView extends LitElement {
 
     render() {
         return html` <div class="app">
-            <button @click=${() => console.log(this.AUDIO_GRAPH)}>Log Audio Graph</button>
-            <audio-graph-view .audioGraph=${this.AUDIO_GRAPH}></audio-graph-view>
-            <side-panel-view
-                orientation="left"
-                .audioGraph=${this.AUDIO_GRAPH}
-                .addNode=${this.handleAddNode}
-                .updateNode=${this.handleUpdateNode}
-                .connectToContext=${this.handleConnectToContext}
-            ></side-panel-view>
+            <audio-graph-view .audioGraph=${this.AUDIO_GRAPH} .addNode=${this.handleAddNode}></audio-graph-view>
             <side-panel-view
                 orientation="right"
                 .audioGraph=${this.AUDIO_GRAPH}
@@ -97,6 +91,7 @@ export class AppView extends LitElement {
 declare global {
     interface HTMLElementTagNameMap {
         "app-view": AppView;
+        "audio-graph-view": AudioGraphView;
         "biquad-filter-node-view": BiquadFilterNodeView;
         "gain-node-view": GainNodeView;
         "new-node-view": NewNodeView;

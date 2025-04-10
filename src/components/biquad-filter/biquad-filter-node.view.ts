@@ -102,7 +102,6 @@ export class BiquadFilterNodeView extends LitElement {
                     }}
                 />
             </div>
-            <button type="button" @click=${this.connectToContext}>Connect to Context</button>
         </div>`;
     }
 }

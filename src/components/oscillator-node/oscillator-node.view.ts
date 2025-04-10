@@ -78,7 +78,6 @@ export class OscillatorNodeView extends LitElement {
             </select>
             <button type="button" @click=${this.startOscillator}>Start</button>
             <button type="button" @click=${this.stopOscillator}>Stop</button>
-            <button type="button" @click=${this.connectToContext}>Connect to Context</button>
         </div>`;
     }
 }

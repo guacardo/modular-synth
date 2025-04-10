@@ -8,6 +8,15 @@ export const sidePanelStyles = css`
         width: 20vw;
         background-color: #333;
         overflow-y: scroll;
+        padding: 16px;
+
+        /* Hide scrollbars */
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE and Edge */
+    }
+
+    .side-panel-container::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, and Opera */
     }
 
     .left {
