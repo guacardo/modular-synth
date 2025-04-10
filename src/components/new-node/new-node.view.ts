@@ -2,7 +2,6 @@ import { LitElement, TemplateResult, html } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { newNodeStyles } from "./new-node.styles";
 import { AudioGraphNode, AudioNodeType, Position } from "../../app/util";
-import { classMap } from "lit/directives/class-map.js";
 
 @customElement("new-node-view")
 export class NewNodeView extends LitElement {
