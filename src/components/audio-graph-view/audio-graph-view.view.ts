@@ -12,7 +12,18 @@ export class AudioGraphView extends LitElement {
 
     render() {
         return html`<div class="audio-graph-container">
-            <new-node-view .addNode=${this.addNode} .audioGraph=${this.audioGraph} .gridStyle=${true}></new-node-view>
+            <div class="nodes-container audiograph-source-nodes">
+                <h3>Source nodes</h3>
+                <new-node-view .addNode=${this.addNode} .audioGraph=${this.audioGraph} .gridStyle=${true}></new-node-view>
+            </div>
+            <div class="nodes-container audiograph-processor-nodes">
+                <h3>Processor nodes</h3>
+                <new-node-view .addNode=${this.addNode} .audioGraph=${this.audioGraph} .gridStyle=${true}></new-node-view>
+            </div>
+            <div class="nodes-container audiograph-destination-nodes">
+                <h3>Destination nodes</h3>
+                <new-node-view .addNode=${this.addNode} .audioGraph=${this.audioGraph} .gridStyle=${true}></new-node-view>
+            </div>
         </div>`;
     }
 }

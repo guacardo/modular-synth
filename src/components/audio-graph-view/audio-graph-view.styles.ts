@@ -21,4 +21,14 @@ export const audioGraphStyles = css`
         border: 1px solid #aaa;
         margin: auto;
     }
+
+    .nodes-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid #aaa;
+        margin: 10px;
+        padding: 10px;
+    }
 `;

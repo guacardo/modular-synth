@@ -1,7 +1,7 @@
 import { LitElement, html } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
-import { graphNodeStyles } from "../../styles/graph-node-styles";
-import { AudioGraphNode, updateAudioParamValue } from "../../app/util";
+import { graphNodeStyles } from "../../../../styles/graph-node-styles";
+import { AudioGraphNode, updateAudioParamValue } from "../../../../app/util";
 import { classMap } from "lit/directives/class-map.js";
 
 export const settableOscillatorTypes: readonly OscillatorType[] = ["sawtooth", "sine", "square", "triangle"] as const;

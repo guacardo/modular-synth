@@ -1,8 +1,8 @@
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { graphNodeStyles } from "../../styles/graph-node-styles";
+import { graphNodeStyles } from "../../../../styles/graph-node-styles";
 import { classMap } from "lit/directives/class-map.js";
-import { AudioGraphNode, updateAudioParamValue } from "../../app/util";
+import { AudioGraphNode, updateAudioParamValue } from "../../../../app/util";
 
 const settableBiquadFilterTypes: readonly BiquadFilterType[] = [
     "allpass",

@@ -1,10 +1,14 @@
 export type Position = [number, number];
 export type AudioNodeType = "oscillator" | "gain" | "biquad-filter";
+export type AudioSourceNode = Extract<AudioNodeType, "oscillator">;
+export type AudioProcessorNode = Extract<AudioNodeType, "gain" | "biquad-filter">;
 export type AudioNodeProperties = Partial<Record<keyof AudioNode, number | string | [number, number]>>;
 export class AudioGraphNode {
     id: string;
     position: Position;
     node: AudioNode;
+    inputIds: string[] = [];
+    outputIds: string[] = [];
 
     constructor(id: string, position: Position, node: AudioNode) {
         this.id = id;
