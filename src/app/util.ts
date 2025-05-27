@@ -10,10 +10,10 @@ export class AudioGraphNode {
     inputIds: string[] = [];
     outputIds: string[] = [];
 
-    constructor(id: string, position: Position, node: AudioNode) {
-        this.id = id;
-        this.position = position;
+    constructor(node: AudioNode, position: Position, id: string) {
         this.node = node;
+        this.position = position;
+        this.id = id;
     }
 }
 

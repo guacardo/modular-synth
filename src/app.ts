@@ -29,38 +29,17 @@ export class AppView extends LitElement {
         super.connectedCallback();
     }
 
+    readonly nodeFactory: Record<AudioNodeType, () => AudioNode> = {
+        oscillator: () => this.audioContext.createOscillator(),
+        gain: () => this.audioContext.createGain(),
+        "biquad-filter": () => this.audioContext.createBiquadFilter(),
+    };
+
     readonly handleAddNode = (type: AudioNodeType) => {
-        let nodeToConnect: AudioGraphNode | undefined;
-        switch (type) {
-            case "oscillator":
-                const newOscillator = new AudioGraphNode(
-                    (this.AUDIO_GRAPH.length + 1).toString(),
-                    [++this.currRow, this.currCol],
-                    this.audioContext.createOscillator()
-                );
-                this.AUDIO_GRAPH = [...this.AUDIO_GRAPH, newOscillator];
-                break;
-            case "gain":
-                const newGain = new AudioGraphNode(
-                    (this.AUDIO_GRAPH.length + 1).toString(),
-                    [++this.currRow, this.currCol],
-                    this.audioContext.createGain()
-                );
-                nodeToConnect = this.AUDIO_GRAPH.find((n) => n.position[0] === this.currRow - 1 && n.position[1] === this.currCol);
-                nodeToConnect?.node.connect(newGain.node as GainNode);
-                this.AUDIO_GRAPH = [...this.AUDIO_GRAPH, newGain];
-                break;
-            case "biquad-filter":
-                const newBiquadFilter = new AudioGraphNode(
-                    (this.AUDIO_GRAPH.length + 1).toString(),
-                    [++this.currRow, this.currCol],
-                    this.audioContext.createBiquadFilter()
-                );
-                nodeToConnect = this.AUDIO_GRAPH.find((n) => n.position[0] === this.currRow - 1 && n.position[1] === this.currCol);
-                nodeToConnect?.node.connect(newBiquadFilter.node as BiquadFilterNode);
-                this.AUDIO_GRAPH = [...this.AUDIO_GRAPH, newBiquadFilter];
-                break;
-        }
+        this.AUDIO_GRAPH = [
+            ...this.AUDIO_GRAPH,
+            new AudioGraphNode(this.nodeFactory[type](), [++this.currRow, this.currCol], (this.AUDIO_GRAPH.length + 1).toString()),
+        ];
     };
 
     readonly handleConnectToContext = () => {
