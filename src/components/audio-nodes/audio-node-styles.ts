@@ -5,12 +5,8 @@ export const audioNodeStyles = css`
         border: 1px solid #ddd;
         border-radius: 4px;
         padding: 8px 16px;
-        background-color: #333;
+        background-color: #555;
         cursor: pointer;
-    }
-
-    .source {
-        border: 1px solid #98fb98;
     }
 
     .slider-container {

@@ -7,18 +7,20 @@ export const audioGraphStyles = css`
         height: 100vh;
         justify-content: center;
         align-items: center;
-        background-color: #222;
+        background-color: var(--elevation-1);
     }
 
     .audio-graph-container {
         display: flex;
         flex-direction: row;
+        gap: calc(2 * var(--base-spacing));
+        padding: calc(2 * var(--base-spacing));
         width: 60vw;
         height: 70vh;
-        background-color: #333;
         overflow: hidden;
-        border: 1px solid #aaa;
         margin: auto;
+        background-color: var(--elevation-2);
+        border: 1px solid var(--border-0);
     }
 
     .nodes-container {
@@ -26,8 +28,8 @@ export const audioGraphStyles = css`
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        border: 1px solid #aaa;
-        margin: 10px;
-        padding: 10px;
+        background-color: var(--elevation-3);
+        border: 1px solid var(--border-0);
+        padding: calc(2 * var(--base-spacing));
     }
 `;

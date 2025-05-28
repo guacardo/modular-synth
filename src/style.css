@@ -1,6 +1,21 @@
+:root {
+    --elevation-0: #000000;
+    --elevation-1: #111;
+    --elevation-2: #222;
+    --elevation-3: #333;
+    --elevation-4: #444;
+
+    --text-primary: #aaa;
+
+    --border-0: #79a267;
+
+    --base-spacing: 8px;
+    --base-radius: 4px;
+}
+
 body {
-    background-color: #333;
-    color: #ccc;
+    background-color: var(--elevation-0);
+    color: var(--text-primary);
     width: 100vw;
     height: 100vw;
     overflow: hidden;

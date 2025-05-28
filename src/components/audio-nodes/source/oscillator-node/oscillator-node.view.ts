@@ -61,16 +61,18 @@ export class OscillatorNodeView extends LitElement {
         const audioNode = this.graphNode.node as OscillatorNode;
         return html`<div class=${classMap({ node: true, running: this.running })}>
             <h2>oscillator</h2>
-            <h3>Frequency: ${audioNode.frequency.value.toString()}</h3>
-            <input
-                type="range"
-                min="0"
-                max="2000"
-                .value="${(this.graphNode.node as OscillatorNode).frequency.value.toString()}"
-                @input=${(e: Event) => {
-                    this.updateFrequency((e.target as HTMLInputElement).valueAsNumber);
-                }}
-            />
+            <div class="slider-container">
+                <label>Frequency: ${audioNode.frequency.value.toString()}</label>
+                <input
+                    type="range"
+                    min="0"
+                    max="2000"
+                    .value="${(this.graphNode.node as OscillatorNode).frequency.value.toString()}"
+                    @input=${(e: Event) => {
+                        this.updateFrequency((e.target as HTMLInputElement).valueAsNumber);
+                    }}
+                />
+            </div>
             <select
                 .value=${(this.graphNode.node as OscillatorNode).type}
                 @change=${(e: Event) => {

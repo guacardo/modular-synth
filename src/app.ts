@@ -13,7 +13,7 @@ import "./components/audio-nodes/processing/gain-node/gain-node.view";
 import "./components/audio-nodes/source/oscillator-node/oscillator-node.view";
 import "./components/new-node/new-node.view";
 import "./components/side-panel/side-panel.view";
-import "./components/audio-nodes/destination/audio-destination-node.view";
+import "./components/audio-nodes/destination/audio-destination-node/audio-destination-node.view";
 import { AudioGraphView } from "./components/audio-graph-view/audio-graph-view.view";
 
 @customElement("app-view")
@@ -54,7 +54,7 @@ export class AppView extends LitElement {
 
     render() {
         return html` <div class="app">
-            <button @click=${this.log}>Log State</button>
+            <button class="button" @click=${this.log}>Log State</button>
             <audio-graph-view
                 .audioGraph=${this.AUDIO_GRAPH}
                 .addNode=${this.handleAddNode}
