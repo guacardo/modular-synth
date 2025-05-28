@@ -1,3 +1,6 @@
+// =====================
+// Types & Type Aliases
+// =====================
 type SafeExtract<T, U extends T> = U;
 
 export type Position = [number, number];
@@ -7,12 +10,30 @@ export type AudioNodeType = "oscillator" | "gain" | "biquad-filter" | "audio-des
 type AudioProcessorNode = SafeExtract<AudioNodeType, "biquad-filter" | "gain">;
 type AudioSourceNode = SafeExtract<AudioNodeType, "oscillator">;
 type AudioDestinationNode = SafeExtract<AudioNodeType, "audio-destination">;
+
+// =====================
+// Audio Node Constants
+// =====================
 export const AUDIO_PROCESSOR_NODES: AudioProcessorNode[] = ["gain", "biquad-filter"] as const;
 export const AUDIO_SOURCE_NODES: AudioSourceNode[] = ["oscillator"] as const;
 export const AUDIO_DESTINATION_NODES: AudioDestinationNode[] = ["audio-destination"] as const;
 
+// =====================
+// Audio Context & Factory
+// =====================
+// TODO: Lit will not update if properties update, can only use methods.
 export const AUDIO_CONTEXT = new AudioContext();
 
+export const nodeFactory: Record<AudioNodeType, () => AudioNode> = {
+    oscillator: () => AUDIO_CONTEXT.createOscillator(),
+    gain: () => AUDIO_CONTEXT.createGain(),
+    "biquad-filter": () => AUDIO_CONTEXT.createBiquadFilter(),
+    "audio-destination": () => AUDIO_CONTEXT.destination,
+};
+
+// =====================
+// AudioGraphNode Class
+// =====================
 export class AudioGraphNode {
     id: string;
     position: Position;
@@ -29,6 +50,10 @@ export class AudioGraphNode {
     }
 }
 
+// =====================
+// Utility Functions
+// =====================
+// TYPE GUARDS
 export function isAudioProcessorNode(type: AudioNodeType): type is AudioProcessorNode {
     return (AUDIO_PROCESSOR_NODES as readonly string[]).includes(type);
 }
@@ -41,13 +66,7 @@ export function isAudioDestinationNode(type: AudioNodeType): type is AudioDestin
     return (AUDIO_DESTINATION_NODES as readonly string[]).includes(type);
 }
 
-export const nodeFactory: Record<AudioNodeType, () => AudioNode> = {
-    oscillator: () => AUDIO_CONTEXT.createOscillator(),
-    gain: () => AUDIO_CONTEXT.createGain(),
-    "biquad-filter": () => AUDIO_CONTEXT.createBiquadFilter(),
-    "audio-destination": () => AUDIO_CONTEXT.destination,
-};
-
+// UPDATE AUDIO PARAMS
 export function updateAudioParamValue<T extends AudioNode>(node: T, properties: AudioNodeProperties): AudioNode {
     for (const [property, value] of Object.entries(properties)) {
         if (property in node) {

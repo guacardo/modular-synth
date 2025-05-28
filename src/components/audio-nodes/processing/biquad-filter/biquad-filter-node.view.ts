@@ -1,6 +1,6 @@
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { graphNodeStyles } from "../../../../styles/graph-node-styles";
+import { audioNodeStyles } from "../../audio-node-styles";
 import { classMap } from "lit/directives/class-map.js";
 import { AudioGraphNode, updateAudioParamValue } from "../../../../app/util";
 
@@ -17,7 +17,7 @@ const settableBiquadFilterTypes: readonly BiquadFilterType[] = [
 
 @customElement("biquad-filter-node-view")
 export class BiquadFilterNodeView extends LitElement {
-    static styles = [graphNodeStyles];
+    static styles = [audioNodeStyles];
 
     // TODO: can graphNode be the specific type BiquadFilterNode? readonly?
     @property({ attribute: false }) graphNode: AudioGraphNode;
@@ -35,6 +35,7 @@ export class BiquadFilterNodeView extends LitElement {
 
     render() {
         return html`<div class=${classMap({ node: true })}>
+            <h2>Biquad Filter</h2>
             <select
                 .value=${(this.graphNode.node as BiquadFilterNode).type}
                 @change=${(e: Event) => {

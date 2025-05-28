@@ -1,11 +1,11 @@
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { graphNodeStyles } from "../../../../styles/graph-node-styles";
+import { audioNodeStyles } from "../../audio-node-styles";
 import { AudioGraphNode, updateAudioParamValue } from "../../../../app/util";
 
 @customElement("gain-node-view")
 export class GainNodeView extends LitElement {
-    static styles = [graphNodeStyles];
+    static styles = [audioNodeStyles];
 
     // TODO: can graphNode be the specific type GainNode? readonly?
     @property({ type: Object, attribute: false }) graphNode: AudioGraphNode;
@@ -20,6 +20,7 @@ export class GainNodeView extends LitElement {
 
     render() {
         return html`<div class="node">
+            <h2>gain</h2>
             <p>Gain ${(this.graphNode.node as GainNode).gain.value.toFixed(3)}</p>
             <input
                 type="range"

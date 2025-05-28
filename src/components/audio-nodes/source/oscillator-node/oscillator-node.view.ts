@@ -1,6 +1,6 @@
 import { LitElement, html } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
-import { graphNodeStyles } from "../../../../styles/graph-node-styles";
+import { audioNodeStyles } from "../../audio-node-styles";
 import { AudioGraphNode, updateAudioParamValue } from "../../../../app/util";
 import { classMap } from "lit/directives/class-map.js";
 
@@ -8,7 +8,7 @@ export const settableOscillatorTypes: readonly OscillatorType[] = ["sawtooth", "
 
 @customElement("oscillator-node-view")
 export class OscillatorNodeView extends LitElement {
-    static styles = [graphNodeStyles];
+    static styles = [audioNodeStyles];
 
     // TODO: can graphNode be the specific type OscillatorNode? readonly?
     @property({ type: Object, attribute: false }) graphNode: AudioGraphNode;
@@ -53,11 +53,15 @@ export class OscillatorNodeView extends LitElement {
         }
     }
 
+    private enableConnectState() {
+        console.log("enable connect state");
+    }
+
     render() {
         const audioNode = this.graphNode.node as OscillatorNode;
         return html`<div class=${classMap({ node: true, running: this.running })}>
-            <h1>oscillator</h1>
-            <h2>Frequency: ${audioNode.frequency.value.toString()}</h2>
+            <h2>oscillator</h2>
+            <h3>Frequency: ${audioNode.frequency.value.toString()}</h3>
             <input
                 type="range"
                 min="0"
@@ -79,6 +83,7 @@ export class OscillatorNodeView extends LitElement {
             </select>
             <button type="button" @click=${this.startOscillator}>Start</button>
             <button type="button" @click=${this.stopOscillator}>Stop</button>
+            <button type="button" @click=${this.enableConnectState}>Connect</button>
         </div>`;
     }
 }

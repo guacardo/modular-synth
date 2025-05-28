@@ -38,7 +38,6 @@ export const newNodeStyles = css`
                 background-color: transparent;
                 border: none;
                 color: rgba(255, 255, 255, 0.5);
-                font-size: 2rem;
                 font-weight: 100;
             }
 

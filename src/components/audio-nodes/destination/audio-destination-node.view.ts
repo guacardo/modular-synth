@@ -1,5 +1,6 @@
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
+import { AUDIO_CONTEXT } from "../../../app/util";
 
 @customElement("audio-destination-node-view")
 export class AudioDestinationNodeView extends LitElement {
@@ -10,6 +11,8 @@ export class AudioDestinationNodeView extends LitElement {
                 <h1>Audio Destination</h1>
                 <p>Channel Count: ${this.node.channelCount}</p>
                 <p>Channel Interpretation: ${this.node.channelInterpretation}</p>
+                <p>Base Latency: ${AUDIO_CONTEXT.baseLatency}</p>
+                <p>Output Latency: ${AUDIO_CONTEXT.outputLatency}</p>
             </div>
         `;
     }

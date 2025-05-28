@@ -1,6 +1,6 @@
 import { css } from "lit";
 
-export const graphNodeStyles = css`
+export const audioNodeStyles = css`
     .node {
         border: 1px solid #ddd;
         border-radius: 4px;
