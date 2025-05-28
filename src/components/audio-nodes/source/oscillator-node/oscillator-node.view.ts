@@ -14,6 +14,8 @@ export class OscillatorNodeView extends LitElement {
     @property({ type: Object, attribute: false }) graphNode: AudioGraphNode;
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
     @property({ attribute: false }) connectToContext: () => void;
+    @property({ attribute: false }) enableConnectState: (node?: AudioGraphNode) => void;
+    @property({ attribute: false }) connectNodeSourceId?: string;
 
     @state() private running: boolean;
 
@@ -53,13 +55,19 @@ export class OscillatorNodeView extends LitElement {
         }
     }
 
-    private enableConnectState() {
-        console.log("enable connect state");
+    private handleEnableConnectState() {
+        if (this.connectNodeSourceId === this.graphNode.id) {
+            this.enableConnectState(undefined);
+            return;
+        }
+        this.enableConnectState(this.graphNode);
     }
 
     render() {
         const audioNode = this.graphNode.node as OscillatorNode;
-        return html`<div class=${classMap({ node: true, running: this.running })}>
+        return html`<div
+            class=${classMap({ node: true, running: this.running, connectSource: this.graphNode.id === this.connectNodeSourceId })}
+        >
             <h2>oscillator</h2>
             <div class="slider-container">
                 <label>Frequency: ${audioNode.frequency.value.toString()}</label>
@@ -85,7 +93,7 @@ export class OscillatorNodeView extends LitElement {
             </select>
             <button type="button" @click=${this.startOscillator}>Start</button>
             <button type="button" @click=${this.stopOscillator}>Stop</button>
-            <button type="button" @click=${this.enableConnectState}>Connect</button>
+            <button type="button" @click=${this.handleEnableConnectState}>Connect</button>
         </div>`;
     }
 }

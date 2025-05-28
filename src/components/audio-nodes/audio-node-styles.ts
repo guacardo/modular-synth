@@ -15,4 +15,8 @@ export const audioNodeStyles = css`
         justify-content: flex-end;
         align-items: center;
     }
+
+    .connectSource {
+        border: 1px solid #f00;
+    }
 `;

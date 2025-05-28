@@ -23,6 +23,7 @@ export class AppView extends LitElement {
     @state() AUDIO_GRAPH: AudioGraphNode[] = [];
     @state() currRow: number = 0;
     @state() currCol: number = 0;
+    @state() connectNodeSourceId: string | undefined = undefined;
 
     connectedCallback(): void {
         super.connectedCallback();
@@ -46,6 +47,10 @@ export class AppView extends LitElement {
         this.AUDIO_GRAPH = this.AUDIO_GRAPH.map((n) => (n.id === node.id ? { ...n, ...node } : n));
     };
 
+    readonly handleEnableConnectState = (node?: AudioGraphNode) => {
+        this.connectNodeSourceId = node ? node.id : undefined;
+    };
+
     private log() {
         console.log("Current Audio Graph:", this.AUDIO_GRAPH);
         console.log("Current Row:", this.currRow, "Current Column:", this.currCol);
@@ -60,6 +65,8 @@ export class AppView extends LitElement {
                 .addNode=${this.handleAddNode}
                 .updateNode=${this.handleUpdateNode}
                 .connectToContext=${this.handleConnectToContext}
+                .enableConnectState=${this.handleEnableConnectState}
+                .connectNodeSourceId=${this.connectNodeSourceId}
             ></audio-graph-view>
             <side-panel-view
                 orientation="right"
@@ -67,6 +74,8 @@ export class AppView extends LitElement {
                 .addNode=${this.handleAddNode}
                 .updateNode=${this.handleUpdateNode}
                 .connectToContext=${this.handleConnectToContext}
+                .enableConnectState=${this.handleEnableConnectState}
+                .connectNodeSourceId=${this.connectNodeSourceId}
             ></side-panel-view>
         </div>`;
     }

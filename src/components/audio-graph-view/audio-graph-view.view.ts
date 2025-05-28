@@ -20,6 +20,8 @@ export class AudioGraphView extends LitElement {
     @property({ attribute: false }) addNode: (type: AudioNodeType) => void;
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
     @property({ attribute: false }) connectToContext: () => void;
+    @property({ attribute: false }) enableConnectState: (node?: AudioGraphNode) => void;
+    @property({ attribute: false }) connectNodeSourceId?: string;
 
     private renderNodeView(graphNode: AudioGraphNode): TemplateResult {
         if (graphNode.node instanceof GainNode) {
@@ -33,6 +35,8 @@ export class AudioGraphView extends LitElement {
                 .graphNode=${graphNode}
                 .updateNode=${this.updateNode}
                 .connectToContext=${this.connectToContext}
+                .enableConnectState=${this.enableConnectState}
+                .connectNodeSourceId=${this.connectNodeSourceId}
             ></oscillator-node-view>`;
         } else if (graphNode.node instanceof BiquadFilterNode) {
             return html`<biquad-filter-node-view
