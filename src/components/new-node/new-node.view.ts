@@ -7,13 +7,13 @@ import { AudioGraphNode, AudioNodeType, Position } from "../../app/util";
 export class NewNodeView extends LitElement {
     static styles = [newNodeStyles];
 
-    @state() private currentPanel = 0;
-    @state() private selectedNodeType = "";
-
     @property({ type: Array }) audioGraph: AudioGraphNode[];
     @property({ type: Array }) position: Position;
+    @property({ type: Array }) options: readonly AudioNodeType[];
     @property() addNode: (type: AudioNodeType) => void;
-    @property({ type: Boolean }) red: boolean = false;
+
+    @state() private currentPanel = 0;
+    @state() private selectedNodeType?: AudioNodeType;
 
     connectedCallback(): void {
         super.connectedCallback();
@@ -38,24 +38,6 @@ export class NewNodeView extends LitElement {
         this.currentPanel = 0;
     }
 
-    /*
-        @description We must start building our audio graph with an audio source node.
-        If we have an audio source node, we can add audio processing nodes.
-        @returns {TemplateResult[]} An array of `<option>` of viable audio node types.
-    */
-    private filteredOptions(): TemplateResult[] {
-        const audioSourceNodes: AudioNodeType[] = ["oscillator"];
-        const audioProcessingNodes: AudioNodeType[] = ["gain", "biquad-filter"];
-        let options: AudioNodeType[] = [];
-        if (this.audioGraph.length) {
-            options = audioProcessingNodes;
-            return options.map((option) => html`<option value=${option}>${option}</option>`);
-        } else {
-            options = audioSourceNodes;
-            return options.map((option) => html`<option value=${option}>${option}</option>`);
-        }
-    }
-
     private panels = (): TemplateResult[] => [
         html`<div class="panel empty-node-container" @click=${this.moveToNextPanel}><button>+</button></div>`,
         html`<div class="panel">
@@ -63,7 +45,9 @@ export class NewNodeView extends LitElement {
             <button @click=${this.moveToPrevPanel}>x</button>
             <select @change=${this.handleNodeChange} class="node-select-type">
                 <option value="" disabled selected>Select Node Type</option>
-                ${this.filteredOptions()}
+                ${this.options.map((option) => {
+                    return html`<option value=${option} ?selected=${this.selectedNodeType === option}>${option}</option>`;
+                })}
             </select>
         </div>`,
         html`<div class="panel">

@@ -10,6 +10,7 @@ export const settableOscillatorTypes: readonly OscillatorType[] = ["sawtooth", "
 export class OscillatorNodeView extends LitElement {
     static styles = [graphNodeStyles];
 
+    // TODO: can graphNode be the specific type OscillatorNode? readonly?
     @property({ type: Object, attribute: false }) graphNode: AudioGraphNode;
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
     @property({ attribute: false }) connectToContext: () => void;
@@ -19,8 +20,7 @@ export class OscillatorNodeView extends LitElement {
     private updateFrequency(value: number) {
         const node = updateAudioParamValue(
             this.graphNode.node as OscillatorNode,
-            { frequency: value } as Partial<Record<keyof OscillatorNode, number>>,
-            this.graphNode.node.context as AudioContext
+            { frequency: value } as Partial<Record<keyof OscillatorNode, number>>
         );
         const newAudioGraphNode = { ...this.graphNode, node };
         this.updateNode(newAudioGraphNode);
@@ -29,8 +29,7 @@ export class OscillatorNodeView extends LitElement {
     private updateType(value: OscillatorType) {
         const node = updateAudioParamValue(
             this.graphNode.node as OscillatorNode,
-            { type: value } as Partial<Record<keyof OscillatorNode, string>>,
-            this.graphNode.node.context as AudioContext
+            { type: value } as Partial<Record<keyof OscillatorNode, string>>
         );
         const newAudioGraphNode = { ...this.graphNode, node };
         this.updateNode(newAudioGraphNode);
@@ -55,8 +54,10 @@ export class OscillatorNodeView extends LitElement {
     }
 
     render() {
+        const audioNode = this.graphNode.node as OscillatorNode;
         return html`<div class=${classMap({ node: true, running: this.running })}>
-            <h6>oscillator</h6>
+            <h1>oscillator</h1>
+            <h2>Frequency: ${audioNode.frequency.value.toString()}</h2>
             <input
                 type="range"
                 min="0"

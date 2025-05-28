@@ -7,16 +7,13 @@ import { AudioGraphNode, updateAudioParamValue } from "../../../../app/util";
 export class GainNodeView extends LitElement {
     static styles = [graphNodeStyles];
 
+    // TODO: can graphNode be the specific type GainNode? readonly?
     @property({ type: Object, attribute: false }) graphNode: AudioGraphNode;
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
     @property({ attribute: false }) connectToContext: () => void;
 
     private updateGain(value: number) {
-        const node = updateAudioParamValue(
-            this.graphNode.node as GainNode,
-            { gain: value } as Partial<Record<keyof GainNode, number>>,
-            this.graphNode.node.context as AudioContext
-        );
+        const node = updateAudioParamValue(this.graphNode.node as GainNode, { gain: value } as Partial<Record<keyof GainNode, number>>);
         const newAudioGraphNode = { ...this.graphNode, node };
         this.updateNode(newAudioGraphNode);
     }

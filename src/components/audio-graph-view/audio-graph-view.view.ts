@@ -1,6 +1,15 @@
-import { LitElement, html } from "lit";
+import { LitElement, TemplateResult, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { AudioGraphNode, AudioNodeType } from "../../app/util";
+import {
+    AUDIO_DESTINATION_NODES,
+    AUDIO_PROCESSOR_NODES,
+    AUDIO_SOURCE_NODES,
+    AudioGraphNode,
+    AudioNodeType,
+    isAudioDestinationNode,
+    isAudioProcessorNode,
+    isAudioSourceNode,
+} from "../../app/util";
 import { audioGraphStyles } from "./audio-graph-view.styles";
 
 @customElement("audio-graph-view")
@@ -9,20 +18,72 @@ export class AudioGraphView extends LitElement {
 
     @property({ type: Array }) audioGraph: AudioGraphNode[];
     @property({ attribute: false }) addNode: (type: AudioNodeType) => void;
+    @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
+    @property({ attribute: false }) connectToContext: () => void;
+
+    private renderNodeView(graphNode: AudioGraphNode): TemplateResult {
+        if (graphNode.node instanceof GainNode) {
+            return html`<gain-node-view
+                .graphNode=${graphNode}
+                .updateNode=${this.updateNode}
+                .connectToContext=${this.connectToContext}
+            ></gain-node-view>`;
+        } else if (graphNode.node instanceof OscillatorNode) {
+            return html`<oscillator-node-view
+                .graphNode=${graphNode}
+                .updateNode=${this.updateNode}
+                .connectToContext=${this.connectToContext}
+            ></oscillator-node-view>`;
+        } else if (graphNode.node instanceof BiquadFilterNode) {
+            return html`<biquad-filter-node-view
+                .graphNode=${graphNode}
+                .updateNode=${this.updateNode}
+                .connectToContext=${this.connectToContext}
+            ></biquad-filter-node-view>`;
+        } else if (graphNode.node instanceof AudioDestinationNode) {
+            return html`<audio-destination-node-view .node=${graphNode.node}></audio-destination-node-view>`;
+        } else {
+            return html`<p>ERroR: nOT a n Audio Noooode</p>`;
+        }
+    }
 
     render() {
         return html`<div class="audio-graph-container">
             <div class="nodes-container audiograph-source-nodes">
                 <h3>Source nodes</h3>
-                <new-node-view .addNode=${this.addNode} .audioGraph=${this.audioGraph} .gridStyle=${true}></new-node-view>
+                <div class="audio-graph-node-container"
+                    >${this.audioGraph.filter((node) => isAudioSourceNode(node.type)).map((node) => this.renderNodeView(node))}</div
+                >
+                <new-node-view
+                    .addNode=${this.addNode}
+                    .audioGraph=${this.audioGraph}
+                    .gridStyle=${true}
+                    .options=${AUDIO_SOURCE_NODES}
+                ></new-node-view>
             </div>
             <div class="nodes-container audiograph-processor-nodes">
                 <h3>Processor nodes</h3>
-                <new-node-view .addNode=${this.addNode} .audioGraph=${this.audioGraph} .gridStyle=${true}></new-node-view>
+                <div class="audio-graph-node-container"
+                    >${this.audioGraph.filter((node) => isAudioProcessorNode(node.type)).map((node) => this.renderNodeView(node))}</div
+                >
+                <new-node-view
+                    .addNode=${this.addNode}
+                    .audioGraph=${this.audioGraph}
+                    .gridStyle=${true}
+                    .options=${AUDIO_PROCESSOR_NODES}
+                ></new-node-view>
             </div>
             <div class="nodes-container audiograph-destination-nodes">
                 <h3>Destination nodes</h3>
-                <new-node-view .addNode=${this.addNode} .audioGraph=${this.audioGraph} .gridStyle=${true}></new-node-view>
+                <div class="audio-graph-node-container"
+                    >${this.audioGraph.filter((node) => isAudioDestinationNode(node.type)).map((node) => this.renderNodeView(node))}</div
+                >
+                <new-node-view
+                    .addNode=${this.addNode}
+                    .audioGraph=${this.audioGraph}
+                    .gridStyle=${true}
+                    .options=${AUDIO_DESTINATION_NODES}
+                ></new-node-view>
             </div>
         </div>`;
     }

@@ -1,32 +1,63 @@
+type SafeExtract<T, U extends T> = U;
+
 export type Position = [number, number];
-export type AudioNodeType = "oscillator" | "gain" | "biquad-filter";
-export type AudioSourceNode = Extract<AudioNodeType, "oscillator">;
-export type AudioProcessorNode = Extract<AudioNodeType, "gain" | "biquad-filter">;
 export type AudioNodeProperties = Partial<Record<keyof AudioNode, number | string | [number, number]>>;
+
+export type AudioNodeType = "oscillator" | "gain" | "biquad-filter" | "audio-destination";
+type AudioProcessorNode = SafeExtract<AudioNodeType, "biquad-filter" | "gain">;
+type AudioSourceNode = SafeExtract<AudioNodeType, "oscillator">;
+type AudioDestinationNode = SafeExtract<AudioNodeType, "audio-destination">;
+export const AUDIO_PROCESSOR_NODES: AudioProcessorNode[] = ["gain", "biquad-filter"] as const;
+export const AUDIO_SOURCE_NODES: AudioSourceNode[] = ["oscillator"] as const;
+export const AUDIO_DESTINATION_NODES: AudioDestinationNode[] = ["audio-destination"] as const;
+
+export const AUDIO_CONTEXT = new AudioContext();
+
 export class AudioGraphNode {
     id: string;
     position: Position;
     node: AudioNode;
+    type: AudioNodeType;
     inputIds: string[] = [];
     outputIds: string[] = [];
 
-    constructor(node: AudioNode, position: Position, id: string) {
-        this.node = node;
+    constructor(type: AudioNodeType, position: Position, id: string) {
+        this.node = nodeFactory[type]();
         this.position = position;
         this.id = id;
+        this.type = type;
     }
 }
 
-export function updateAudioParamValue<T extends AudioNode>(node: T, properties: AudioNodeProperties, context: AudioContext): AudioNode {
+export function isAudioProcessorNode(type: AudioNodeType): type is AudioProcessorNode {
+    return (AUDIO_PROCESSOR_NODES as readonly string[]).includes(type);
+}
+
+export function isAudioSourceNode(type: AudioNodeType): type is AudioSourceNode {
+    return (AUDIO_SOURCE_NODES as readonly string[]).includes(type);
+}
+
+export function isAudioDestinationNode(type: AudioNodeType): type is AudioDestinationNode {
+    return (AUDIO_DESTINATION_NODES as readonly string[]).includes(type);
+}
+
+export const nodeFactory: Record<AudioNodeType, () => AudioNode> = {
+    oscillator: () => AUDIO_CONTEXT.createOscillator(),
+    gain: () => AUDIO_CONTEXT.createGain(),
+    "biquad-filter": () => AUDIO_CONTEXT.createBiquadFilter(),
+    "audio-destination": () => AUDIO_CONTEXT.destination,
+};
+
+export function updateAudioParamValue<T extends AudioNode>(node: T, properties: AudioNodeProperties): AudioNode {
     for (const [property, value] of Object.entries(properties)) {
         if (property in node) {
             const propKey = property as keyof T;
             if (node[propKey] instanceof AudioParam) {
                 if (Array.isArray(value)) {
                     const [targetValue, rampTime] = value;
-                    node[propKey].linearRampToValueAtTime(targetValue, context.currentTime + rampTime);
+                    node[propKey].linearRampToValueAtTime(targetValue, AUDIO_CONTEXT.currentTime + rampTime);
                 } else if (typeof value === "number") {
-                    node[propKey].setValueAtTime(value, context.currentTime);
+                    node[propKey].setValueAtTime(value, AUDIO_CONTEXT.currentTime);
                     node[propKey].value = value;
                 } else {
                     console.error(`Invalid value for AudioParam ${value}`);

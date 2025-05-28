@@ -19,6 +19,7 @@ const settableBiquadFilterTypes: readonly BiquadFilterType[] = [
 export class BiquadFilterNodeView extends LitElement {
     static styles = [graphNodeStyles];
 
+    // TODO: can graphNode be the specific type BiquadFilterNode? readonly?
     @property({ attribute: false }) graphNode: AudioGraphNode;
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
     @property({ attribute: false }) connectToContext: () => void;
@@ -26,8 +27,7 @@ export class BiquadFilterNodeView extends LitElement {
     private updateBiquadFilterParam<T extends keyof BiquadFilterNode>(param: T, value: BiquadFilterType | number) {
         const node = updateAudioParamValue(
             this.graphNode.node as BiquadFilterNode,
-            { [param]: value } as Partial<Record<keyof BiquadFilterNode, string>>,
-            this.graphNode.node?.context as AudioContext
+            { [param]: value } as Partial<Record<keyof BiquadFilterNode, string>>
         );
         const newAudioGraphNode = { ...this.graphNode, node };
         this.updateNode(newAudioGraphNode);
