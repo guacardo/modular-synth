@@ -1,7 +1,7 @@
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { audioNodeStyles } from "../../audio-node-styles";
-import { AudioGraphNode, updateAudioParamValue } from "../../../../app/util";
+import { AudioGraphNode, NodeConnectState, updateAudioParamValue } from "../../../../app/util";
 
 @customElement("gain-node-view")
 export class GainNodeView extends LitElement {
@@ -10,7 +10,8 @@ export class GainNodeView extends LitElement {
     // TODO: can graphNode be the specific type GainNode? readonly?
     @property({ type: Object, attribute: false }) graphNode: AudioGraphNode;
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
-    @property({ attribute: false }) connectToContext: () => void;
+    @property({ attribute: false, type: Object }) nodeConnectState: NodeConnectState;
+    @property({ attribute: false }) updateNodeConnectState: (node: AudioGraphNode) => void;
 
     private updateGain(value: number) {
         const node = updateAudioParamValue(this.graphNode.node as GainNode, { gain: value } as Partial<Record<keyof GainNode, number>>);
@@ -32,7 +33,7 @@ export class GainNodeView extends LitElement {
                     this.updateGain((e.target as HTMLInputElement).valueAsNumber);
                 }}"
             />
-            <button type="button" @click=${this.connectToContext}>Connect to Context</button>
+            <button type="button" @click=${() => this.updateNodeConnectState(this.graphNode)}>Connect</button>
         </div>`;
     }
 }

@@ -16,7 +16,7 @@ export const audioNodeStyles = css`
         align-items: center;
     }
 
-    .connectSource {
+    .isConnectSource {
         border: 1px solid #f00;
     }
 `;

@@ -6,7 +6,7 @@ import { OscillatorNodeView } from "./components/audio-nodes/source/oscillator-n
 import { appStyles } from "./styles/app-styles";
 import { SidePanelView } from "./components/side-panel/side-panel.view";
 import { NewNodeView } from "./components/new-node/new-node.view";
-import { AUDIO_CONTEXT, AudioGraphNode, AudioNodeType } from "./app/util";
+import { AUDIO_CONTEXT, AudioGraphNode, AudioNodeType, connectAudioNodes, NodeConnectState } from "./app/util";
 import "./components/audio-graph-view/audio-graph-view.view";
 import "./components/audio-nodes/processing/biquad-filter/biquad-filter-node.view";
 import "./components/audio-nodes/processing/gain-node/gain-node.view";
@@ -24,6 +24,10 @@ export class AppView extends LitElement {
     @state() currRow: number = 0;
     @state() currCol: number = 0;
     @state() connectNodeSourceId: string | undefined = undefined;
+    @state() nodeConnectState: NodeConnectState = {
+        source: undefined,
+        destination: undefined,
+    };
 
     connectedCallback(): void {
         super.connectedCallback();
@@ -36,25 +40,48 @@ export class AppView extends LitElement {
         ];
     };
 
-    readonly handleConnectToContext = () => {
-        console.log("Connecting graph to context");
-        if (this.AUDIO_GRAPH.length > 0) {
-            this.AUDIO_GRAPH[this.AUDIO_GRAPH.length - 1].node.connect(AUDIO_CONTEXT.destination);
-        }
-    };
-
     readonly handleUpdateNode = (node: AudioGraphNode) => {
         this.AUDIO_GRAPH = this.AUDIO_GRAPH.map((n) => (n.id === node.id ? { ...n, ...node } : n));
     };
 
-    readonly handleEnableConnectState = (node?: AudioGraphNode) => {
-        this.connectNodeSourceId = node ? node.id : undefined;
+    readonly handleUpdateNodeConnect = (node: AudioGraphNode | AudioDestinationNode) => {
+        if (node instanceof AudioGraphNode) {
+            if (this.nodeConnectState.source?.id === undefined) {
+                this.nodeConnectState = {
+                    source: node,
+                    destination: undefined,
+                };
+            } else if (this.nodeConnectState.source?.id === node.id) {
+                this.nodeConnectState = {
+                    source: undefined,
+                    destination: undefined,
+                };
+            } else {
+                // connect the two nodes if valid
+                const success = connectAudioNodes({
+                    source: this.nodeConnectState.source,
+                    destination: node,
+                });
+                console.log("Connection success:", success);
+                // reset state
+                this.nodeConnectState = {
+                    source: undefined,
+                    destination: undefined,
+                };
+            }
+        } else {
+            connectAudioNodes({
+                source: this.nodeConnectState.source,
+                destination: node,
+            });
+        }
     };
 
     private log() {
         console.log("Current Audio Graph:", this.AUDIO_GRAPH);
         console.log("Current Row:", this.currRow, "Current Column:", this.currCol);
         console.log("Audio Context:", AUDIO_CONTEXT);
+        console.log(this.nodeConnectState);
     }
 
     render() {
@@ -64,18 +91,16 @@ export class AppView extends LitElement {
                 .audioGraph=${this.AUDIO_GRAPH}
                 .addNode=${this.handleAddNode}
                 .updateNode=${this.handleUpdateNode}
-                .connectToContext=${this.handleConnectToContext}
-                .enableConnectState=${this.handleEnableConnectState}
-                .connectNodeSourceId=${this.connectNodeSourceId}
+                .nodeConnectState=${this.nodeConnectState}
+                .updateNodeConnectState=${this.handleUpdateNodeConnect}
             ></audio-graph-view>
             <side-panel-view
                 orientation="right"
                 .audioGraph=${this.AUDIO_GRAPH}
                 .addNode=${this.handleAddNode}
                 .updateNode=${this.handleUpdateNode}
-                .connectToContext=${this.handleConnectToContext}
-                .enableConnectState=${this.handleEnableConnectState}
-                .connectNodeSourceId=${this.connectNodeSourceId}
+                .nodeConnectState=${this.nodeConnectState}
+                .updateNodeConnectState=${this.handleUpdateNodeConnect}
             ></side-panel-view>
         </div>`;
     }

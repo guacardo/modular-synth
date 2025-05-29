@@ -2,7 +2,14 @@ import { LitElement, TemplateResult, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { sidePanelStyles } from "./side-panel.styles";
 import { classMap } from "lit/directives/class-map.js";
-import { AUDIO_DESTINATION_NODES, AUDIO_PROCESSOR_NODES, AUDIO_SOURCE_NODES, AudioGraphNode, AudioNodeType } from "../../app/util";
+import {
+    AUDIO_DESTINATION_NODES,
+    AUDIO_PROCESSOR_NODES,
+    AUDIO_SOURCE_NODES,
+    AudioGraphNode,
+    AudioNodeType,
+    NodeConnectState,
+} from "../../app/util";
 
 type Orientation = "left" | "right";
 
@@ -14,9 +21,8 @@ export class SidePanelView extends LitElement {
     @property({ type: String, attribute: true }) orientation: Orientation;
     @property({ attribute: false }) addNode: (type: AudioNodeType) => void;
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
-    @property({ attribute: false }) connectToContext: () => void;
-    @property({ attribute: false }) enableConnectState: (node?: AudioGraphNode) => void;
-    @property({ attribute: false }) connectNodeSourceId?: string;
+    @property({ attribute: false, type: Object }) nodeConnectState: NodeConnectState;
+    @property({ attribute: false }) updateNodeConnectState: (node: AudioGraphNode | AudioDestinationNode) => void;
 
     connectedCallback(): void {
         super.connectedCallback();
@@ -27,22 +33,22 @@ export class SidePanelView extends LitElement {
             return html`<gain-node-view
                 .graphNode=${graphNode}
                 .updateNode=${this.updateNode}
-                .connectToContext=${this.connectToContext}
+                .nodeConnectState=${this.nodeConnectState}
+                .updateNodeConnectState=${this.updateNodeConnectState}
             ></gain-node-view>`;
         } else if (graphNode.node instanceof OscillatorNode) {
             return html`<oscillator-node-view
                 .graphNode=${graphNode}
                 .updateNode=${this.updateNode}
-                .connectToContext=${this.connectToContext}
-                .enableConnectState=${this.enableConnectState}
-                .connectNodeSourceId=${this.connectNodeSourceId}
+                .nodeConnectState=${this.nodeConnectState}
+                .updateNodeConnectState=${this.updateNodeConnectState}
             ></oscillator-node-view>`;
-        } else if (graphNode.node instanceof BiquadFilterNode) {
-            return html`<biquad-filter-node-view
-                .graphNode=${graphNode}
-                .updateNode=${this.updateNode}
-                .connectToContext=${this.connectToContext}
-            ></biquad-filter-node-view>`;
+        } else if (graphNode.node instanceof AudioDestinationNode) {
+            return html`<audio-destination-node-view
+                .node=${graphNode.node}
+                .nodeConnectState=${this.nodeConnectState}
+                .updateNodeConnectState=${this.updateNodeConnectState}
+            ></audio-destination-node-view>`;
         } else {
             return html`<p>ERroR: nOT a n Audio Noooode</p>`;
         }

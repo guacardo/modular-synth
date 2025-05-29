@@ -9,6 +9,7 @@ import {
     isAudioDestinationNode,
     isAudioProcessorNode,
     isAudioSourceNode,
+    NodeConnectState,
 } from "../../app/util";
 import { audioGraphStyles } from "./audio-graph-view.styles";
 
@@ -19,33 +20,32 @@ export class AudioGraphView extends LitElement {
     @property({ type: Array }) audioGraph: AudioGraphNode[];
     @property({ attribute: false }) addNode: (type: AudioNodeType) => void;
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
-    @property({ attribute: false }) connectToContext: () => void;
-    @property({ attribute: false }) enableConnectState: (node?: AudioGraphNode) => void;
-    @property({ attribute: false }) connectNodeSourceId?: string;
+    @property({ attribute: false, type: Object }) nodeConnectState: NodeConnectState;
+    @property({ attribute: false }) updateNodeConnectState: (node: AudioGraphNode | AudioDestinationNode) => void;
 
     private renderNodeView(graphNode: AudioGraphNode): TemplateResult {
         if (graphNode.node instanceof GainNode) {
             return html`<gain-node-view
                 .graphNode=${graphNode}
                 .updateNode=${this.updateNode}
-                .connectToContext=${this.connectToContext}
+                .nodeConnectState=${this.nodeConnectState}
+                .updateNodeConnectState=${this.updateNodeConnectState}
             ></gain-node-view>`;
         } else if (graphNode.node instanceof OscillatorNode) {
             return html`<oscillator-node-view
                 .graphNode=${graphNode}
                 .updateNode=${this.updateNode}
-                .connectToContext=${this.connectToContext}
-                .enableConnectState=${this.enableConnectState}
-                .connectNodeSourceId=${this.connectNodeSourceId}
+                .nodeConnectState=${this.nodeConnectState}
+                .updateNodeConnectState=${this.updateNodeConnectState}
             ></oscillator-node-view>`;
         } else if (graphNode.node instanceof BiquadFilterNode) {
-            return html`<biquad-filter-node-view
-                .graphNode=${graphNode}
-                .updateNode=${this.updateNode}
-                .connectToContext=${this.connectToContext}
-            ></biquad-filter-node-view>`;
+            return html`<biquad-filter-node-view .graphNode=${graphNode} .updateNode=${this.updateNode}></biquad-filter-node-view>`;
         } else if (graphNode.node instanceof AudioDestinationNode) {
-            return html`<audio-destination-node-view .node=${graphNode.node}></audio-destination-node-view>`;
+            return html`<audio-destination-node-view
+                .node=${graphNode.node}
+                .nodeConnectState=${this.nodeConnectState}
+                .updateNodeConnectState=${this.updateNodeConnectState}
+            ></audio-destination-node-view>`;
         } else {
             return html`<p>ERroR: nOT a n Audio Noooode</p>`;
         }

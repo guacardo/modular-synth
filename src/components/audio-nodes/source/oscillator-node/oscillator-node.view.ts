@@ -1,7 +1,7 @@
 import { LitElement, html } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { audioNodeStyles } from "../../audio-node-styles";
-import { AudioGraphNode, updateAudioParamValue } from "../../../../app/util";
+import { AudioGraphNode, NodeConnectState, updateAudioParamValue } from "../../../../app/util";
 import { classMap } from "lit/directives/class-map.js";
 
 export const settableOscillatorTypes: readonly OscillatorType[] = ["sawtooth", "sine", "square", "triangle"] as const;
@@ -11,11 +11,10 @@ export class OscillatorNodeView extends LitElement {
     static styles = [audioNodeStyles];
 
     // TODO: can graphNode be the specific type OscillatorNode? readonly?
-    @property({ type: Object, attribute: false }) graphNode: AudioGraphNode;
+    @property({ attribute: false, type: Object }) graphNode: AudioGraphNode;
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
-    @property({ attribute: false }) connectToContext: () => void;
-    @property({ attribute: false }) enableConnectState: (node?: AudioGraphNode) => void;
-    @property({ attribute: false }) connectNodeSourceId?: string;
+    @property({ attribute: false, type: Object }) nodeConnectState: NodeConnectState;
+    @property({ attribute: false }) updateNodeConnectState: (node: AudioGraphNode) => void;
 
     @state() private running: boolean;
 
@@ -40,7 +39,6 @@ export class OscillatorNodeView extends LitElement {
     private startOscillator() {
         const node = this.graphNode.node as OscillatorNode;
         if (node && !this.running) {
-            console.log("start");
             node.start();
             this.running = true;
         }
@@ -49,24 +47,19 @@ export class OscillatorNodeView extends LitElement {
     private stopOscillator() {
         const node = this.graphNode.node as OscillatorNode;
         if (node) {
-            console.log("stop");
             node.stop();
             this.running = false;
         }
     }
 
-    private handleEnableConnectState() {
-        if (this.connectNodeSourceId === this.graphNode.id) {
-            this.enableConnectState(undefined);
-            return;
-        }
-        this.enableConnectState(this.graphNode);
-    }
-
     render() {
         const audioNode = this.graphNode.node as OscillatorNode;
         return html`<div
-            class=${classMap({ node: true, running: this.running, connectSource: this.graphNode.id === this.connectNodeSourceId })}
+            class=${classMap({
+                node: true,
+                running: this.running,
+                isConnectSource: this.graphNode.id === this.nodeConnectState.source?.id,
+            })}
         >
             <h2>oscillator</h2>
             <div class="slider-container">
@@ -93,7 +86,7 @@ export class OscillatorNodeView extends LitElement {
             </select>
             <button type="button" @click=${this.startOscillator}>Start</button>
             <button type="button" @click=${this.stopOscillator}>Stop</button>
-            <button type="button" @click=${this.handleEnableConnectState}>Connect</button>
+            <button type="button" @click=${() => this.updateNodeConnectState(this.graphNode)}>Connect</button>
         </div>`;
     }
 }

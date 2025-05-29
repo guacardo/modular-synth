@@ -1,6 +1,6 @@
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { AUDIO_CONTEXT } from "../../../../app/util";
+import { AUDIO_CONTEXT, NodeConnectState } from "../../../../app/util";
 import { audioNodeStyles } from "../../audio-node-styles";
 
 @customElement("audio-destination-node-view")
@@ -8,6 +8,8 @@ export class AudioDestinationNodeView extends LitElement {
     static styles = [audioNodeStyles];
 
     @property({ type: Object, attribute: false }) node: AudioDestinationNode;
+    @property({ attribute: false, type: Object }) nodeConnectState: NodeConnectState;
+    @property({ attribute: false }) updateNodeConnectState: (node: AudioDestinationNode) => void;
 
     render() {
         return html`
@@ -17,6 +19,7 @@ export class AudioDestinationNodeView extends LitElement {
                 <p>Channel Interpretation: ${this.node.channelInterpretation}</p>
                 <p>Base Latency: ${AUDIO_CONTEXT.baseLatency}</p>
                 <p>Output Latency: ${AUDIO_CONTEXT.outputLatency}</p>
+                <button type="button" @click=${() => this.updateNodeConnectState(this.node)}>Connect</button>
             </div>
         `;
     }

@@ -9,19 +9,19 @@ export type AudioNodeProperties = Partial<Record<keyof AudioNode, number | strin
 export type AudioNodeType = "oscillator" | "gain" | "biquad-filter" | "audio-destination";
 type AudioProcessorNode = SafeExtract<AudioNodeType, "biquad-filter" | "gain">;
 type AudioSourceNode = SafeExtract<AudioNodeType, "oscillator">;
-type AudioDestinationNode = SafeExtract<AudioNodeType, "audio-destination">;
+type AudioGraphDestinationNode = SafeExtract<AudioNodeType, "audio-destination">;
 
 // =====================
 // Audio Node Constants
 // =====================
 export const AUDIO_PROCESSOR_NODES: AudioProcessorNode[] = ["gain", "biquad-filter"] as const;
 export const AUDIO_SOURCE_NODES: AudioSourceNode[] = ["oscillator"] as const;
-export const AUDIO_DESTINATION_NODES: AudioDestinationNode[] = ["audio-destination"] as const;
+export const AUDIO_DESTINATION_NODES: AudioGraphDestinationNode[] = ["audio-destination"] as const;
 
 // =====================
 // Audio Context & Factory
 // =====================
-// TODO: Lit will not update if properties update, can only use methods.
+// TODO: Lit will not update for properties, can only call functions.
 export const AUDIO_CONTEXT = new AudioContext();
 
 export const nodeFactory: Record<AudioNodeType, () => AudioNode> = {
@@ -53,7 +53,35 @@ export class AudioGraphNode {
 // =====================
 // Utility Functions
 // =====================
-// TYPE GUARDS
+export function connectAudioNodes(connection: NodeConnectState): boolean {
+    const { source, destination } = connection;
+    if (destination instanceof AudioGraphNode) {
+        console.log("Connecting nodes:", source?.id, destination?.id);
+        if (source && destination) {
+            if (source.node instanceof AudioNode && destination.node instanceof AudioNode) {
+                source.node.connect(destination.node);
+                // this won't work. need to do it in Lit context
+                // source.outputIds.push(destination.id);
+                // destination.inputIds.push(source.id);
+                console.log(`Connected ${source.id} to ${destination.id}`);
+                return true;
+            } else {
+                console.error("Invalid nodes for connection");
+            }
+        } else {
+            console.error("Source or destination node is undefined");
+        }
+        return false;
+    } else if (destination instanceof AudioContext) {
+        source?.node.connect(destination.destination);
+        return true;
+    }
+    return false;
+}
+
+// =====================
+// Type Guards
+// =====================
 export function isAudioProcessorNode(type: AudioNodeType): type is AudioProcessorNode {
     return (AUDIO_PROCESSOR_NODES as readonly string[]).includes(type);
 }
@@ -62,7 +90,7 @@ export function isAudioSourceNode(type: AudioNodeType): type is AudioSourceNode 
     return (AUDIO_SOURCE_NODES as readonly string[]).includes(type);
 }
 
-export function isAudioDestinationNode(type: AudioNodeType): type is AudioDestinationNode {
+export function isAudioDestinationNode(type: AudioNodeType): type is AudioGraphDestinationNode {
     return (AUDIO_DESTINATION_NODES as readonly string[]).includes(type);
 }
 
@@ -90,4 +118,9 @@ export function updateAudioParamValue<T extends AudioNode>(node: T, properties: 
     }
 
     return node;
+}
+
+export interface NodeConnectState {
+    source?: AudioGraphNode;
+    destination?: AudioGraphNode | AudioDestinationNode;
 }
