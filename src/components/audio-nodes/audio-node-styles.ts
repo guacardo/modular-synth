@@ -27,5 +27,9 @@ export const audioNodeStyles = [
                 color: black;
             }
         }
+
+        .connectionCandidate {
+            border: 1px solid var(--accent-1);
+        }
     `,
 ];
