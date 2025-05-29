@@ -45,36 +45,32 @@ export class AppView extends LitElement {
     };
 
     readonly handleUpdateNodeConnect = (node: AudioGraphNode | AudioDestinationNode) => {
-        if (node instanceof AudioGraphNode) {
-            if (this.nodeConnectState.source?.id === undefined) {
-                this.nodeConnectState = {
-                    source: node,
-                    destination: undefined,
-                };
-            } else if (this.nodeConnectState.source?.id === node.id) {
-                this.nodeConnectState = {
-                    source: undefined,
-                    destination: undefined,
-                };
-            } else {
-                // connect the two nodes if valid
-                const success = connectAudioNodes({
-                    source: this.nodeConnectState.source,
-                    destination: node,
-                });
-                console.log("Connection success:", success);
-                // reset state
-                this.nodeConnectState = {
-                    source: undefined,
-                    destination: undefined,
-                };
-            }
-        } else {
-            connectAudioNodes({
+        if (node instanceof AudioGraphNode && this.nodeConnectState.source?.id === undefined) {
+            this.nodeConnectState = {
+                source: node,
+                destination: undefined,
+            };
+        } else if (node instanceof AudioGraphNode && this.nodeConnectState.source?.id === node.id) {
+            this.nodeConnectState = {
+                source: undefined,
+                destination: undefined,
+            };
+        } else if (this.nodeConnectState.source?.id) {
+            // connect the two nodes if valid
+            const success = connectAudioNodes({
                 source: this.nodeConnectState.source,
                 destination: node,
             });
+            console.log("Connection success:", success);
+            // reset state
+            this.nodeConnectState = {
+                source: undefined,
+                destination: undefined,
+            };
+        } else {
+            console.warn("Cannot connect to node");
         }
+        console.log(this.nodeConnectState);
     };
 
     private log() {

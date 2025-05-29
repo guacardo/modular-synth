@@ -59,10 +59,12 @@ export function connectAudioNodes(connection: NodeConnectState): boolean {
         console.log("Connecting nodes:", source?.id, destination?.id);
         if (source && destination) {
             if (source.node instanceof AudioNode && destination.node instanceof AudioNode) {
+                // TODO: add check for destination node type accepting inputs. (ie: can't connect gain to oscillator)
                 source.node.connect(destination.node);
-                // this won't work. need to do it in Lit context
-                // source.outputIds.push(destination.id);
-                // destination.inputIds.push(source.id);
+                /* TODO: this won't update state. need to do it in Lit context
+                source.outputIds.push(destination.id);
+                destination.inputIds.push(source.id);
+                */
                 console.log(`Connected ${source.id} to ${destination.id}`);
                 return true;
             } else {
@@ -72,8 +74,8 @@ export function connectAudioNodes(connection: NodeConnectState): boolean {
             console.error("Source or destination node is undefined");
         }
         return false;
-    } else if (destination instanceof AudioContext) {
-        source?.node.connect(destination.destination);
+    } else if (destination instanceof AudioDestinationNode) {
+        source?.node.connect(destination);
         return true;
     }
     return false;
