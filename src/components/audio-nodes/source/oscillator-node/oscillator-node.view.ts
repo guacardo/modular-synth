@@ -54,17 +54,19 @@ export class OscillatorNodeView extends LitElement {
 
     render() {
         const audioNode = this.graphNode.node as OscillatorNode;
+        const isConnectSource = this.graphNode.id === this.nodeConnectState.source?.id;
         return html`<div
             class=${classMap({
                 node: true,
                 running: this.running,
-                isConnectSource: this.graphNode.id === this.nodeConnectState.source?.id,
+                isConnectSource: isConnectSource,
             })}
         >
             <h2>oscillator</h2>
             <div class="slider-container">
                 <label>Frequency: ${audioNode.frequency.value.toString()}</label>
                 <input
+                    class="range"
                     type="range"
                     min="0"
                     max="2000"
@@ -84,9 +86,14 @@ export class OscillatorNodeView extends LitElement {
                     return html`<option value=${type} ?selected=${type === (this.graphNode.node as OscillatorNode).type}>${type}</option>`;
                 })}
             </select>
-            <button type="button" @click=${this.startOscillator}>Start</button>
-            <button type="button" @click=${this.stopOscillator}>Stop</button>
-            <button type="button" @click=${() => this.updateNodeConnectState(this.graphNode)}>Connect</button>
+            <button class="button" type="button" @click=${this.startOscillator}>Start</button>
+            <button class="button" type="button" @click=${this.stopOscillator}>Stop</button>
+            <button
+                class=${classMap({ button: true, "button-active": isConnectSource })}
+                type="button"
+                @click=${() => this.updateNodeConnectState(this.graphNode)}
+                >Connect</button
+            >
         </div>`;
     }
 }

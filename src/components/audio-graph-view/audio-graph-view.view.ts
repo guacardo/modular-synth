@@ -55,9 +55,9 @@ export class AudioGraphView extends LitElement {
         return html`<div class="audio-graph-container">
             <div class="nodes-container audiograph-source-nodes">
                 <h3>Source nodes</h3>
-                <div class="audio-graph-node-container"
-                    >${this.audioGraph.filter((node) => isAudioSourceNode(node.type)).map((node) => this.renderNodeView(node))}</div
-                >
+                <div class="audio-graph-node-container">
+                    ${this.audioGraph.filter((node) => isAudioSourceNode(node.type)).map((node) => this.renderNodeView(node))}
+                </div>
                 <new-node-view
                     .addNode=${this.addNode}
                     .audioGraph=${this.audioGraph}

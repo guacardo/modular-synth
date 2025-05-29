@@ -9,7 +9,7 @@ export const sidePanelStyles = css`
         overflow-y: scroll;
         padding: 16px;
         background-color: var(--elevation-2);
-        border-left: 1px solid var(--border-0);
+        border-left: 1px solid var(--accent-0);
 
         /* Hide scrollbars */
         scrollbar-width: none; /* Firefox */
