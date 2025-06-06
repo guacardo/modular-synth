@@ -12,7 +12,7 @@ export class GainNodeView extends LitElement {
     @property({ type: Object, attribute: false }) graphNode: AudioGraphNode;
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
     @property({ attribute: false, type: Object }) nodeConnectState: NodeConnectState;
-    @property({ attribute: false }) updateNodeConnectState: (node: AudioGraphNode) => void;
+    @property({ attribute: false }) updateNodeConnectState: (node: AudioGraphNode | AudioParam) => void;
 
     private updateGain(value: number) {
         const node = updateAudioParamValue(this.graphNode.node as GainNode, { gain: value } as Partial<Record<keyof GainNode, number>>);
@@ -53,6 +53,9 @@ export class GainNodeView extends LitElement {
                 type="button"
                 @click=${() => this.updateNodeConnectState(this.graphNode)}
                 >Connect</button
+            >
+            <button class="button" @click=${() => this.updateNodeConnectState((this.graphNode.node as GainNode).gain)}
+                >Connect to Gain</button
             >
         </div>`;
     }

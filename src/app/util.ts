@@ -81,6 +81,9 @@ export function connectAudioNodes(connection: NodeConnectState): boolean {
     } else if (destination instanceof AudioDestinationNode) {
         source?.node.connect(destination);
         return true;
+    } else if (destination instanceof AudioParam) {
+        console.log("Connecting AudioParam:", source?.id, destination);
+        source?.node.connect(destination);
     }
     return false;
 }
@@ -128,5 +131,5 @@ export function updateAudioParamValue<T extends AudioNode>(node: T, properties: 
 
 export interface NodeConnectState {
     source?: AudioGraphNode;
-    destination?: AudioGraphNode | AudioDestinationNode;
+    destination?: AudioGraphNode | AudioDestinationNode | AudioParam;
 }

@@ -21,7 +21,7 @@ export class AudioGraphView extends LitElement {
     @property({ attribute: false }) addNode: (type: AudioNodeType) => void;
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
     @property({ attribute: false, type: Object }) nodeConnectState: NodeConnectState;
-    @property({ attribute: false }) updateNodeConnectState: (node: AudioGraphNode | AudioDestinationNode) => void;
+    @property({ attribute: false }) updateNodeConnectState: (node: AudioGraphNode | AudioDestinationNode | AudioParam) => void;
 
     private renderNodeView(graphNode: AudioGraphNode): TemplateResult {
         if (graphNode.node instanceof GainNode) {

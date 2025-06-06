@@ -45,7 +45,7 @@ export class AppView extends LitElement {
         );
     };
 
-    readonly handleUpdateNodeConnect = (node: AudioGraphNode | AudioDestinationNode) => {
+    readonly handleUpdateNodeConnect = (node: AudioGraphNode | AudioDestinationNode | AudioParam) => {
         if (node instanceof AudioGraphNode && this.nodeConnectState.source?.id === undefined) {
             this.nodeConnectState = {
                 source: node,
