@@ -17,6 +17,7 @@ export class OscillatorNodeView extends LitElement {
     @property({ attribute: false }) updateNodeConnectState: (node: AudioGraphNode) => void;
 
     @state() private running: boolean;
+    @state() private dutyCycle: number = 0.5;
 
     private updateFrequency(value: number) {
         const node = updateAudioParamValue(
@@ -52,6 +53,22 @@ export class OscillatorNodeView extends LitElement {
         }
     }
 
+    private setPulseWave(dutyCycle: number = 0.5) {
+        const audioCtx = (this.graphNode.node as OscillatorNode).context;
+        const n = 4096; // Number of samples for the wave
+        const real = new Float32Array(n);
+        const imag = new Float32Array(n);
+
+        for (let i = 1; i < n; i++) {
+            // Fourier series for pulse wave
+            real[i] = (2 / (i * Math.PI)) * Math.sin(i * Math.PI * dutyCycle);
+            imag[i] = 0;
+        }
+
+        (this.graphNode.node as OscillatorNode).setPeriodicWave(audioCtx.createPeriodicWave(real, imag));
+        this.dutyCycle = dutyCycle;
+    }
+
     render() {
         const audioNode = this.graphNode.node as OscillatorNode;
         const isConnectSource = this.graphNode.id === this.nodeConnectState.source?.id;
@@ -74,6 +91,18 @@ export class OscillatorNodeView extends LitElement {
                     @input=${(e: Event) => {
                         this.updateFrequency((e.target as HTMLInputElement).valueAsNumber);
                     }}
+                />
+            </div>
+            <div class="slider-container">
+                <label>Duty Cycle: ${this.dutyCycle.toFixed(2)}</label>
+                <input
+                    class="range"
+                    type="range"
+                    min="0.01"
+                    max="0.99"
+                    step="0.01"
+                    .value="${this.dutyCycle.toString()}"
+                    @input=${(e: Event) => this.setPulseWave((e.target as HTMLInputElement).valueAsNumber)}
                 />
             </div>
             <select
