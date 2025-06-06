@@ -1,14 +1,17 @@
 import { css } from "lit";
 
-export const appStyles = css`
-    .app {
-        background-color: var(--elevation-0);
+export const keyboardControllerStyles = css`
+    .keyboard-controller {
         display: flex;
-        flex-direction: column;
-        height: 100%;
+        width: 80vw;
+        height: 20vh;
+        justify-content: center;
+        align-items: center;
+        background-color: var(--elevation-1);
+        gap: 4px;
     }
 
-    .button {
+    .keyboard-button {
         font-family: "Courier New", Courier, monospace;
         text-transform: lowercase;
         background-color: var(--elevation-3);
@@ -28,30 +31,9 @@ export const appStyles = css`
             box-shadow: 0 1px 0 0 var(--accent-0), 0 2px 4px 0 rgba(0, 0, 0, 0.22);
             transform: translateY(3px);
         }
-    }
 
-    .non-desktop-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: rgba(0, 0, 0, 0.7);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        z-index: 1000;
-        padding: 0 10%;
-
-        p {
-            font-size: 40px;
-        }
-    }
-
-    @media (min-width: 1280px) {
-        .non-desktop-overlay {
-            display: none;
-        }
+        &.pressed {
+            background-color: var(--accent-1);
+            transform: translateY(3px);
     }
 `;

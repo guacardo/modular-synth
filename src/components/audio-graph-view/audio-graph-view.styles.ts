@@ -4,7 +4,7 @@ export const audioGraphStyles = css`
     :host {
         display: flex;
         width: 80vw;
-        height: 100vh;
+        height: 80vh;
         justify-content: center;
         align-items: center;
         background-color: var(--elevation-1);

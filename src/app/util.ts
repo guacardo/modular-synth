@@ -34,6 +34,13 @@ export const nodeFactory: Record<AudioNodeType, () => AudioNode> = {
 // =====================
 // AudioGraphNode Class
 // =====================
+export interface KeyboardAudioEvent {
+    key: string;
+    keydown: () => void;
+    keyup?: () => void;
+    pressed?: boolean;
+}
+
 export class AudioGraphNode {
     id: string;
     position: Position;

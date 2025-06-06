@@ -22,6 +22,7 @@ export class AudioGraphView extends LitElement {
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
     @property({ attribute: false, type: Object }) nodeConnectState: NodeConnectState;
     @property({ attribute: false }) updateNodeConnectState: (node: AudioGraphNode | AudioDestinationNode | AudioParam) => void;
+    @property({ attribute: false }) onSelectAudioGraphNode: (node: AudioGraphNode) => void;
 
     private renderNodeView(graphNode: AudioGraphNode): TemplateResult {
         if (graphNode.node instanceof GainNode) {
@@ -30,6 +31,7 @@ export class AudioGraphView extends LitElement {
                 .updateNode=${this.updateNode}
                 .nodeConnectState=${this.nodeConnectState}
                 .updateNodeConnectState=${this.updateNodeConnectState}
+                .onSelectAudioGraphNode=${this.onSelectAudioGraphNode}
             ></gain-node-view>`;
         } else if (graphNode.node instanceof OscillatorNode) {
             return html`<oscillator-node-view
@@ -37,6 +39,7 @@ export class AudioGraphView extends LitElement {
                 .updateNode=${this.updateNode}
                 .nodeConnectState=${this.nodeConnectState}
                 .updateNodeConnectState=${this.updateNodeConnectState}
+                .onSelectAudioGraphNode=${this.onSelectAudioGraphNode}
             ></oscillator-node-view>`;
         } else if (graphNode.node instanceof BiquadFilterNode) {
             return html`<biquad-filter-node-view .graphNode=${graphNode} .updateNode=${this.updateNode}></biquad-filter-node-view>`;

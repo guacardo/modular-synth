@@ -6,21 +6,24 @@ import { OscillatorNodeView } from "./components/audio-nodes/source/oscillator-n
 import { appStyles } from "./styles/app-styles";
 import { SidePanelView } from "./components/side-panel/side-panel.view";
 import { NewNodeView } from "./components/new-node/new-node.view";
-import { AUDIO_CONTEXT, AudioGraphNode, AudioNodeType, connectAudioNodes, NodeConnectState } from "./app/util";
+import { AudioGraphNode, AudioNodeType, connectAudioNodes, NodeConnectState } from "./app/util";
+import { AudioGraphView } from "./components/audio-graph-view/audio-graph-view.view";
+import { KeyboardController } from "./components/keyboard-controller/keyboard-controller.view";
 import "./components/audio-graph-view/audio-graph-view.view";
 import "./components/audio-nodes/processing/biquad-filter/biquad-filter-node.view";
 import "./components/audio-nodes/processing/gain-node/gain-node.view";
 import "./components/audio-nodes/source/oscillator-node/oscillator-node.view";
+import "./components/keyboard-controller/keyboard-controller.view";
 import "./components/new-node/new-node.view";
 import "./components/side-panel/side-panel.view";
 import "./components/audio-nodes/destination/audio-destination-node/audio-destination-node.view";
-import { AudioGraphView } from "./components/audio-graph-view/audio-graph-view.view";
 
 @customElement("app-view")
 export class AppView extends LitElement {
     static styles = [appStyles];
 
     @state() AUDIO_GRAPH: AudioGraphNode[] = [];
+    @state() selectedAudioGraphNodes: AudioGraphNode[] = [];
     @state() currRow: number = 0;
     @state() currCol: number = 0;
     @state() nodeConnectState: NodeConnectState = {
@@ -58,7 +61,7 @@ export class AppView extends LitElement {
             };
         } else if (this.nodeConnectState.source?.id) {
             // connect the two nodes if valid
-            const success = connectAudioNodes({
+            connectAudioNodes({
                 source: this.nodeConnectState.source,
                 destination: node,
             });
@@ -68,27 +71,31 @@ export class AppView extends LitElement {
                 destination: undefined,
             };
         } else {
-            console.warn("Cannot connect to node");
+            console.warn("Cannot connect to node or param");
         }
     };
 
-    private log() {
-        console.log("Current Audio Graph:", this.AUDIO_GRAPH);
-        console.log("Current Row:", this.currRow, "Current Column:", this.currCol);
-        console.log("Audio Context:", AUDIO_CONTEXT);
-        console.log(this.nodeConnectState);
-    }
+    readonly handleSelectAudioGraphNode = (node: AudioGraphNode) => {
+        if (this.selectedAudioGraphNodes.some((n) => n.id === node.id)) {
+            this.selectedAudioGraphNodes = this.selectedAudioGraphNodes.filter((n) => n.id !== node.id);
+        } else {
+            this.selectedAudioGraphNodes = [...this.selectedAudioGraphNodes, node];
+        }
+        console.log("Selected nodes:", this.selectedAudioGraphNodes);
+    };
 
     render() {
         return html` <div class="app">
-            <button class="button" @click=${this.log}>Log State</button>
+            <div class="non-desktop-overlay"><p>big computers only sry</p></div>
             <audio-graph-view
                 .audioGraph=${this.AUDIO_GRAPH}
                 .addNode=${this.handleAddNode}
                 .updateNode=${this.handleUpdateNode}
                 .nodeConnectState=${this.nodeConnectState}
                 .updateNodeConnectState=${this.handleUpdateNodeConnect}
+                .onSelectAudioGraphNode=${this.handleSelectAudioGraphNode}
             ></audio-graph-view>
+            <keyboard-controller></keyboard-controller>
             <side-panel-view
                 orientation="right"
                 .audioGraph=${this.AUDIO_GRAPH}
@@ -110,5 +117,6 @@ declare global {
         "new-node-view": NewNodeView;
         "oscillator-node-view": OscillatorNodeView;
         "side-panel-view": SidePanelView;
+        "keyboard-controller": KeyboardController;
     }
 }

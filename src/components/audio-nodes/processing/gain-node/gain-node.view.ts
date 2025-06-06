@@ -8,11 +8,11 @@ import { classMap } from "lit/directives/class-map.js";
 export class GainNodeView extends LitElement {
     static styles = [audioNodeStyles];
 
-    // TODO: can graphNode be the specific type GainNode? readonly?
     @property({ type: Object, attribute: false }) graphNode: AudioGraphNode;
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
     @property({ attribute: false, type: Object }) nodeConnectState: NodeConnectState;
     @property({ attribute: false }) updateNodeConnectState: (node: AudioGraphNode | AudioParam) => void;
+    @property({ attribute: false }) onSelectAudioGraphNode: (node: AudioGraphNode) => void;
 
     private updateGain(value: number) {
         const node = updateAudioParamValue(this.graphNode.node as GainNode, { gain: value } as Partial<Record<keyof GainNode, number>>);
@@ -35,6 +35,7 @@ export class GainNodeView extends LitElement {
                 isConnectSource: isConnectSource,
                 connectionCandidate: this.isConnectionCandidate(),
             })}
+            @click=${() => this.onSelectAudioGraphNode(this.graphNode)}
         >
             <h2>gain</h2>
             <p>Gain ${(this.graphNode.node as GainNode).gain.value.toFixed(3)}</p>
@@ -44,6 +45,10 @@ export class GainNodeView extends LitElement {
                 max="1.0"
                 step="0.001"
                 .value="${(this.graphNode.node as GainNode).gain.value.toString()}"
+                @click=${(e: MouseEvent) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                }}
                 @input="${(e: Event) => {
                     this.updateGain((e.target as HTMLInputElement).valueAsNumber);
                 }}"

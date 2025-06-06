@@ -10,11 +10,11 @@ export const settableOscillatorTypes: readonly OscillatorType[] = ["sawtooth", "
 export class OscillatorNodeView extends LitElement {
     static styles = [audioNodeStyles];
 
-    // TODO: can graphNode be the specific type OscillatorNode? readonly?
     @property({ attribute: false, type: Object }) graphNode: AudioGraphNode;
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
     @property({ attribute: false, type: Object }) nodeConnectState: NodeConnectState;
     @property({ attribute: false }) updateNodeConnectState: (node: AudioGraphNode) => void;
+    @property({ attribute: false }) onSelectAudioGraphNode: (node: AudioGraphNode) => void;
 
     @state() private running: boolean;
     @state() private dutyCycle: number = 0.5;
@@ -78,6 +78,7 @@ export class OscillatorNodeView extends LitElement {
                 running: this.running,
                 isConnectSource: isConnectSource,
             })}
+            @click=${() => this.onSelectAudioGraphNode(this.graphNode)}
         >
             <h2>oscillator</h2>
             <div class="slider-container">
@@ -88,6 +89,10 @@ export class OscillatorNodeView extends LitElement {
                     min="0"
                     max="2000"
                     .value="${(this.graphNode.node as OscillatorNode).frequency.value.toString()}"
+                    @click=${(e: MouseEvent) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                    }}
                     @input=${(e: Event) => {
                         this.updateFrequency((e.target as HTMLInputElement).valueAsNumber);
                     }}
@@ -102,11 +107,19 @@ export class OscillatorNodeView extends LitElement {
                     max="0.99"
                     step="0.01"
                     .value="${this.dutyCycle.toString()}"
+                    @click=${(e: MouseEvent) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                    }}
                     @input=${(e: Event) => this.setPulseWave((e.target as HTMLInputElement).valueAsNumber)}
                 />
             </div>
             <select
                 .value=${(this.graphNode.node as OscillatorNode).type}
+                @click=${(e: MouseEvent) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                }}
                 @change=${(e: Event) => {
                     this.updateType((e.target as HTMLSelectElement).value as OscillatorType);
                 }}
@@ -115,12 +128,34 @@ export class OscillatorNodeView extends LitElement {
                     return html`<option value=${type} ?selected=${type === (this.graphNode.node as OscillatorNode).type}>${type}</option>`;
                 })}
             </select>
-            <button class="button" type="button" @click=${this.startOscillator}>Start</button>
-            <button class="button" type="button" @click=${this.stopOscillator}>Stop</button>
+            <button
+                class="button"
+                type="button"
+                @click=${(e: MouseEvent) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    this.startOscillator();
+                }}
+                >Start</button
+            >
+            <button
+                class="button"
+                type="button"
+                @click=${(e: MouseEvent) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    this.stopOscillator();
+                }}
+                >Stop</button
+            >
             <button
                 class=${classMap({ button: true, "button-active": isConnectSource })}
                 type="button"
-                @click=${() => this.updateNodeConnectState(this.graphNode)}
+                @click=${(e: MouseEvent) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    this.updateNodeConnectState(this.graphNode);
+                }}
                 >Connect</button
             >
         </div>`;
