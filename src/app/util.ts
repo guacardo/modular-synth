@@ -58,8 +58,12 @@ export function connectAudioNodes(connection: NodeConnectState): boolean {
     if (destination instanceof AudioGraphNode) {
         console.log("Connecting nodes:", source?.id, destination?.id);
         if (source && destination) {
-            if (source.node instanceof AudioNode && destination.node instanceof AudioNode) {
-                // TODO: add check for destination node type accepting inputs. (ie: can't connect gain to oscillator)
+            if (
+                source.node instanceof AudioNode &&
+                source.node.numberOfOutputs > 0 &&
+                destination.node instanceof AudioNode &&
+                destination.node.numberOfInputs > 0
+            ) {
                 source.node.connect(destination.node);
                 /* TODO: this won't update state. need to do it in Lit context
                 source.outputIds.push(destination.id);

@@ -23,7 +23,6 @@ export class AppView extends LitElement {
     @state() AUDIO_GRAPH: AudioGraphNode[] = [];
     @state() currRow: number = 0;
     @state() currCol: number = 0;
-    @state() connectNodeSourceId: string | undefined = undefined;
     @state() nodeConnectState: NodeConnectState = {
         source: undefined,
         destination: undefined,
@@ -41,7 +40,9 @@ export class AppView extends LitElement {
     };
 
     readonly handleUpdateNode = (node: AudioGraphNode) => {
-        this.AUDIO_GRAPH = this.AUDIO_GRAPH.map((n) => (n.id === node.id ? { ...n, ...node } : n));
+        this.AUDIO_GRAPH = this.AUDIO_GRAPH.map((n) =>
+            n.id === node.id ? Object.assign(Object.create(Object.getPrototypeOf(n)), n, node) : n
+        );
     };
 
     readonly handleUpdateNodeConnect = (node: AudioGraphNode | AudioDestinationNode) => {
@@ -61,7 +62,6 @@ export class AppView extends LitElement {
                 source: this.nodeConnectState.source,
                 destination: node,
             });
-            console.log("Connection success:", success);
             // reset state
             this.nodeConnectState = {
                 source: undefined,
@@ -70,7 +70,6 @@ export class AppView extends LitElement {
         } else {
             console.warn("Cannot connect to node");
         }
-        console.log(this.nodeConnectState);
     };
 
     private log() {
