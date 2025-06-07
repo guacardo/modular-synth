@@ -26,31 +26,36 @@ export const AUDIO_CONTEXT = new AudioContext();
 // AudioGraphNode Classes
 // =====================
 export interface KeyboardAudioEvent {
-    key: string;
     keydown: () => void;
     keyup?: () => void;
-    pressed?: boolean;
 }
 
 export interface AudioGraphNode {
     id: string;
     position: Position;
     node: AudioNode;
-    inputIds: string[];
-    outputIds: string[];
+    keyboardEvents?: Map<string, KeyboardAudioEvent>;
 }
 
 export class OscillatorGraphNode implements AudioGraphNode {
     id: string;
     position: Position;
     node: OscillatorNode;
-    inputIds: string[] = [];
-    outputIds: string[] = [];
-
+    keyboardEvents: Map<string, KeyboardAudioEvent>;
     constructor(context: AudioContext, position: Position, id: string) {
         this.node = context.createOscillator();
         this.position = position;
         this.id = id;
+        this.keyboardEvents = new Map<string, KeyboardAudioEvent>([
+            ["a", { keydown: () => this.node.start() }],
+            ["s", { keydown: () => this.node.frequency.setValueAtTime(440, context.currentTime) }],
+            ["d", { keydown: () => this.node.frequency.setValueAtTime(880, context.currentTime) }],
+            ["f", { keydown: () => this.node.frequency.setValueAtTime(660, context.currentTime) }],
+            ["g", { keydown: () => (this.node.type = "sine") }],
+            ["h", { keydown: () => (this.node.type = "square") }],
+            ["j", { keydown: () => (this.node.type = "sawtooth") }],
+            ["k", { keydown: () => (this.node.type = "triangle") }],
+        ]);
     }
 }
 
@@ -58,8 +63,6 @@ export class GainGraphNode implements AudioGraphNode {
     id: string;
     position: Position;
     node: GainNode;
-    inputIds: string[] = [];
-    outputIds: string[] = [];
 
     constructor(context: AudioContext, position: Position, id: string) {
         this.node = context.createGain();
@@ -72,8 +75,6 @@ export class BiquadFilterGraphNode implements AudioGraphNode {
     id: string;
     position: Position;
     node: BiquadFilterNode;
-    inputIds: string[] = [];
-    outputIds: string[] = [];
 
     constructor(context: AudioContext, position: Position, id: string) {
         this.node = context.createBiquadFilter();
@@ -86,8 +87,6 @@ export class AudioDestinationGraphNode implements AudioGraphNode {
     id: string;
     position: Position;
     node: AudioDestinationNode;
-    inputIds: string[] = [];
-    outputIds: string[] = [];
 
     constructor(context: AudioContext, position: Position, id: string) {
         this.node = context.destination;

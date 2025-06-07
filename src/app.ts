@@ -124,7 +124,7 @@ export class AppView extends LitElement {
 
     render() {
         return html` <div class="app">
-            <div class="non-desktop-overlay"><p>big computers only sry</p></div>
+            <div class="non-desktop-overlay"><p>big boi puters only sry</p></div>
             <audio-graph-view
                 .audioGraph=${this.AUDIO_GRAPH}
                 .addNode=${this.handleAddNode}
