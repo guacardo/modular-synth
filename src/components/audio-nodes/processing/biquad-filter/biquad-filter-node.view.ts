@@ -24,10 +24,7 @@ export class BiquadFilterNodeView extends LitElement {
     @property({ attribute: false }) connectToContext: () => void;
 
     private updateBiquadFilterParam<T extends keyof BiquadFilterNode>(param: T, value: BiquadFilterType | number) {
-        const node = updateAudioParamValue(
-            this.graphNode.node as BiquadFilterNode,
-            { [param]: value } as Partial<Record<keyof BiquadFilterNode, string>>
-        );
+        const node = updateAudioParamValue(this.graphNode.node, { [param]: value } as Partial<Record<keyof BiquadFilterNode, string>>);
         const newAudioGraphNode = { ...this.graphNode, node };
         this.updateNode(newAudioGraphNode);
     }

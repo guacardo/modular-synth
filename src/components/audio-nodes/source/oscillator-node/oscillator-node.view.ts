@@ -19,20 +19,8 @@ export class OscillatorNodeView extends LitElement {
     @state() private running: boolean;
     @state() private dutyCycle: number = 0.5;
 
-    private updateFrequency(value: number) {
-        const node = updateAudioParamValue(
-            this.graphNode.node as OscillatorNode,
-            { frequency: value } as Partial<Record<keyof OscillatorNode, number>>
-        );
-        const newAudioGraphNode = { ...this.graphNode, node };
-        this.updateNode(newAudioGraphNode);
-    }
-
-    private updateType(value: OscillatorType) {
-        const node = updateAudioParamValue(
-            this.graphNode.node as OscillatorNode,
-            { type: value } as Partial<Record<keyof OscillatorNode, string>>
-        );
+    private updateOscillatorParam<T extends keyof OscillatorNode>(property: T, value: number | OscillatorType) {
+        const node = updateAudioParamValue(this.graphNode.node, { [property]: value } as Partial<Record<keyof OscillatorNode, string>>);
         const newAudioGraphNode = { ...this.graphNode, node };
         this.updateNode(newAudioGraphNode);
     }
@@ -90,7 +78,7 @@ export class OscillatorNodeView extends LitElement {
                         e.preventDefault();
                     }}
                     @input=${(e: Event) => {
-                        this.updateFrequency((e.target as HTMLInputElement).valueAsNumber);
+                        this.updateOscillatorParam("frequency", (e.target as HTMLInputElement).valueAsNumber);
                     }}
                 />
             </div>
@@ -117,7 +105,7 @@ export class OscillatorNodeView extends LitElement {
                     e.preventDefault();
                 }}
                 @change=${(e: Event) => {
-                    this.updateType((e.target as HTMLSelectElement).value as OscillatorType);
+                    this.updateOscillatorParam("type", (e.target as HTMLSelectElement).value as OscillatorType);
                 }}
             >
                 ${settableOscillatorTypes.map((type) => {
