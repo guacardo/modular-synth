@@ -18,9 +18,7 @@ export class OscillatorNodeView extends LitElement {
     @property({ attribute: false }) onSelectAudioGraphNode: (node: AudioGraphNode) => void;
 
     private updateOscillatorParam<T extends keyof OscillatorNode>(property: T, value: number | OscillatorType) {
-        const node = updateAudioParamValue(this.graphNode.node, { [property]: value });
-        const newAudioGraphNode = { ...this.graphNode, node };
-        this.updateNode(newAudioGraphNode);
+        this.updateNode({ ...this.graphNode, node: updateAudioParamValue(this.graphNode.node, { [property]: value }) });
     }
 
     private setPulseWave(dutyCycle: number = 0.5) {
