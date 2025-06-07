@@ -1,5 +1,5 @@
 import { html, LitElement } from "lit";
-import { customElement } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import { keyboardControllerStyles } from "./keyboard-controller.styles";
 import { classMap } from "lit/directives/class-map.js";
 import { KeyboardAudioEvent } from "../../app/util";
@@ -8,16 +8,7 @@ import { KeyboardAudioEvent } from "../../app/util";
 export class KeyboardController extends LitElement {
     static styles = [keyboardControllerStyles];
 
-    events: Map<string, KeyboardAudioEvent[]> = new Map([
-        ["a", [{ keydown: () => console.log("A pressed 1st") }, { keydown: () => console.log("A pressed 2nd") }]],
-        ["s", [{ keydown: () => console.log("S pressed") }]],
-        ["d", [{ keydown: () => console.log("D pressed") }]],
-        ["f", [{ keydown: () => console.log("F pressed") }]],
-        ["g", [{ keydown: () => console.log("G pressed") }]],
-        ["h", [{ keydown: () => console.log("H pressed") }]],
-        ["j", [{ keydown: () => console.log("J pressed") }]],
-        ["k", [{ keydown: () => console.log("K pressed") }]],
-    ]);
+    @property({ attribute: false }) keyboardAudioEvents: Map<string, KeyboardAudioEvent[]>;
 
     pressedKeys: Set<string> = new Set();
 
@@ -34,7 +25,7 @@ export class KeyboardController extends LitElement {
     }
 
     private handleKeyDown = (event: KeyboardEvent) => {
-        this.events.get(event.key)?.map((button) => {
+        this.keyboardAudioEvents.get(event.key)?.map((button) => {
             button.keydown();
         });
         this.pressedKeys.add(event.key);
@@ -42,7 +33,7 @@ export class KeyboardController extends LitElement {
     };
 
     private handleKeyUp = (event: KeyboardEvent) => {
-        this.events.get(event.key)?.map((button) => {
+        this.keyboardAudioEvents.get(event.key)?.map((button) => {
             button.keyup?.();
         });
         this.pressedKeys.delete(event.key);
@@ -51,7 +42,7 @@ export class KeyboardController extends LitElement {
 
     render() {
         return html` <div class="keyboard-controller">
-            ${Array.from(this.events.entries()).map(
+            ${Array.from(this.keyboardAudioEvents.entries()).map(
                 ([key, _]) => html`
                     <button class=${classMap({ "keyboard-button": true, pressed: this.pressedKeys.has(key) ?? false })}> ${key} </button>
                 `

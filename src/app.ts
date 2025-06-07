@@ -14,6 +14,7 @@ import {
     BiquadFilterGraphNode,
     connectAudioNodes,
     GainGraphNode,
+    KeyboardAudioEvent,
     NodeConnectState,
     OscillatorGraphNode,
 } from "./app/util";
@@ -113,6 +114,24 @@ export class AppView extends LitElement {
         }
     };
 
+    mergeEventMaps(): Map<string, KeyboardAudioEvent[]> {
+        const result = new Map<string, KeyboardAudioEvent[]>();
+        for (const node of this.selectedAudioGraphNodes) {
+            const events = node.keyboardEvents;
+            if (events !== undefined) {
+                for (const [key, eventList] of events.entries()) {
+                    if (result.has(key)) {
+                        result.set(key, [...(result.get(key) ?? []), eventList]);
+                    } else {
+                        result.set(key, [eventList]);
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
     readonly handleSelectAudioGraphNode = (node: AudioGraphNode) => {
         if (this.selectedAudioGraphNodes.some((n) => n.id === node.id)) {
             this.selectedAudioGraphNodes = this.selectedAudioGraphNodes.filter((n) => n.id !== node.id);
@@ -133,7 +152,7 @@ export class AppView extends LitElement {
                 .updateNodeConnectState=${this.handleUpdateNodeConnect}
                 .onSelectAudioGraphNode=${this.handleSelectAudioGraphNode}
             ></audio-graph-view>
-            <keyboard-controller></keyboard-controller>
+            <keyboard-controller .keyboardAudioEvents=${this.mergeEventMaps()}></keyboard-controller>
             <side-panel-view
                 orientation="right"
                 .audioGraph=${this.AUDIO_GRAPH}
