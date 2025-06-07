@@ -55,7 +55,12 @@ export class AppView extends LitElement {
                 newNode = new GainGraphNode(AUDIO_CONTEXT, [++this.currRow, this.currCol], (this.AUDIO_GRAPH.length + 1).toString());
                 break;
             case "oscillator":
-                newNode = new OscillatorGraphNode(AUDIO_CONTEXT, [++this.currRow, this.currCol], (this.AUDIO_GRAPH.length + 1).toString());
+                newNode = new OscillatorGraphNode(
+                    AUDIO_CONTEXT,
+                    [++this.currRow, this.currCol],
+                    (this.AUDIO_GRAPH.length + 1).toString(),
+                    this.handleUpdateNode.bind(this)
+                );
                 break;
             case "audio-destination":
                 newNode = new AudioDestinationGraphNode(AUDIO_CONTEXT, [++this.currRow, this.currCol], (this.AUDIO_GRAPH.length + 1).toString());

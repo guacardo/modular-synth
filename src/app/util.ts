@@ -5,7 +5,9 @@ import { OscillatorGraphNode } from "../components/audio-nodes/source/oscillator
 // =====================
 type SafeExtract<T, U extends T> = U;
 export type Position = [number, number];
-export type AudioNodeProperties = Partial<Record<keyof AudioNode, number | string | [number, number]>>;
+export type AudioNodeProperties = Partial<
+    Record<keyof AudioNode | keyof OscillatorNode | keyof GainNode | keyof BiquadFilterNode, number | string | [number, number]>
+>;
 export type AudioNodeType = "oscillator" | "gain" | "biquad-filter" | "audio-destination";
 type AudioProcessorNode = SafeExtract<AudioNodeType, "biquad-filter" | "gain">;
 type AudioSourceNode = SafeExtract<AudioNodeType, "oscillator">;
