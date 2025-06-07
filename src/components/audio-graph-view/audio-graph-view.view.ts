@@ -4,12 +4,13 @@ import {
     AUDIO_DESTINATION_NODES,
     AUDIO_PROCESSOR_NODES,
     AUDIO_SOURCE_NODES,
+    AudioDestinationGraphNode,
     AudioGraphNode,
     AudioNodeType,
-    isAudioDestinationNode,
-    isAudioProcessorNode,
-    isAudioSourceNode,
+    BiquadFilterGraphNode,
+    GainGraphNode,
     NodeConnectState,
+    OscillatorGraphNode,
 } from "../../app/util";
 import { audioGraphStyles } from "./audio-graph-view.styles";
 
@@ -21,11 +22,11 @@ export class AudioGraphView extends LitElement {
     @property({ attribute: false }) addNode: (type: AudioNodeType) => void;
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
     @property({ attribute: false, type: Object }) nodeConnectState: NodeConnectState;
-    @property({ attribute: false }) updateNodeConnectState: (node: AudioGraphNode | AudioDestinationNode | AudioParam) => void;
+    @property({ attribute: false }) updateNodeConnectState: (node: AudioGraphNode | AudioParam) => void;
     @property({ attribute: false }) onSelectAudioGraphNode: (node: AudioGraphNode) => void;
 
     private renderNodeView(graphNode: AudioGraphNode): TemplateResult {
-        if (graphNode.node instanceof GainNode) {
+        if (graphNode instanceof GainGraphNode) {
             return html`<gain-node-view
                 .graphNode=${graphNode}
                 .updateNode=${this.updateNode}
@@ -33,7 +34,7 @@ export class AudioGraphView extends LitElement {
                 .updateNodeConnectState=${this.updateNodeConnectState}
                 .onSelectAudioGraphNode=${this.onSelectAudioGraphNode}
             ></gain-node-view>`;
-        } else if (graphNode.node instanceof OscillatorNode) {
+        } else if (graphNode instanceof OscillatorGraphNode) {
             return html`<oscillator-node-view
                 .graphNode=${graphNode}
                 .updateNode=${this.updateNode}
@@ -41,11 +42,11 @@ export class AudioGraphView extends LitElement {
                 .updateNodeConnectState=${this.updateNodeConnectState}
                 .onSelectAudioGraphNode=${this.onSelectAudioGraphNode}
             ></oscillator-node-view>`;
-        } else if (graphNode.node instanceof BiquadFilterNode) {
+        } else if (graphNode instanceof BiquadFilterGraphNode) {
             return html`<biquad-filter-node-view .graphNode=${graphNode} .updateNode=${this.updateNode}></biquad-filter-node-view>`;
-        } else if (graphNode.node instanceof AudioDestinationNode) {
+        } else if (graphNode instanceof AudioDestinationGraphNode) {
             return html`<audio-destination-node-view
-                .node=${graphNode.node}
+                .graphNode=${graphNode}
                 .nodeConnectState=${this.nodeConnectState}
                 .updateNodeConnectState=${this.updateNodeConnectState}
             ></audio-destination-node-view>`;
@@ -59,7 +60,7 @@ export class AudioGraphView extends LitElement {
             <div class="nodes-container audiograph-source-nodes">
                 <h3>Source nodes</h3>
                 <div class="audio-graph-node-container">
-                    ${this.audioGraph.filter((node) => isAudioSourceNode(node.type)).map((node) => this.renderNodeView(node))}
+                    ${this.audioGraph.filter((node) => node instanceof OscillatorGraphNode).map((node) => this.renderNodeView(node))}
                 </div>
                 <new-node-view
                     .addNode=${this.addNode}
@@ -71,7 +72,9 @@ export class AudioGraphView extends LitElement {
             <div class="nodes-container audiograph-processor-nodes">
                 <h3>Processor nodes</h3>
                 <div class="audio-graph-node-container"
-                    >${this.audioGraph.filter((node) => isAudioProcessorNode(node.type)).map((node) => this.renderNodeView(node))}</div
+                    >${this.audioGraph
+                        .filter((node) => node instanceof GainGraphNode || node instanceof BiquadFilterGraphNode)
+                        .map((node) => this.renderNodeView(node))}</div
                 >
                 <new-node-view
                     .addNode=${this.addNode}
@@ -83,7 +86,9 @@ export class AudioGraphView extends LitElement {
             <div class="nodes-container audiograph-destination-nodes">
                 <h3>Destination nodes</h3>
                 <div class="audio-graph-node-container"
-                    >${this.audioGraph.filter((node) => isAudioDestinationNode(node.type)).map((node) => this.renderNodeView(node))}</div
+                    >${this.audioGraph
+                        .filter((node) => node instanceof AudioDestinationGraphNode)
+                        .map((node) => this.renderNodeView(node))}</div
                 >
                 <new-node-view
                     .addNode=${this.addNode}

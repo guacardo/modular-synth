@@ -9,7 +9,7 @@ export class NewNodeView extends LitElement {
 
     @property({ type: Array }) audioGraph: AudioGraphNode[];
     @property({ type: Array }) position: Position;
-    @property({ type: Array }) options: readonly AudioNodeType[];
+    @property({ type: Array }) options: AudioNodeType[];
     @property() addNode: (type: AudioNodeType) => void;
 
     @state() private currentPanel = 0;

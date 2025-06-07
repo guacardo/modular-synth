@@ -1,14 +1,14 @@
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { audioNodeStyles } from "../../audio-node-styles";
-import { AudioGraphNode, NodeConnectState, updateAudioParamValue } from "../../../../app/util";
+import { AudioGraphNode, GainGraphNode, NodeConnectState, updateAudioParamValue } from "../../../../app/util";
 import { classMap } from "lit/directives/class-map.js";
 
 @customElement("gain-node-view")
 export class GainNodeView extends LitElement {
     static styles = [audioNodeStyles];
 
-    @property({ type: Object, attribute: false }) graphNode: AudioGraphNode;
+    @property({ type: Object, attribute: false }) graphNode: GainGraphNode;
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
     @property({ attribute: false, type: Object }) nodeConnectState: NodeConnectState;
     @property({ attribute: false }) updateNodeConnectState: (node: AudioGraphNode | AudioParam) => void;

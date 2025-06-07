@@ -1,7 +1,7 @@
 import { LitElement, html } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { audioNodeStyles } from "../../audio-node-styles";
-import { AudioGraphNode, NodeConnectState, updateAudioParamValue } from "../../../../app/util";
+import { AudioGraphNode, NodeConnectState, OscillatorGraphNode, updateAudioParamValue } from "../../../../app/util";
 import { classMap } from "lit/directives/class-map.js";
 
 export const settableOscillatorTypes: readonly OscillatorType[] = ["sawtooth", "sine", "square", "triangle"] as const;
@@ -10,7 +10,7 @@ export const settableOscillatorTypes: readonly OscillatorType[] = ["sawtooth", "
 export class OscillatorNodeView extends LitElement {
     static styles = [audioNodeStyles];
 
-    @property({ attribute: false, type: Object }) graphNode: AudioGraphNode;
+    @property({ attribute: false, type: Object }) readonly graphNode: OscillatorGraphNode;
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
     @property({ attribute: false, type: Object }) nodeConnectState: NodeConnectState;
     @property({ attribute: false }) updateNodeConnectState: (node: AudioGraphNode) => void;
@@ -38,19 +38,15 @@ export class OscillatorNodeView extends LitElement {
     }
 
     private startOscillator() {
-        const node = this.graphNode.node as OscillatorNode;
-        if (node && !this.running) {
-            node.start();
-            this.running = true;
+        if (this.running) {
+            return;
         }
+        this.graphNode.node.start();
+        this.running = true;
     }
 
     private stopOscillator() {
-        const node = this.graphNode.node as OscillatorNode;
-        if (node) {
-            node.stop();
-            this.running = false;
-        }
+        this.graphNode.node.stop();
     }
 
     private setPulseWave(dutyCycle: number = 0.5) {

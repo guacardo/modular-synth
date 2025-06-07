@@ -2,7 +2,7 @@ import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { audioNodeStyles } from "../../audio-node-styles";
 import { classMap } from "lit/directives/class-map.js";
-import { AudioGraphNode, updateAudioParamValue } from "../../../../app/util";
+import { AudioGraphNode, BiquadFilterGraphNode, updateAudioParamValue } from "../../../../app/util";
 
 const settableBiquadFilterTypes: readonly BiquadFilterType[] = [
     "allpass",
@@ -19,8 +19,7 @@ const settableBiquadFilterTypes: readonly BiquadFilterType[] = [
 export class BiquadFilterNodeView extends LitElement {
     static styles = [audioNodeStyles];
 
-    // TODO: can graphNode be the specific type BiquadFilterNode? readonly?
-    @property({ attribute: false }) graphNode: AudioGraphNode;
+    @property({ attribute: false }) readonly graphNode: BiquadFilterGraphNode;
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
     @property({ attribute: false }) connectToContext: () => void;
 

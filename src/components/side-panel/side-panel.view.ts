@@ -6,9 +6,13 @@ import {
     AUDIO_DESTINATION_NODES,
     AUDIO_PROCESSOR_NODES,
     AUDIO_SOURCE_NODES,
+    AudioDestinationGraphNode,
     AudioGraphNode,
     AudioNodeType,
+    BiquadFilterGraphNode,
+    GainGraphNode,
     NodeConnectState,
+    OscillatorGraphNode,
 } from "../../app/util";
 
 type Orientation = "left" | "right";
@@ -23,29 +27,34 @@ export class SidePanelView extends LitElement {
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
     @property({ attribute: false, type: Object }) nodeConnectState: NodeConnectState;
     @property({ attribute: false }) updateNodeConnectState: (node: AudioGraphNode | AudioDestinationNode) => void;
+    @property({ attribute: false }) onSelectAudioGraphNode: (node: AudioGraphNode) => void;
 
     connectedCallback(): void {
         super.connectedCallback();
     }
 
     private renderNodeView(graphNode: AudioGraphNode): TemplateResult {
-        if (graphNode.node instanceof GainNode) {
+        if (graphNode instanceof GainGraphNode) {
             return html`<gain-node-view
                 .graphNode=${graphNode}
                 .updateNode=${this.updateNode}
                 .nodeConnectState=${this.nodeConnectState}
                 .updateNodeConnectState=${this.updateNodeConnectState}
+                .onSelectAudioGraphNode=${this.onSelectAudioGraphNode}
             ></gain-node-view>`;
-        } else if (graphNode.node instanceof OscillatorNode) {
+        } else if (graphNode instanceof OscillatorGraphNode) {
             return html`<oscillator-node-view
                 .graphNode=${graphNode}
                 .updateNode=${this.updateNode}
                 .nodeConnectState=${this.nodeConnectState}
                 .updateNodeConnectState=${this.updateNodeConnectState}
+                .onSelectAudioGraphNode=${this.onSelectAudioGraphNode}
             ></oscillator-node-view>`;
-        } else if (graphNode.node instanceof AudioDestinationNode) {
+        } else if (graphNode instanceof BiquadFilterGraphNode) {
+            return html`<biquad-filter-node-view .graphNode=${graphNode} .updateNode=${this.updateNode}></biquad-filter-node-view>`;
+        } else if (graphNode instanceof AudioDestinationGraphNode) {
             return html`<audio-destination-node-view
-                .node=${graphNode.node}
+                .graphNode=${graphNode}
                 .nodeConnectState=${this.nodeConnectState}
                 .updateNodeConnectState=${this.updateNodeConnectState}
             ></audio-destination-node-view>`;

@@ -2,10 +2,8 @@
 // Types & Type Aliases
 // =====================
 type SafeExtract<T, U extends T> = U;
-
 export type Position = [number, number];
 export type AudioNodeProperties = Partial<Record<keyof AudioNode, number | string | [number, number]>>;
-
 export type AudioNodeType = "oscillator" | "gain" | "biquad-filter" | "audio-destination";
 type AudioProcessorNode = SafeExtract<AudioNodeType, "biquad-filter" | "gain">;
 type AudioSourceNode = SafeExtract<AudioNodeType, "oscillator">;
@@ -24,15 +22,8 @@ export const AUDIO_DESTINATION_NODES: AudioGraphDestinationNode[] = ["audio-dest
 // TODO: Lit will not update for properties, can only call functions.
 export const AUDIO_CONTEXT = new AudioContext();
 
-export const nodeFactory: Record<AudioNodeType, () => AudioNode> = {
-    oscillator: () => AUDIO_CONTEXT.createOscillator(),
-    gain: () => AUDIO_CONTEXT.createGain(),
-    "biquad-filter": () => AUDIO_CONTEXT.createBiquadFilter(),
-    "audio-destination": () => AUDIO_CONTEXT.destination,
-};
-
 // =====================
-// AudioGraphNode Class
+// AudioGraphNode Classes
 // =====================
 export interface KeyboardAudioEvent {
     key: string;
@@ -41,19 +32,67 @@ export interface KeyboardAudioEvent {
     pressed?: boolean;
 }
 
-export class AudioGraphNode {
+export interface AudioGraphNode {
     id: string;
     position: Position;
     node: AudioNode;
-    type: AudioNodeType;
+    inputIds: string[];
+    outputIds: string[];
+}
+
+export class OscillatorGraphNode implements AudioGraphNode {
+    id: string;
+    position: Position;
+    node: OscillatorNode;
     inputIds: string[] = [];
     outputIds: string[] = [];
 
-    constructor(type: AudioNodeType, position: Position, id: string) {
-        this.node = nodeFactory[type]();
+    constructor(context: AudioContext, position: Position, id: string) {
+        this.node = context.createOscillator();
         this.position = position;
         this.id = id;
-        this.type = type;
+    }
+}
+
+export class GainGraphNode implements AudioGraphNode {
+    id: string;
+    position: Position;
+    node: GainNode;
+    inputIds: string[] = [];
+    outputIds: string[] = [];
+
+    constructor(context: AudioContext, position: Position, id: string) {
+        this.node = context.createGain();
+        this.position = position;
+        this.id = id;
+    }
+}
+
+export class BiquadFilterGraphNode implements AudioGraphNode {
+    id: string;
+    position: Position;
+    node: BiquadFilterNode;
+    inputIds: string[] = [];
+    outputIds: string[] = [];
+
+    constructor(context: AudioContext, position: Position, id: string) {
+        this.node = context.createBiquadFilter();
+        this.position = position;
+        this.id = id;
+    }
+}
+
+export class AudioDestinationGraphNode implements AudioGraphNode {
+    id: string;
+    position: Position;
+    node: AudioDestinationNode;
+    inputIds: string[] = [];
+    outputIds: string[] = [];
+
+    constructor(context: AudioContext, position: Position, id: string) {
+        this.node = context.destination;
+        this.position = position;
+        this.id = id;
     }
 }
 
@@ -62,7 +101,11 @@ export class AudioGraphNode {
 // =====================
 export function connectAudioNodes(connection: NodeConnectState): boolean {
     const { source, destination } = connection;
-    if (destination instanceof AudioGraphNode) {
+    if (
+        destination instanceof OscillatorGraphNode ||
+        destination instanceof GainGraphNode ||
+        destination instanceof BiquadFilterGraphNode
+    ) {
         console.log("Connecting nodes:", source?.id, destination?.id);
         if (source && destination) {
             if (
@@ -85,29 +128,15 @@ export function connectAudioNodes(connection: NodeConnectState): boolean {
             console.error("Source or destination node is undefined");
         }
         return false;
-    } else if (destination instanceof AudioDestinationNode) {
-        source?.node.connect(destination);
+    } else if (destination instanceof AudioDestinationGraphNode) {
+        console.log("Connecting to AudioDestinationNode:", source?.id, destination.id);
+        source?.node.connect(destination.node.context.destination);
         return true;
     } else if (destination instanceof AudioParam) {
         console.log("Connecting AudioParam:", source?.id, destination);
         source?.node.connect(destination);
     }
     return false;
-}
-
-// =====================
-// Type Guards
-// =====================
-export function isAudioProcessorNode(type: AudioNodeType): type is AudioProcessorNode {
-    return (AUDIO_PROCESSOR_NODES as readonly string[]).includes(type);
-}
-
-export function isAudioSourceNode(type: AudioNodeType): type is AudioSourceNode {
-    return (AUDIO_SOURCE_NODES as readonly string[]).includes(type);
-}
-
-export function isAudioDestinationNode(type: AudioNodeType): type is AudioGraphDestinationNode {
-    return (AUDIO_DESTINATION_NODES as readonly string[]).includes(type);
 }
 
 // UPDATE AUDIO PARAMS

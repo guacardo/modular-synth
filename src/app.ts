@@ -6,7 +6,17 @@ import { OscillatorNodeView } from "./components/audio-nodes/source/oscillator-n
 import { appStyles } from "./styles/app-styles";
 import { SidePanelView } from "./components/side-panel/side-panel.view";
 import { NewNodeView } from "./components/new-node/new-node.view";
-import { AudioGraphNode, AudioNodeType, connectAudioNodes, NodeConnectState } from "./app/util";
+import {
+    AUDIO_CONTEXT,
+    AudioDestinationGraphNode,
+    AudioGraphNode,
+    AudioNodeType,
+    BiquadFilterGraphNode,
+    connectAudioNodes,
+    GainGraphNode,
+    NodeConnectState,
+    OscillatorGraphNode,
+} from "./app/util";
 import { AudioGraphView } from "./components/audio-graph-view/audio-graph-view.view";
 import { KeyboardController } from "./components/keyboard-controller/keyboard-controller.view";
 import "./components/audio-graph-view/audio-graph-view.view";
@@ -36,10 +46,29 @@ export class AppView extends LitElement {
     }
 
     readonly handleAddNode = (type: AudioNodeType) => {
-        this.AUDIO_GRAPH = [
-            ...this.AUDIO_GRAPH,
-            new AudioGraphNode(type, [++this.currRow, this.currCol], (this.AUDIO_GRAPH.length + 1).toString()),
-        ];
+        let newNode: AudioGraphNode;
+        switch (type) {
+            case "biquad-filter":
+                newNode = new BiquadFilterGraphNode(
+                    AUDIO_CONTEXT,
+                    [++this.currRow, this.currCol],
+                    (this.AUDIO_GRAPH.length + 1).toString()
+                );
+                break;
+            case "gain":
+                newNode = new GainGraphNode(AUDIO_CONTEXT, [++this.currRow, this.currCol], (this.AUDIO_GRAPH.length + 1).toString());
+                break;
+            case "oscillator":
+                newNode = new OscillatorGraphNode(AUDIO_CONTEXT, [++this.currRow, this.currCol], (this.AUDIO_GRAPH.length + 1).toString());
+                break;
+            case "audio-destination":
+                newNode = new AudioDestinationGraphNode(
+                    AUDIO_CONTEXT,
+                    [++this.currRow, this.currCol],
+                    (this.AUDIO_GRAPH.length + 1).toString()
+                );
+        }
+        this.AUDIO_GRAPH = [...this.AUDIO_GRAPH, newNode];
     };
 
     readonly handleUpdateNode = (node: AudioGraphNode) => {
@@ -49,22 +78,31 @@ export class AppView extends LitElement {
     };
 
     readonly handleUpdateNodeConnect = (node: AudioGraphNode | AudioDestinationNode | AudioParam) => {
-        if (node instanceof AudioGraphNode && this.nodeConnectState.source?.id === undefined) {
+        console.log(node);
+        if (
+            (node instanceof BiquadFilterGraphNode || node instanceof GainGraphNode || node instanceof OscillatorGraphNode) &&
+            this.nodeConnectState.source?.id === undefined
+        ) {
             this.nodeConnectState = {
                 source: node,
                 destination: undefined,
             };
-        } else if (node instanceof AudioGraphNode && this.nodeConnectState.source?.id === node.id) {
+        } else if (
+            (node instanceof BiquadFilterGraphNode || node instanceof GainGraphNode || node instanceof OscillatorGraphNode) &&
+            this.nodeConnectState.source?.id === node.id
+        ) {
             this.nodeConnectState = {
                 source: undefined,
                 destination: undefined,
             };
         } else if (this.nodeConnectState.source?.id) {
             // connect the two nodes if valid
-            connectAudioNodes({
-                source: this.nodeConnectState.source,
-                destination: node,
-            });
+            console.log(
+                connectAudioNodes({
+                    source: this.nodeConnectState.source,
+                    destination: node,
+                })
+            );
             // reset state
             this.nodeConnectState = {
                 source: undefined,
@@ -103,6 +141,7 @@ export class AppView extends LitElement {
                 .updateNode=${this.handleUpdateNode}
                 .nodeConnectState=${this.nodeConnectState}
                 .updateNodeConnectState=${this.handleUpdateNodeConnect}
+                .onSelectAudioGraphNode=${this.handleSelectAudioGraphNode}
             ></side-panel-view>
         </div>`;
     }
