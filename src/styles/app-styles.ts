@@ -28,6 +28,11 @@ export const appStyles = css`
             box-shadow: 0 1px 0 0 var(--accent-0), 0 2px 4px 0 rgba(0, 0, 0, 0.22);
             transform: translateY(3px);
         }
+
+        &.button-active {
+            background-color: var(--accent-0-dark);
+            color: black;
+        }
     }
 
     .non-desktop-overlay {

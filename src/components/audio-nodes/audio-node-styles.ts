@@ -21,11 +21,6 @@ export const audioNodeStyles = [
 
         .isConnectSource {
             border: 1px solid var(--accent-0);
-
-            .button-active {
-                background-color: var(--accent-0-dark);
-                color: black;
-            }
         }
 
         .connectionCandidate {

@@ -24,7 +24,7 @@ export class BiquadFilterNodeView extends LitElement {
     @property({ attribute: false }) connectToContext: () => void;
 
     private updateBiquadFilterParam<T extends keyof BiquadFilterNode>(param: T, value: BiquadFilterType | number) {
-        const node = updateAudioParamValue(this.graphNode.node, { [param]: value } as Partial<Record<keyof BiquadFilterNode, string>>);
+        const node = updateAudioParamValue(this.graphNode.node, { [param]: value });
         const newAudioGraphNode = { ...this.graphNode, node };
         this.updateNode(newAudioGraphNode);
     }
@@ -39,9 +39,7 @@ export class BiquadFilterNodeView extends LitElement {
                 }}
             >
                 ${settableBiquadFilterTypes.map((type) => {
-                    return html`<option value=${type} ?selected=${type === (this.graphNode.node as BiquadFilterNode).type}
-                        >${type}</option
-                    >`;
+                    return html`<option value=${type} ?selected=${type === (this.graphNode.node as BiquadFilterNode).type}>${type}</option>`;
                 })}
             </select>
             <div class="slider-container">

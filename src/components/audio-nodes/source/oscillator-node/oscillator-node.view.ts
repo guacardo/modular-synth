@@ -18,7 +18,7 @@ export class OscillatorNodeView extends LitElement {
     @property({ attribute: false }) onSelectAudioGraphNode: (node: AudioGraphNode) => void;
 
     private updateOscillatorParam<T extends keyof OscillatorNode>(property: T, value: number | OscillatorType) {
-        const node = updateAudioParamValue(this.graphNode.node, { [property]: value } as Partial<Record<keyof OscillatorNode, string>>);
+        const node = updateAudioParamValue(this.graphNode.node, { [property]: value });
         const newAudioGraphNode = { ...this.graphNode, node };
         this.updateNode(newAudioGraphNode);
     }
@@ -49,7 +49,6 @@ export class OscillatorNodeView extends LitElement {
                 node: true,
                 isConnectSource: isConnectSource,
             })}
-            @click=${() => this.onSelectAudioGraphNode(this.graphNode)}
         >
             <h2>oscillator</h2>
             <div class="slider-container">
@@ -60,10 +59,6 @@ export class OscillatorNodeView extends LitElement {
                     min="0"
                     max="2000"
                     .value="${(this.graphNode.node as OscillatorNode).frequency.value.toString()}"
-                    @click=${(e: MouseEvent) => {
-                        e.stopPropagation();
-                        e.preventDefault();
-                    }}
                     @input=${(e: Event) => {
                         this.updateOscillatorParam("frequency", (e.target as HTMLInputElement).valueAsNumber);
                     }}
@@ -78,19 +73,12 @@ export class OscillatorNodeView extends LitElement {
                     max="1"
                     step="0.01"
                     .value="${this.graphNode.dutyCycle.toString()}"
-                    @click=${(e: MouseEvent) => {
-                        e.stopPropagation();
-                        e.preventDefault();
-                    }}
                     @input=${(e: Event) => this.setPulseWave((e.target as HTMLInputElement).valueAsNumber)}
                 />
             </div>
             <select
                 .value=${this.graphNode.node.type}
-                @click=${(e: MouseEvent) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                }}
+                @click=${(e: MouseEvent) => {}}
                 @change=${(e: Event) => {
                     this.updateOscillatorParam("type", (e.target as HTMLSelectElement).value as OscillatorType);
                 }}
@@ -104,11 +92,15 @@ export class OscillatorNodeView extends LitElement {
                 class=${classMap({ button: true, "button-active": isConnectSource })}
                 type="button"
                 @click=${(e: MouseEvent) => {
-                    e.stopPropagation();
-                    e.preventDefault();
                     this.updateNodeConnectState(this.graphNode);
                 }}
                 >Connect</button
+            >
+            <button
+                class=${classMap({ button: true, "button-active": this.graphNode.isSelected })}
+                type="button"
+                @click=${() => this.onSelectAudioGraphNode(this.graphNode)}
+                >Select</button
             >
         </div>`;
     }

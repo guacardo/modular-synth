@@ -35,6 +35,7 @@ export interface KeyboardAudioEvent {
 export interface AudioGraphNode {
     id: string;
     position: Position;
+    isSelected: boolean;
     node: AudioNode;
     keyboardEvents?: Map<string, KeyboardAudioEvent>;
 }
@@ -42,6 +43,7 @@ export interface AudioGraphNode {
 export class GainGraphNode implements AudioGraphNode {
     id: string;
     position: Position;
+    isSelected = false;
     node: GainNode;
 
     constructor(context: AudioContext, position: Position, id: string) {
@@ -54,6 +56,7 @@ export class GainGraphNode implements AudioGraphNode {
 export class BiquadFilterGraphNode implements AudioGraphNode {
     id: string;
     position: Position;
+    isSelected = false;
     node: BiquadFilterNode;
 
     constructor(context: AudioContext, position: Position, id: string) {
@@ -66,6 +69,7 @@ export class BiquadFilterGraphNode implements AudioGraphNode {
 export class AudioDestinationGraphNode implements AudioGraphNode {
     id: string;
     position: Position;
+    isSelected = false;
     node: AudioDestinationNode;
 
     constructor(context: AudioContext, position: Position, id: string) {

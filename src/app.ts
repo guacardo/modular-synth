@@ -34,7 +34,6 @@ export class AppView extends LitElement {
     static styles = [appStyles];
 
     @state() AUDIO_GRAPH: AudioGraphNode[] = [];
-    @state() selectedAudioGraphNodes: AudioGraphNode[] = [];
     @state() currRow: number = 0;
     @state() currCol: number = 0;
     @state() nodeConnectState: NodeConnectState = {
@@ -88,12 +87,10 @@ export class AppView extends LitElement {
             };
         } else if (this.nodeConnectState.source?.id) {
             // connect the two nodes if valid
-            console.log(
-                connectAudioNodes({
-                    source: this.nodeConnectState.source,
-                    destination: node,
-                })
-            );
+            connectAudioNodes({
+                source: this.nodeConnectState.source,
+                destination: node,
+            });
             // reset state
             this.nodeConnectState = {
                 source: undefined,
@@ -106,14 +103,16 @@ export class AppView extends LitElement {
 
     mergeEventMaps(): Map<string, KeyboardAudioEvent[]> {
         const result = new Map<string, KeyboardAudioEvent[]>();
-        for (const node of this.selectedAudioGraphNodes) {
-            const events = node.keyboardEvents;
-            if (events !== undefined) {
-                for (const [key, eventList] of events.entries()) {
-                    if (result.has(key)) {
-                        result.set(key, [...(result.get(key) ?? []), eventList]);
-                    } else {
-                        result.set(key, [eventList]);
+        for (const node of this.AUDIO_GRAPH) {
+            if (node.isSelected) {
+                const events = node.keyboardEvents;
+                if (events !== undefined) {
+                    for (const [key, eventList] of events.entries()) {
+                        if (result.has(key)) {
+                            result.set(key, [...(result.get(key) ?? []), eventList]);
+                        } else {
+                            result.set(key, [eventList]);
+                        }
                     }
                 }
             }
@@ -123,17 +122,14 @@ export class AppView extends LitElement {
     }
 
     readonly handleSelectAudioGraphNode = (node: AudioGraphNode) => {
-        if (this.selectedAudioGraphNodes.some((n) => n.id === node.id)) {
-            this.selectedAudioGraphNodes = this.selectedAudioGraphNodes.filter((n) => n.id !== node.id);
-        } else {
-            this.selectedAudioGraphNodes = [...this.selectedAudioGraphNodes, node];
-        }
-        console.log("Selected nodes:", this.selectedAudioGraphNodes);
+        node.isSelected = !node.isSelected;
+        this.handleUpdateNode(node);
+        this.requestUpdate();
     };
 
     render() {
         return html` <div class="app">
-            <div class="non-desktop-overlay"><p>big boi puters only sry</p></div>
+            <div class="non-desktop-overlay"><p>big boi 'puters only sry</p></div>
             <audio-graph-view
                 .audioGraph=${this.AUDIO_GRAPH}
                 .addNode=${this.handleAddNode}
