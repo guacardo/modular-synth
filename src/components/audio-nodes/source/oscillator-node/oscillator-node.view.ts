@@ -1,8 +1,9 @@
 import { LitElement, html } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import { audioNodeStyles } from "../../audio-node-styles";
-import { AudioGraphNode, NodeConnectState, OscillatorGraphNode, updateAudioParamValue } from "../../../../app/util";
+import { AudioGraphNode, NodeConnectState, updateAudioParamValue } from "../../../../app/util";
 import { classMap } from "lit/directives/class-map.js";
+import { OscillatorGraphNode } from "./oscillator-graph-node";
 
 export const settableOscillatorTypes: readonly OscillatorType[] = ["sawtooth", "sine", "square", "triangle"] as const;
 
@@ -16,29 +17,14 @@ export class OscillatorNodeView extends LitElement {
     @property({ attribute: false }) updateNodeConnectState: (node: AudioGraphNode) => void;
     @property({ attribute: false }) onSelectAudioGraphNode: (node: AudioGraphNode) => void;
 
-    @state() private running: boolean;
-    @state() private dutyCycle: number = 0.5;
-
     private updateOscillatorParam<T extends keyof OscillatorNode>(property: T, value: number | OscillatorType) {
         const node = updateAudioParamValue(this.graphNode.node, { [property]: value } as Partial<Record<keyof OscillatorNode, string>>);
         const newAudioGraphNode = { ...this.graphNode, node };
         this.updateNode(newAudioGraphNode);
     }
 
-    private startOscillator() {
-        if (this.running) {
-            return;
-        }
-        this.graphNode.node.start();
-        this.running = true;
-    }
-
-    private stopOscillator() {
-        this.graphNode.node.stop();
-    }
-
     private setPulseWave(dutyCycle: number = 0.5) {
-        const audioCtx = (this.graphNode.node as OscillatorNode).context;
+        const audioCtx = this.graphNode.node.context;
         const n = 4096; // Number of samples for the wave
         const real = new Float32Array(n);
         const imag = new Float32Array(n);
@@ -49,8 +35,10 @@ export class OscillatorNodeView extends LitElement {
             imag[i] = 0;
         }
 
-        (this.graphNode.node as OscillatorNode).setPeriodicWave(audioCtx.createPeriodicWave(real, imag));
-        this.dutyCycle = dutyCycle;
+        this.graphNode.node.setPeriodicWave(audioCtx.createPeriodicWave(real, imag));
+        this.graphNode.dutyCycle = dutyCycle;
+        const newAudioGraphNode = { ...this.graphNode, node: this.graphNode.node, dutyCycle };
+        this.updateNode(newAudioGraphNode);
     }
 
     render() {
@@ -59,7 +47,6 @@ export class OscillatorNodeView extends LitElement {
         return html`<div
             class=${classMap({
                 node: true,
-                running: this.running,
                 isConnectSource: isConnectSource,
             })}
             @click=${() => this.onSelectAudioGraphNode(this.graphNode)}
@@ -83,14 +70,14 @@ export class OscillatorNodeView extends LitElement {
                 />
             </div>
             <div class="slider-container">
-                <label>Duty Cycle: ${this.dutyCycle.toFixed(2)}</label>
+                <label>Duty Cycle: ${this.graphNode.dutyCycle.toFixed(2)}</label>
                 <input
                     class="range"
                     type="range"
-                    min="0.01"
-                    max="0.99"
+                    min="0"
+                    max="1"
                     step="0.01"
-                    .value="${this.dutyCycle.toString()}"
+                    .value="${this.graphNode.dutyCycle.toString()}"
                     @click=${(e: MouseEvent) => {
                         e.stopPropagation();
                         e.preventDefault();
@@ -99,7 +86,7 @@ export class OscillatorNodeView extends LitElement {
                 />
             </div>
             <select
-                .value=${(this.graphNode.node as OscillatorNode).type}
+                .value=${this.graphNode.node.type}
                 @click=${(e: MouseEvent) => {
                     e.stopPropagation();
                     e.preventDefault();
@@ -109,29 +96,10 @@ export class OscillatorNodeView extends LitElement {
                 }}
             >
                 ${settableOscillatorTypes.map((type) => {
-                    return html`<option value=${type} ?selected=${type === (this.graphNode.node as OscillatorNode).type}>${type}</option>`;
+                    return html`<option value=${type} ?selected=${type === this.graphNode.node.type}>${type}</option>`;
                 })}
+                <option disabled value="custom" ?selected=${this.graphNode.node.type === "custom"}>custom</option>
             </select>
-            <button
-                class="button"
-                type="button"
-                @click=${(e: MouseEvent) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    this.startOscillator();
-                }}
-                >Start</button
-            >
-            <button
-                class="button"
-                type="button"
-                @click=${(e: MouseEvent) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    this.stopOscillator();
-                }}
-                >Stop</button
-            >
             <button
                 class=${classMap({ button: true, "button-active": isConnectSource })}
                 type="button"

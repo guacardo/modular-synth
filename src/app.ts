@@ -16,7 +16,6 @@ import {
     GainGraphNode,
     KeyboardAudioEvent,
     NodeConnectState,
-    OscillatorGraphNode,
 } from "./app/util";
 import { AudioGraphView } from "./components/audio-graph-view/audio-graph-view.view";
 import { KeyboardController } from "./components/keyboard-controller/keyboard-controller.view";
@@ -28,6 +27,7 @@ import "./components/keyboard-controller/keyboard-controller.view";
 import "./components/new-node/new-node.view";
 import "./components/side-panel/side-panel.view";
 import "./components/audio-nodes/destination/audio-destination-node/audio-destination-node.view";
+import { OscillatorGraphNode } from "./components/audio-nodes/source/oscillator-node/oscillator-graph-node";
 
 @customElement("app-view")
 export class AppView extends LitElement {
@@ -50,11 +50,7 @@ export class AppView extends LitElement {
         let newNode: AudioGraphNode;
         switch (type) {
             case "biquad-filter":
-                newNode = new BiquadFilterGraphNode(
-                    AUDIO_CONTEXT,
-                    [++this.currRow, this.currCol],
-                    (this.AUDIO_GRAPH.length + 1).toString()
-                );
+                newNode = new BiquadFilterGraphNode(AUDIO_CONTEXT, [++this.currRow, this.currCol], (this.AUDIO_GRAPH.length + 1).toString());
                 break;
             case "gain":
                 newNode = new GainGraphNode(AUDIO_CONTEXT, [++this.currRow, this.currCol], (this.AUDIO_GRAPH.length + 1).toString());
@@ -63,19 +59,13 @@ export class AppView extends LitElement {
                 newNode = new OscillatorGraphNode(AUDIO_CONTEXT, [++this.currRow, this.currCol], (this.AUDIO_GRAPH.length + 1).toString());
                 break;
             case "audio-destination":
-                newNode = new AudioDestinationGraphNode(
-                    AUDIO_CONTEXT,
-                    [++this.currRow, this.currCol],
-                    (this.AUDIO_GRAPH.length + 1).toString()
-                );
+                newNode = new AudioDestinationGraphNode(AUDIO_CONTEXT, [++this.currRow, this.currCol], (this.AUDIO_GRAPH.length + 1).toString());
         }
         this.AUDIO_GRAPH = [...this.AUDIO_GRAPH, newNode];
     };
 
     readonly handleUpdateNode = (node: AudioGraphNode) => {
-        this.AUDIO_GRAPH = this.AUDIO_GRAPH.map((n) =>
-            n.id === node.id ? Object.assign(Object.create(Object.getPrototypeOf(n)), n, node) : n
-        );
+        this.AUDIO_GRAPH = this.AUDIO_GRAPH.map((n) => (n.id === node.id ? Object.assign(Object.create(Object.getPrototypeOf(n)), n, node) : n));
     };
 
     readonly handleUpdateNodeConnect = (node: AudioGraphNode | AudioDestinationNode | AudioParam) => {

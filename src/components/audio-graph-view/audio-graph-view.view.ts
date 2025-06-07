@@ -10,9 +10,9 @@ import {
     BiquadFilterGraphNode,
     GainGraphNode,
     NodeConnectState,
-    OscillatorGraphNode,
 } from "../../app/util";
 import { audioGraphStyles } from "./audio-graph-view.styles";
+import { OscillatorGraphNode } from "../audio-nodes/source/oscillator-node/oscillator-graph-node";
 
 @customElement("audio-graph-view")
 export class AudioGraphView extends LitElement {
@@ -62,12 +62,7 @@ export class AudioGraphView extends LitElement {
                 <div class="audio-graph-node-container">
                     ${this.audioGraph.filter((node) => node instanceof OscillatorGraphNode).map((node) => this.renderNodeView(node))}
                 </div>
-                <new-node-view
-                    .addNode=${this.addNode}
-                    .audioGraph=${this.audioGraph}
-                    .gridStyle=${true}
-                    .options=${AUDIO_SOURCE_NODES}
-                ></new-node-view>
+                <new-node-view .addNode=${this.addNode} .audioGraph=${this.audioGraph} .gridStyle=${true} .options=${AUDIO_SOURCE_NODES}></new-node-view>
             </div>
             <div class="nodes-container audiograph-processor-nodes">
                 <h3>Processor nodes</h3>
@@ -76,26 +71,14 @@ export class AudioGraphView extends LitElement {
                         .filter((node) => node instanceof GainGraphNode || node instanceof BiquadFilterGraphNode)
                         .map((node) => this.renderNodeView(node))}</div
                 >
-                <new-node-view
-                    .addNode=${this.addNode}
-                    .audioGraph=${this.audioGraph}
-                    .gridStyle=${true}
-                    .options=${AUDIO_PROCESSOR_NODES}
-                ></new-node-view>
+                <new-node-view .addNode=${this.addNode} .audioGraph=${this.audioGraph} .gridStyle=${true} .options=${AUDIO_PROCESSOR_NODES}></new-node-view>
             </div>
             <div class="nodes-container audiograph-destination-nodes">
                 <h3>Destination nodes</h3>
                 <div class="audio-graph-node-container"
-                    >${this.audioGraph
-                        .filter((node) => node instanceof AudioDestinationGraphNode)
-                        .map((node) => this.renderNodeView(node))}</div
+                    >${this.audioGraph.filter((node) => node instanceof AudioDestinationGraphNode).map((node) => this.renderNodeView(node))}</div
                 >
-                <new-node-view
-                    .addNode=${this.addNode}
-                    .audioGraph=${this.audioGraph}
-                    .gridStyle=${true}
-                    .options=${AUDIO_DESTINATION_NODES}
-                ></new-node-view>
+                <new-node-view .addNode=${this.addNode} .audioGraph=${this.audioGraph} .gridStyle=${true} .options=${AUDIO_DESTINATION_NODES}></new-node-view>
             </div>
         </div>`;
     }

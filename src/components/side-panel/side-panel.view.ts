@@ -12,8 +12,8 @@ import {
     BiquadFilterGraphNode,
     GainGraphNode,
     NodeConnectState,
-    OscillatorGraphNode,
 } from "../../app/util";
+import { OscillatorGraphNode } from "../audio-nodes/source/oscillator-node/oscillator-graph-node";
 
 type Orientation = "left" | "right";
 

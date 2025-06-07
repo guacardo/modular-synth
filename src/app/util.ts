@@ -1,3 +1,5 @@
+import { OscillatorGraphNode } from "../components/audio-nodes/source/oscillator-node/oscillator-graph-node";
+
 // =====================
 // Types & Type Aliases
 // =====================
@@ -35,28 +37,6 @@ export interface AudioGraphNode {
     position: Position;
     node: AudioNode;
     keyboardEvents?: Map<string, KeyboardAudioEvent>;
-}
-
-export class OscillatorGraphNode implements AudioGraphNode {
-    id: string;
-    position: Position;
-    node: OscillatorNode;
-    keyboardEvents: Map<string, KeyboardAudioEvent>;
-    constructor(context: AudioContext, position: Position, id: string) {
-        this.node = context.createOscillator();
-        this.position = position;
-        this.id = id;
-        this.keyboardEvents = new Map<string, KeyboardAudioEvent>([
-            ["a", { keydown: () => this.node.start() }],
-            ["s", { keydown: () => this.node.frequency.setValueAtTime(440, context.currentTime) }],
-            ["d", { keydown: () => this.node.frequency.setValueAtTime(880, context.currentTime) }],
-            ["f", { keydown: () => this.node.frequency.setValueAtTime(660, context.currentTime) }],
-            ["g", { keydown: () => (this.node.type = "sine") }],
-            ["h", { keydown: () => (this.node.type = "square") }],
-            ["j", { keydown: () => (this.node.type = "sawtooth") }],
-            ["k", { keydown: () => (this.node.type = "triangle") }],
-        ]);
-    }
 }
 
 export class GainGraphNode implements AudioGraphNode {
@@ -100,11 +80,7 @@ export class AudioDestinationGraphNode implements AudioGraphNode {
 // =====================
 export function connectAudioNodes(connection: NodeConnectState): boolean {
     const { source, destination } = connection;
-    if (
-        destination instanceof OscillatorGraphNode ||
-        destination instanceof GainGraphNode ||
-        destination instanceof BiquadFilterGraphNode
-    ) {
+    if (destination instanceof OscillatorGraphNode || destination instanceof GainGraphNode || destination instanceof BiquadFilterGraphNode) {
         console.log("Connecting nodes:", source?.id, destination?.id);
         if (source && destination) {
             if (
