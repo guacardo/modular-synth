@@ -18,9 +18,9 @@ export class OscillatorGraphNode implements AudioGraphNode {
             ["d", { keydown: () => updateNode({ ...this, node: updateAudioParamValue(this.node, { frequency: 800 }) }) }],
             ["f", { keydown: () => updateNode({ ...this, node: updateAudioParamValue(this.node, { frequency: 1600 }) }) }],
             ["g", { keydown: () => updateNode({ ...this, node: updateAudioParamValue(this.node, { type: "sine" }) }) }],
-            ["h", { keydown: () => (this.node.type = "square") }],
-            ["j", { keydown: () => (this.node.type = "sawtooth") }],
-            ["k", { keydown: () => (this.node.type = "triangle") }],
+            ["h", { keydown: () => updateNode({ ...this, node: updateAudioParamValue(this.node, { type: "square" }) }) }],
+            ["j", { keydown: () => updateNode({ ...this, node: updateAudioParamValue(this.node, { type: "sawtooth" }) }) }],
+            ["k", { keydown: () => updateNode({ ...this, node: updateAudioParamValue(this.node, { type: "triangle" }) }) }],
         ]);
     }
 }
