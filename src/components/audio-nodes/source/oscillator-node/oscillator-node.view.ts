@@ -76,7 +76,6 @@ export class OscillatorNodeView extends LitElement {
             </div>
             <select
                 .value=${this.graphNode.node.type}
-                @click=${(e: MouseEvent) => {}}
                 @change=${(e: Event) => {
                     this.updateOscillatorParam("type", (e.target as HTMLSelectElement).value as OscillatorType);
                 }}
@@ -89,9 +88,7 @@ export class OscillatorNodeView extends LitElement {
             <button
                 class=${classMap({ button: true, "button-active": isConnectSource })}
                 type="button"
-                @click=${(e: MouseEvent) => {
-                    this.updateNodeConnectState(this.graphNode);
-                }}
+                @click=${() => this.updateNodeConnectState(this.graphNode)}
                 >Connect</button
             >
             <button

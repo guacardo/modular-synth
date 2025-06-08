@@ -59,9 +59,19 @@ export class GainNodeView extends LitElement {
                 @click=${() => this.updateNodeConnectState(this.graphNode)}
                 >Connect</button
             >
-            <button class="button" @click=${() => this.updateNodeConnectState((this.graphNode.node as GainNode).gain)}
-                >Connect to Gain</button
-            >
+            <button class="button" @click=${() => this.updateNodeConnectState((this.graphNode.node as GainNode).gain)}>Connect to Gain</button>
+            <div class="io-container">
+                <button class="io-button"></button>
+                <label class="io-label">in</label>
+            </div>
+            <div class="io-container">
+                <button class="io-button"></button>
+                <label class="io-label">gain mod</label>
+            </div>
+            <div class="io-container">
+                <button class="io-button"></button>
+                <label class="io-label">out</label>
+            </div>
         </div>`;
     }
 }
