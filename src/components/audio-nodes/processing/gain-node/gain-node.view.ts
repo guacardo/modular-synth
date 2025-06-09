@@ -38,21 +38,25 @@ export class GainNodeView extends LitElement {
             @click=${() => this.onSelectAudioGraphNode(this.graphNode)}
         >
             <h2>gain</h2>
-            <p>Gain ${(this.graphNode.node as GainNode).gain.value.toFixed(3)}</p>
-            <input
-                type="range"
-                min="0.001"
-                max="1.0"
-                step="0.001"
-                .value="${(this.graphNode.node as GainNode).gain.value.toString()}"
-                @click=${(e: MouseEvent) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                }}
-                @input="${(e: Event) => {
-                    this.updateGain((e.target as HTMLInputElement).valueAsNumber);
-                }}"
-            />
+            <div class="slider-container">
+                <label for="gain-slider-${this.graphNode.id}">level: ${(this.graphNode.node as GainNode).gain.value.toFixed(3)}</label>
+                <input
+                    id="gain-slider-${this.graphNode.id}"
+                    class="slider"
+                    type="range"
+                    min="0.001"
+                    max="1.0"
+                    step="0.001"
+                    .value="${(this.graphNode.node as GainNode).gain.value.toString()}"
+                    @click=${(e: MouseEvent) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                    }}
+                    @input="${(e: Event) => {
+                        this.updateGain((e.target as HTMLInputElement).valueAsNumber);
+                    }}"
+                />
+            </div>
             <button
                 class=${classMap({ button: true, "button-active": isConnectSource })}
                 type="button"
@@ -60,17 +64,31 @@ export class GainNodeView extends LitElement {
                 >Connect</button
             >
             <button class="button" @click=${() => this.updateNodeConnectState((this.graphNode.node as GainNode).gain)}>Connect to Gain</button>
-            <div class="io-container">
-                <button class="io-button"></button>
-                <label class="io-label">in</label>
-            </div>
-            <div class="io-container">
-                <button class="io-button"></button>
-                <label class="io-label">gain mod</label>
-            </div>
-            <div class="io-container">
-                <button class="io-button"></button>
-                <label class="io-label">out</label>
+            <div class="button-io-container">
+                <div class="io-container">
+                    <button class="io-button"></button>
+                    <label class="io-label">in</label>
+                </div>
+                <div class="io-container">
+                    <button class="io-button active"></button>
+                    <label class="io-label">active</label>
+                </div>
+                <div class="io-container">
+                    <button class="io-button accent-0"></button>
+                    <label class="io-label">out</label>
+                </div>
+                <div class="io-container">
+                    <button class="io-button accent-1"></button>
+                    <label class="io-label">gain mod</label>
+                </div>
+                <div class="io-container">
+                    <button class="io-button accent-2"></button>
+                    <label class="io-label">ready</label>
+                </div>
+                <div class="io-container">
+                    <button class="io-button accent-3"></button>
+                    <label class="io-label">avail</label>
+                </div>
             </div>
         </div>`;
     }

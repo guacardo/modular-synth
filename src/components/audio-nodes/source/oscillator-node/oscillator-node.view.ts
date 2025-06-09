@@ -50,9 +50,9 @@ export class OscillatorNodeView extends LitElement {
         >
             <h2>oscillator</h2>
             <div class="slider-container">
-                <label>Frequency: ${audioNode.frequency.value.toString()}</label>
+                <label class="label"><span class="unit">freq:</span> <span class="value">${audioNode.frequency.value.toString()}</span></label>
                 <input
-                    class="range"
+                    class="slider"
                     type="range"
                     min="0"
                     max="2000"
@@ -63,9 +63,9 @@ export class OscillatorNodeView extends LitElement {
                 />
             </div>
             <div class="slider-container">
-                <label>Duty Cycle: ${this.graphNode.dutyCycle.toFixed(2)}</label>
+                <label class="label"><span class="unit">cycle:</span> <span class="value">${this.graphNode.dutyCycle.toFixed(2)}</span></label>
                 <input
-                    class="range"
+                    class="slider"
                     type="range"
                     min="0"
                     max="1"
@@ -86,17 +86,19 @@ export class OscillatorNodeView extends LitElement {
                 <option disabled value="custom" ?selected=${this.graphNode.node.type === "custom"}>custom</option>
             </select>
             <button
-                class=${classMap({ button: true, "button-active": isConnectSource })}
-                type="button"
-                @click=${() => this.updateNodeConnectState(this.graphNode)}
-                >Connect</button
-            >
-            <button
                 class=${classMap({ button: true, "button-active": this.graphNode.isSelected })}
                 type="button"
                 @click=${() => this.onSelectAudioGraphNode(this.graphNode)}
                 >Select</button
             >
+            <div class=${classMap({ "io-container": true })}>
+                <button
+                    type="button"
+                    class=${classMap({ "io-button": true, active: isConnectSource })}
+                    @click=${() => this.updateNodeConnectState(this.graphNode)}
+                ></button>
+                <label class="io-label">out</label>
+            </div>
         </div>`;
     }
 }

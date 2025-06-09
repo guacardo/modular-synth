@@ -7,16 +7,33 @@ export const audioNodeStyles = [
         .node {
             border: 1px solid var(--text-primary);
             border-radius: 8px;
-            padding: calc(2 * var(--base-spacing));
             background-color: var(--elevation-3);
-            cursor: pointer;
         }
 
         .slider-container {
             width: 100%;
             display: flex;
-            justify-content: flex-end;
             align-items: center;
+            gap: 16px;
+
+            .label {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                width: 20%;
+
+                .unit {
+                    color: var(--text-primary);
+                }
+
+                .value {
+                    color: var(--text-primary);
+                }
+            }
+
+            .slider {
+                flex: 1;
+            }
         }
 
         .isConnectSource {
@@ -27,11 +44,22 @@ export const audioNodeStyles = [
             border: 1px solid var(--accent-1);
         }
 
+        .button-io-container {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            justify-content: center;
+            text-align: center;
+            gap: 16px;
+            margin: 32px 0 16px;
+        }
+
         .io-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            width: 32px;
 
             .io-button {
                 width: 24px;
@@ -46,6 +74,10 @@ export const audioNodeStyles = [
                 justify-content: center;
                 overflow: visible;
                 cursor: pointer;
+            }
+
+            .io-label {
+                margin-top: 4px;
             }
 
             .io-button::after {
@@ -88,6 +120,30 @@ export const audioNodeStyles = [
                 background: radial-gradient(circle at 60% 40%, #baff7f 0%, #4caf50 60%, #333 100%);
                 box-shadow: 0 0 8px 2px #7fff4f, 0 0 2px #000, 0 2px 4px #222 inset;
                 border: 2px solid #2e7d32;
+            }
+
+            .io-button.accent-0::after {
+                background: radial-gradient(circle at 60% 40%, var(--accent-0) 0%, var(--accent-0-dark) 80%, #333 100%);
+                box-shadow: 0 0 8px 2px var(--accent-0), 0 0 2px #000, 0 2px 4px #222 inset;
+                border: 2px solid var(--accent-0-dark);
+            }
+
+            .io-button.accent-1::after {
+                background: radial-gradient(circle at 60% 40%, var(--accent-1) 0%, var(--accent-1-dark) 80%, #333 100%);
+                box-shadow: 0 0 8px 2px var(--accent-1), 0 0 2px #000, 0 2px 4px #222 inset;
+                border: 2px solid var(--accent-1-dark);
+            }
+
+            .io-button.accent-2::after {
+                background: radial-gradient(circle at 60% 40%, var(--accent-2) 0%, var(--accent-2-dark) 80%, #333 100%);
+                box-shadow: 0 0 12px 3px var(--accent-2), 0 0 2px #000, 0 2px 4px #222 inset;
+                border: 2px solid var(--accent-2-dark);
+            }
+
+            .io-button.accent-3::after {
+                background: radial-gradient(circle at 60% 40%, var(--accent-3) 0%, var(--accent-3-dark) 80%, #333 100%);
+                box-shadow: 0 0 12px 3px var(--accent-3), 0 0 2px #000, 0 2px 4px #222 inset;
+                border: 2px solid var(--accent-3-dark);
             }
         }
     `,
