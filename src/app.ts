@@ -27,7 +27,9 @@ import "./components/keyboard-controller/keyboard-controller.view";
 import "./components/new-node/new-node.view";
 import "./components/side-panel/side-panel.view";
 import "./components/audio-nodes/destination/audio-destination-node/audio-destination-node.view";
+import "./views/willys-rack-shack.view";
 import { OscillatorGraphNode } from "./components/audio-nodes/source/oscillator-node/oscillator-graph-node";
+import { WillysRackShackView } from "./views/willys-rack-shack.view";
 
 @customElement("app-view")
 export class AppView extends LitElement {
@@ -135,7 +137,16 @@ export class AppView extends LitElement {
     render() {
         return html` <div class="app">
             <div class="non-desktop-overlay"><p>big boi 'puters only sry</p></div>
-            <audio-graph-view
+            <willys-rack-shack-view
+                .audioGraph=${this.AUDIO_GRAPH}
+                .addNode=${this.handleAddNode}
+                .updateNode=${this.handleUpdateNode}
+                .nodeConnectState=${this.nodeConnectState}
+                .updateNodeConnectState=${this.handleUpdateNodeConnect}
+                .onSelectAudioGraphNode=${this.handleSelectAudioGraphNode}
+            >
+            </willys-rack-shack-view>
+            <!-- <audio-graph-view
                 .audioGraph=${this.AUDIO_GRAPH}
                 .addNode=${this.handleAddNode}
                 .updateNode=${this.handleUpdateNode}
@@ -152,7 +163,7 @@ export class AppView extends LitElement {
                 .nodeConnectState=${this.nodeConnectState}
                 .updateNodeConnectState=${this.handleUpdateNodeConnect}
                 .onSelectAudioGraphNode=${this.handleSelectAudioGraphNode}
-            ></side-panel-view>
+            ></side-panel-view> -->
         </div>`;
     }
 }
@@ -167,5 +178,6 @@ declare global {
         "oscillator-node-view": OscillatorNodeView;
         "side-panel-view": SidePanelView;
         "keyboard-controller": KeyboardController;
+        "willys-rack-shack-view": WillysRackShackView;
     }
 }
