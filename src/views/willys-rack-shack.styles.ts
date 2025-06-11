@@ -1,7 +1,7 @@
 import { css } from "lit";
 
 export const willysRackShackStyles = css`
-    :host {
+    .willys-rack-shack-container {
         background-color: var(--elevation-1);
         display: grid;
         grid-template-columns: repeat(10, 1fr);

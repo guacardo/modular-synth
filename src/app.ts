@@ -75,7 +75,6 @@ export class AppView extends LitElement {
     };
 
     readonly handleUpdateNodeConnect = (node: AudioGraphNode | AudioDestinationNode | AudioParam) => {
-        console.log(node);
         if (
             (node instanceof BiquadFilterGraphNode || node instanceof GainGraphNode || node instanceof OscillatorGraphNode) &&
             this.nodeConnectState.source?.id === undefined
@@ -129,8 +128,8 @@ export class AppView extends LitElement {
     }
 
     readonly handleSelectAudioGraphNode = (node: AudioGraphNode) => {
-        node.isSelected = !node.isSelected;
-        this.handleUpdateNode(node);
+        const updatedNode = { ...node, isSelected: !node.isSelected };
+        this.handleUpdateNode(updatedNode);
         this.requestUpdate();
     };
 
@@ -146,24 +145,7 @@ export class AppView extends LitElement {
                 .onSelectAudioGraphNode=${this.handleSelectAudioGraphNode}
             >
             </willys-rack-shack-view>
-            <!-- <audio-graph-view
-                .audioGraph=${this.AUDIO_GRAPH}
-                .addNode=${this.handleAddNode}
-                .updateNode=${this.handleUpdateNode}
-                .nodeConnectState=${this.nodeConnectState}
-                .updateNodeConnectState=${this.handleUpdateNodeConnect}
-                .onSelectAudioGraphNode=${this.handleSelectAudioGraphNode}
-            ></audio-graph-view>
             <keyboard-controller .keyboardAudioEvents=${this.mergeEventMaps()}></keyboard-controller>
-            <side-panel-view
-                orientation="right"
-                .audioGraph=${this.AUDIO_GRAPH}
-                .addNode=${this.handleAddNode}
-                .updateNode=${this.handleUpdateNode}
-                .nodeConnectState=${this.nodeConnectState}
-                .updateNodeConnectState=${this.handleUpdateNodeConnect}
-                .onSelectAudioGraphNode=${this.handleSelectAudioGraphNode}
-            ></side-panel-view> -->
         </div>`;
     }
 }

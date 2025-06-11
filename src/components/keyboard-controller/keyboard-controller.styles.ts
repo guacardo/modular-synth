@@ -3,12 +3,13 @@ import { css } from "lit";
 export const keyboardControllerStyles = css`
     .keyboard-controller {
         display: flex;
-        width: 80vw;
-        height: 20vh;
         justify-content: center;
         align-items: center;
-        background-color: var(--elevation-1);
         gap: 4px;
+        position: absolute;
+        bottom: 24px;
+        left: 50%;
+        transform: translateX(-50%);
     }
 
     .keyboard-button {

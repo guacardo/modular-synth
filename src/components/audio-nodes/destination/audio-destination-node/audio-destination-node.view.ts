@@ -20,7 +20,6 @@ export class AudioDestinationNodeView extends LitElement {
     }
 
     render() {
-        console.log(this.graphNode);
         return html`
             <div class=${classMap({ node: true, connectionCandidate: this.isConnectionCandidate() })}>
                 <h1>Audio Destination</h1>

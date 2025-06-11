@@ -3,7 +3,7 @@ import { AudioGraphNode, Position, KeyboardAudioEvent, updateAudioParamValue } f
 export class OscillatorGraphNode implements AudioGraphNode {
     id: string;
     position: Position;
-    isSelected = false;
+    isSelected: boolean;
     node: OscillatorNode;
     keyboardEvents: Map<string, KeyboardAudioEvent>;
     dutyCycle: number = 0.5;

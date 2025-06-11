@@ -43,9 +43,7 @@ export class KeyboardController extends LitElement {
     render() {
         return html` <div class="keyboard-controller">
             ${Array.from(this.keyboardAudioEvents.entries()).map(
-                ([key, _]) => html`
-                    <button class=${classMap({ "keyboard-button": true, pressed: this.pressedKeys.has(key) ?? false })}> ${key} </button>
-                `
+                ([key, _]) => html`<button class=${classMap({ "keyboard-button": true, pressed: this.pressedKeys.has(key) ?? false })}> ${key} </button>`
             )}
         </div>`;
     }

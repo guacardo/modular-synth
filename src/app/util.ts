@@ -87,7 +87,6 @@ export class AudioDestinationGraphNode implements AudioGraphNode {
 export function connectAudioNodes(connection: NodeConnectState): boolean {
     const { source, destination } = connection;
     if (destination instanceof OscillatorGraphNode || destination instanceof GainGraphNode || destination instanceof BiquadFilterGraphNode) {
-        console.log("Connecting nodes:", source?.id, destination?.id);
         if (source && destination) {
             if (
                 source.node instanceof AudioNode &&
@@ -100,7 +99,7 @@ export function connectAudioNodes(connection: NodeConnectState): boolean {
                 source.outputIds.push(destination.id);
                 destination.inputIds.push(source.id);
                 */
-                console.log(`Connected ${source.id} to ${destination.id}`);
+
                 return true;
             } else {
                 console.error("Invalid nodes for connection");
@@ -110,11 +109,9 @@ export function connectAudioNodes(connection: NodeConnectState): boolean {
         }
         return false;
     } else if (destination instanceof AudioDestinationGraphNode) {
-        console.log("Connecting to AudioDestinationNode:", source?.id, destination.id);
         source?.node.connect(destination.node.context.destination);
         return true;
     } else if (destination instanceof AudioParam) {
-        console.log("Connecting AudioParam:", source?.id, destination);
         source?.node.connect(destination);
     }
     return false;

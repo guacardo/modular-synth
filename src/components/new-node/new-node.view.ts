@@ -10,7 +10,7 @@ export class NewNodeView extends LitElement {
     @property({ type: Array }) audioGraph: AudioGraphNode[];
     @property({ type: Array }) position: Position;
     @property({ type: Array }) options: AudioNodeType[];
-    @property() addNode: (type: AudioNodeType) => void;
+    @property() addNode: (type: AudioNodeType, position: Position) => void;
 
     @state() private currentPanel = 0;
     @state() private selectedNodeType?: AudioNodeType;
@@ -33,7 +33,7 @@ export class NewNodeView extends LitElement {
 
     private handleNodeChange(e: Event) {
         const selectElement = e.target as HTMLSelectElement;
-        this.addNode((e.target as HTMLSelectElement).value as AudioNodeType);
+        this.addNode((e.target as HTMLSelectElement).value as AudioNodeType, this.position);
         selectElement.selectedIndex = 0;
         this.currentPanel = 0;
     }
@@ -49,9 +49,6 @@ export class NewNodeView extends LitElement {
                     return html`<option value=${option} ?selected=${this.selectedNodeType === option}>${option}</option>`;
                 })}
             </select>
-        </div>`,
-        html`<div class="panel">
-            <p>${this.selectedNodeType}</p>
         </div>`,
     ];
 
