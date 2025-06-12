@@ -130,7 +130,6 @@ export class AppView extends LitElement {
     readonly handleSelectAudioGraphNode = (node: AudioGraphNode) => {
         const updatedNode = { ...node, isSelected: !node.isSelected };
         this.handleUpdateNode(updatedNode);
-        this.requestUpdate();
     };
 
     render() {
