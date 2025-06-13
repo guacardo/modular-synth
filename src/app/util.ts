@@ -39,7 +39,7 @@ export interface AudioGraphNode {
     position: Position;
     isSelected: boolean;
     node: AudioNode;
-    keyboardEvents?: Map<string, KeyboardAudioEvent>;
+    getKeyboardEvents?: (updateNode: (node: AudioGraphNode) => void) => Map<string, KeyboardAudioEvent>;
 }
 
 export class GainGraphNode implements AudioGraphNode {

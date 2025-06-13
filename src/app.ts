@@ -57,12 +57,7 @@ export class AppView extends LitElement {
                 newNode = new GainGraphNode(AUDIO_CONTEXT, [++this.currRow, this.currCol], (this.AUDIO_GRAPH.length + 1).toString());
                 break;
             case "oscillator":
-                newNode = new OscillatorGraphNode(
-                    AUDIO_CONTEXT,
-                    [++this.currRow, this.currCol],
-                    (this.AUDIO_GRAPH.length + 1).toString(),
-                    this.handleUpdateNode.bind(this)
-                );
+                newNode = new OscillatorGraphNode(AUDIO_CONTEXT, [++this.currRow, this.currCol], (this.AUDIO_GRAPH.length + 1).toString());
                 break;
             case "audio-destination":
                 newNode = new AudioDestinationGraphNode(AUDIO_CONTEXT, [++this.currRow, this.currCol], (this.AUDIO_GRAPH.length + 1).toString());
@@ -111,7 +106,7 @@ export class AppView extends LitElement {
         const result = new Map<string, KeyboardAudioEvent[]>();
         for (const node of this.AUDIO_GRAPH) {
             if (node.isSelected) {
-                const events = node.keyboardEvents;
+                const events = node.getKeyboardEvents?.(this.handleUpdateNode);
                 if (events !== undefined) {
                     for (const [key, eventList] of events.entries()) {
                         if (result.has(key)) {

@@ -7,12 +7,8 @@ export class OscillatorGraphNode implements AudioGraphNode {
     node: OscillatorNode;
     keyboardEvents: Map<string, KeyboardAudioEvent>;
     dutyCycle: number = 0.5;
-    constructor(context: AudioContext, position: Position, id: string, updateNode: (node: AudioGraphNode) => void) {
-        this.node = context.createOscillator();
-        this.node.start();
-        this.position = position;
-        this.id = id;
-        this.keyboardEvents = new Map<string, KeyboardAudioEvent>([
+    getKeyboardEvents(updateNode: (node: AudioGraphNode) => void): Map<string, KeyboardAudioEvent> {
+        return new Map<string, KeyboardAudioEvent>([
             ["a", { keydown: () => updateNode({ ...this, node: updateAudioParamValue(this.node, { frequency: 200 }) }) }],
             ["s", { keydown: () => updateNode({ ...this, node: updateAudioParamValue(this.node, { frequency: 400 }) }) }],
             ["d", { keydown: () => updateNode({ ...this, node: updateAudioParamValue(this.node, { frequency: 800 }) }) }],
@@ -21,6 +17,14 @@ export class OscillatorGraphNode implements AudioGraphNode {
             ["h", { keydown: () => updateNode({ ...this, node: updateAudioParamValue(this.node, { type: "square" }) }) }],
             ["j", { keydown: () => updateNode({ ...this, node: updateAudioParamValue(this.node, { type: "sawtooth" }) }) }],
             ["k", { keydown: () => updateNode({ ...this, node: updateAudioParamValue(this.node, { type: "triangle" }) }) }],
+            ["ArrowUp", { keydown: () => updateNode({ ...this, node: updateAudioParamValue(this.node, { frequency: this.node.frequency.value + 10 }) }) }],
+            ["ArrowDown", { keydown: () => updateNode({ ...this, node: updateAudioParamValue(this.node, { frequency: this.node.frequency.value - 10 }) }) }],
         ]);
+    }
+    constructor(context: AudioContext, position: Position, id: string) {
+        this.node = context.createOscillator();
+        this.node.start();
+        this.position = position;
+        this.id = id;
     }
 }
