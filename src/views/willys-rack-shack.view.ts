@@ -60,7 +60,11 @@ export class WillysRackShackView extends LitElement {
         } else if (graphNode instanceof BiquadFilterGraphNode) {
             return html`<biquad-filter-node-view
                 .graphNode=${graphNode}
+                .connections=${this.connections}
                 .updateNode=${this.updateNode}
+                .nodeConnectState=${this.nodeConnectState}
+                .updateNodeConnectState=${this.updateNodeConnectState}
+                .onSelectAudioGraphNode=${this.onSelectAudioGraphNode}
             ></biquad-filter-node-view>`;
         } else if (graphNode instanceof AudioDestinationGraphNode) {
             return html`<audio-destination-node-view

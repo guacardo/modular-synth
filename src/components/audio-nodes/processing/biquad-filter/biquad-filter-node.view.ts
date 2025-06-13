@@ -2,7 +2,14 @@ import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { audioNodeStyles } from "../../audio-node-styles";
 import { classMap } from "lit/directives/class-map.js";
-import { AudioGraphNode, BiquadFilterGraphNode, updateAudioParamValue } from "../../../../app/util";
+import {
+    AudioDestinationGraphNode,
+    AudioGraphNode,
+    AudioParamName,
+    BiquadFilterGraphNode,
+    NodeConnectState,
+    updateAudioParamValue,
+} from "../../../../app/util";
 
 const settableBiquadFilterTypes: readonly BiquadFilterType[] = [
     "allpass",
@@ -20,16 +27,36 @@ export class BiquadFilterNodeView extends LitElement {
     static styles = [audioNodeStyles];
 
     @property({ attribute: false }) readonly graphNode: BiquadFilterGraphNode;
+    @property({ type: Array }) connections: Array<[string, string]>;
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
-    @property({ attribute: false }) connectToContext: () => void;
+    @property({ attribute: false, type: Object })
+    nodeConnectState: NodeConnectState;
+    @property({ attribute: false }) updateNodeConnectState: (
+        node: AudioGraphNode | AudioDestinationGraphNode,
+        param?: AudioParam,
+        paramName?: AudioParamName
+    ) => void;
+    @property({ attribute: false }) onSelectAudioGraphNode: (node: AudioGraphNode) => void;
 
     private updateBiquadFilterParam<T extends keyof BiquadFilterNode>(param: T, value: BiquadFilterType | number) {
-        const node = updateAudioParamValue(this.graphNode.node, { [param]: value });
+        const node = updateAudioParamValue(this.graphNode.node, {
+            [param]: value,
+        });
         const newAudioGraphNode = { ...this.graphNode, node };
         this.updateNode(newAudioGraphNode);
     }
 
+    private isConnectionCandidate(): boolean {
+        if (this.nodeConnectState.source?.node?.numberOfOutputs && this.nodeConnectState.source.id !== this.graphNode.id) {
+            return true;
+        }
+        return false;
+    }
+
     render() {
+        const isConnectSource = this.graphNode.id === this.nodeConnectState.source?.id;
+        const isConnectedOut = this.connections.some((connection) => connection[0] === this.graphNode.id);
+        const isConnectedIn = this.connections.some((connection) => connection[1] === this.graphNode.id);
         return html`<div class=${classMap({ node: true })}>
             <h2>Biquad Filter</h2>
             <select
@@ -96,6 +123,34 @@ export class BiquadFilterNodeView extends LitElement {
                         this.updateBiquadFilterParam("gain", (e.target as HTMLInputElement).valueAsNumber);
                     }}
                 />
+            </div>
+            <div class="button-io-container">
+                <!-- IN -->
+                <div class="io-container">
+                    <button
+                        type="button"
+                        class=${classMap({
+                            "io-button": true,
+                            "can-connect": this.isConnectionCandidate(),
+                            connected: isConnectedIn,
+                        })}
+                        @click=${() => this.updateNodeConnectState(this.graphNode)}
+                    ></button>
+                    <label class="io-label">in</label>
+                </div>
+                <!-- OUT -->
+                <div class="io-container">
+                    <button
+                        type="button"
+                        class=${classMap({
+                            "io-button": true,
+                            "connection-source": isConnectSource,
+                            connected: isConnectedOut,
+                        })}
+                        @click=${() => this.updateNodeConnectState(this.graphNode)}
+                    ></button>
+                    <label class="io-label">out</label>
+                </div>
             </div>
         </div>`;
     }

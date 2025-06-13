@@ -11,7 +11,8 @@ export class GainNodeView extends LitElement {
     @property({ type: Object, attribute: false }) graphNode: GainGraphNode;
     @property({ type: Array }) connections: Array<[string, string]>;
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
-    @property({ attribute: false, type: Object }) nodeConnectState: NodeConnectState;
+    @property({ attribute: false, type: Object })
+    nodeConnectState: NodeConnectState;
     @property({ attribute: false }) updateNodeConnectState: (
         node: AudioGraphNode | AudioDestinationGraphNode,
         param?: AudioParam,
@@ -64,7 +65,11 @@ export class GainNodeView extends LitElement {
                 <div class="io-container">
                     <button
                         type="button"
-                        class=${classMap({ "io-button": true, "can-connect": this.isConnectionCandidate(), connected: isConnectedIn })}
+                        class=${classMap({
+                            "io-button": true,
+                            "can-connect": this.isConnectionCandidate(),
+                            connected: isConnectedIn,
+                        })}
                         @click=${() => this.updateNodeConnectState(this.graphNode)}
                     ></button>
                     <label class="io-label">in</label>
@@ -74,7 +79,11 @@ export class GainNodeView extends LitElement {
                     <button
                         type="button"
                         class="io-button"
-                        class=${classMap({ "io-button": true, "can-connect": this.isConnectionCandidate(), connected: isGainModConnected })}
+                        class=${classMap({
+                            "io-button": true,
+                            "can-connect": this.isConnectionCandidate(),
+                            connected: isGainModConnected,
+                        })}
                         @click=${() => this.updateNodeConnectState(this.graphNode, this.graphNode.node.gain, "gain")}
                     ></button>
                     <label class="io-label">gain mod</label>
@@ -83,7 +92,11 @@ export class GainNodeView extends LitElement {
                 <div class="io-container">
                     <button
                         type="button"
-                        class=${classMap({ "io-button": true, "connection-source": isConnectSource, connected: isConnectedOut })}
+                        class=${classMap({
+                            "io-button": true,
+                            "connection-source": isConnectSource,
+                            connected: isConnectedOut,
+                        })}
                         @click=${() => this.updateNodeConnectState(this.graphNode)}
                     ></button>
                     <label class="io-label">out</label>

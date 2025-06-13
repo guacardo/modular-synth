@@ -4,8 +4,8 @@ export const appStyles = css`
     .app {
         background-color: var(--elevation-0);
         display: flex;
-        justify-content: center;
-        gap: 16px;
+        flex-direction: column;
+        align-items: center;
         height: 100%;
     }
 

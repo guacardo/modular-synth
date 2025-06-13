@@ -189,6 +189,7 @@ export class AppView extends LitElement {
                 <p>big boi 'puters only sry</p>
             </div>
             <h1 class="title-text">willy's rack shack</h1>
+            <h3>coaching text</h3>
             <willys-rack-shack-view
                 .audioGraph=${this.AUDIO_GRAPH}
                 .connections=${this.CONNECTIONS}
