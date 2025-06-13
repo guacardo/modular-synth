@@ -12,6 +12,7 @@ export class OscillatorNodeView extends LitElement {
     static styles = [audioNodeStyles];
 
     @property({ attribute: false, type: Object }) readonly graphNode: OscillatorGraphNode;
+    @property({ type: Array }) connections: Array<[string, string]>;
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
     @property({ attribute: false, type: Object }) nodeConnectState: NodeConnectState;
     @property({ attribute: false }) updateNodeConnectState: (node: AudioGraphNode) => void;
@@ -42,12 +43,8 @@ export class OscillatorNodeView extends LitElement {
     render() {
         const audioNode = this.graphNode.node as OscillatorNode;
         const isConnectSource = this.graphNode.id === this.nodeConnectState.source?.id;
-        return html`<div
-            class=${classMap({
-                node: true,
-                isConnectSource: isConnectSource,
-            })}
-        >
+        const isConnected = this.connections.some((connection) => connection[0] === this.graphNode.id || connection[1] === this.graphNode.id);
+        return html`<div class="node">
             <h2>oscillator</h2>
             <div class="slider-container">
                 <label class="label"><span class="unit">freq:</span> <span class="value">${audioNode.frequency.value.toString()}</span></label>
@@ -91,10 +88,10 @@ export class OscillatorNodeView extends LitElement {
                 @click=${() => this.onSelectAudioGraphNode(this.graphNode)}
                 >Select</button
             >
-            <div class=${classMap({ "io-container": true })}>
+            <div class="io-container">
                 <button
                     type="button"
-                    class=${classMap({ "io-button": true, active: isConnectSource })}
+                    class=${classMap({ "io-button": true, "connection-source": isConnectSource, connected: isConnected })}
                     @click=${() => this.updateNodeConnectState(this.graphNode)}
                 ></button>
                 <label class="io-label">out</label>

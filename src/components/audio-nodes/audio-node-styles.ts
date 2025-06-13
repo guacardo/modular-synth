@@ -36,14 +36,6 @@ export const audioNodeStyles = [
             }
         }
 
-        .isConnectSource {
-            border: 1px solid var(--accent-0);
-        }
-
-        .connectionCandidate {
-            border: 1px solid var(--accent-1);
-        }
-
         .button-io-container {
             display: flex;
             flex-direction: row;
@@ -52,6 +44,34 @@ export const audioNodeStyles = [
             text-align: center;
             gap: 16px;
             margin: 32px 0 16px;
+        }
+
+        @keyframes blink-active {
+            0%,
+            100% {
+                background: radial-gradient(circle at 60% 40%, #baff7f 0%, #4caf50 60%, #333 100%);
+                box-shadow: 0 0 8px 2px #7fff4f, 0 0 2px #000, 0 2px 4px #222 inset;
+                border: 2px solid #2e7d32;
+            }
+            50% {
+                background: radial-gradient(circle at 60% 40%, #baff7f00 0%, #4caf5000 60%, #333 100%);
+                box-shadow: 0 0 2px 0px #7fff4f00, 0 0 2px #000, 0 2px 4px #222 inset;
+                border: 2px solid #2e7d3200;
+            }
+        }
+
+        @keyframes blink-connection-source {
+            0%,
+            100% {
+                background: radial-gradient(circle at 60% 40%, var(--accent-2) 0%, var(--accent-2-dark) 80%, #333 100%);
+                box-shadow: 0 0 12px 3px var(--accent-2), 0 0 2px #000, 0 2px 4px #222 inset;
+                border: 2px solid var(--accent-2-dark);
+            }
+            50% {
+                background: radial-gradient(circle at 60% 40%, var(--accent-2) 0%, var(--accent-2-dark) 80%, #333 100%, transparent 100%);
+                box-shadow: 0 0 2px 0px var(--accent-2), 0 0 2px #000, 0 2px 4px #222 inset;
+                border: 2px solid transparent;
+            }
         }
 
         .io-container {
@@ -116,7 +136,7 @@ export const audioNodeStyles = [
                 border: 2px solid #b85c00;
             }
 
-            .io-button.active::after {
+            .io-button.connected::after {
                 background: radial-gradient(circle at 60% 40%, #baff7f 0%, #4caf50 60%, #333 100%);
                 box-shadow: 0 0 8px 2px #7fff4f, 0 0 2px #000, 0 2px 4px #222 inset;
                 border: 2px solid #2e7d32;
@@ -134,13 +154,14 @@ export const audioNodeStyles = [
                 border: 2px solid var(--accent-1-dark);
             }
 
-            .io-button.accent-2::after {
+            .io-button.connection-source::after {
                 background: radial-gradient(circle at 60% 40%, var(--accent-2) 0%, var(--accent-2-dark) 80%, #333 100%);
                 box-shadow: 0 0 12px 3px var(--accent-2), 0 0 2px #000, 0 2px 4px #222 inset;
                 border: 2px solid var(--accent-2-dark);
+                animation: blink-connection-source 0.8s infinite;
             }
 
-            .io-button.accent-3::after {
+            .io-button.can-connect::after {
                 background: radial-gradient(circle at 60% 40%, var(--accent-3) 0%, var(--accent-3-dark) 80%, #333 100%);
                 box-shadow: 0 0 12px 3px var(--accent-3), 0 0 2px #000, 0 2px 4px #222 inset;
                 border: 2px solid var(--accent-3-dark);

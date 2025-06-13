@@ -1,7 +1,7 @@
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { audioNodeStyles } from "../../audio-node-styles";
-import { AudioGraphNode, GainGraphNode, NodeConnectState, updateAudioParamValue } from "../../../../app/util";
+import { AudioDestinationGraphNode, AudioGraphNode, AudioParamName, GainGraphNode, NodeConnectState, updateAudioParamValue } from "../../../../app/util";
 import { classMap } from "lit/directives/class-map.js";
 
 @customElement("gain-node-view")
@@ -9,9 +9,14 @@ export class GainNodeView extends LitElement {
     static styles = [audioNodeStyles];
 
     @property({ type: Object, attribute: false }) graphNode: GainGraphNode;
+    @property({ type: Array }) connections: Array<[string, string]>;
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
     @property({ attribute: false, type: Object }) nodeConnectState: NodeConnectState;
-    @property({ attribute: false }) updateNodeConnectState: (node: AudioGraphNode | AudioParam) => void;
+    @property({ attribute: false }) updateNodeConnectState: (
+        node: AudioGraphNode | AudioDestinationGraphNode,
+        param?: AudioParam,
+        paramName?: AudioParamName
+    ) => void;
     @property({ attribute: false }) onSelectAudioGraphNode: (node: AudioGraphNode) => void;
 
     private updateGain(value: number) {
@@ -29,14 +34,11 @@ export class GainNodeView extends LitElement {
 
     render() {
         const isConnectSource = this.graphNode.id === this.nodeConnectState.source?.id;
-        return html`<div
-            class=${classMap({
-                node: true,
-                isConnectSource: isConnectSource,
-                connectionCandidate: this.isConnectionCandidate(),
-            })}
-            @click=${() => this.onSelectAudioGraphNode(this.graphNode)}
-        >
+        const isConnectedOut = this.connections.some((connection) => connection[0] === this.graphNode.id);
+        const isConnectedIn = this.connections.some((connection) => connection[1] === this.graphNode.id);
+        const isGainModConnected = this.connections.some((connection) => connection[1] === `${this.graphNode.id}-gain`);
+
+        return html`<div class="node" @click=${() => this.onSelectAudioGraphNode(this.graphNode)}>
             <h2>gain</h2>
             <div class="slider-container">
                 <label for="gain-slider-${this.graphNode.id}">level: ${(this.graphNode.node as GainNode).gain.value.toFixed(3)}</label>
@@ -57,37 +59,34 @@ export class GainNodeView extends LitElement {
                     }}"
                 />
             </div>
-            <button
-                class=${classMap({ button: true, "button-active": isConnectSource })}
-                type="button"
-                @click=${() => this.updateNodeConnectState(this.graphNode)}
-                >Connect</button
-            >
-            <button class="button" @click=${() => this.updateNodeConnectState((this.graphNode.node as GainNode).gain)}>Connect to Gain</button>
             <div class="button-io-container">
+                <!-- IN -->
                 <div class="io-container">
-                    <button class="io-button"></button>
+                    <button
+                        type="button"
+                        class=${classMap({ "io-button": true, "can-connect": this.isConnectionCandidate(), connected: isConnectedIn })}
+                        @click=${() => this.updateNodeConnectState(this.graphNode)}
+                    ></button>
                     <label class="io-label">in</label>
                 </div>
+                <!-- GAIN MOD -->
                 <div class="io-container">
-                    <button class="io-button active"></button>
-                    <label class="io-label">active</label>
-                </div>
-                <div class="io-container">
-                    <button class="io-button accent-0"></button>
-                    <label class="io-label">out</label>
-                </div>
-                <div class="io-container">
-                    <button class="io-button accent-1"></button>
+                    <button
+                        type="button"
+                        class="io-button"
+                        class=${classMap({ "io-button": true, "can-connect": this.isConnectionCandidate(), connected: isGainModConnected })}
+                        @click=${() => this.updateNodeConnectState(this.graphNode, this.graphNode.node.gain, "gain")}
+                    ></button>
                     <label class="io-label">gain mod</label>
                 </div>
+                <!-- OUT -->
                 <div class="io-container">
-                    <button class="io-button accent-2"></button>
-                    <label class="io-label">ready</label>
-                </div>
-                <div class="io-container">
-                    <button class="io-button accent-3"></button>
-                    <label class="io-label">avail</label>
+                    <button
+                        type="button"
+                        class=${classMap({ "io-button": true, "connection-source": isConnectSource, connected: isConnectedOut })}
+                        @click=${() => this.updateNodeConnectState(this.graphNode)}
+                    ></button>
+                    <label class="io-label">out</label>
                 </div>
             </div>
         </div>`;

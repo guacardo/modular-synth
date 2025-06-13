@@ -6,12 +6,13 @@ import { OscillatorGraphNode } from "../components/audio-nodes/source/oscillator
 type SafeExtract<T, U extends T> = U;
 export type Position = [number, number];
 export type AudioNodeProperties = Partial<
-    Record<keyof AudioNode | keyof OscillatorNode | keyof GainNode | keyof BiquadFilterNode, number | OscillatorType | [number, number]>
+    Record<keyof AudioNode | keyof OscillatorNode | keyof GainNode | keyof BiquadFilterNode, number | [number, number] | OscillatorType>
 >;
 export type AudioNodeType = "oscillator" | "gain" | "biquad-filter" | "audio-destination";
 type AudioProcessorNode = SafeExtract<AudioNodeType, "biquad-filter" | "gain">;
 type AudioSourceNode = SafeExtract<AudioNodeType, "oscillator">;
 type AudioGraphDestinationNode = SafeExtract<AudioNodeType, "audio-destination">;
+export type AudioParamName = "gain" | "frequency" | "detune" | "Q" | "pan"; // Add others as needed
 
 // =====================
 // Audio Node Constants
@@ -84,6 +85,12 @@ export class AudioDestinationGraphNode implements AudioGraphNode {
 // =====================
 // Utility Functions
 // =====================
+
+export interface NodeConnectState {
+    source?: AudioGraphNode;
+    destination?: AudioGraphNode | AudioDestinationNode | AudioParam;
+}
+
 export function connectAudioNodes(connection: NodeConnectState): boolean {
     const { source, destination } = connection;
     if (destination instanceof OscillatorGraphNode || destination instanceof GainGraphNode || destination instanceof BiquadFilterGraphNode) {
@@ -95,11 +102,6 @@ export function connectAudioNodes(connection: NodeConnectState): boolean {
                 destination.node.numberOfInputs > 0
             ) {
                 source.node.connect(destination.node);
-                /* TODO: this won't update state. need to do it in Lit context
-                source.outputIds.push(destination.id);
-                destination.inputIds.push(source.id);
-                */
-
                 return true;
             } else {
                 console.error("Invalid nodes for connection");
@@ -113,6 +115,7 @@ export function connectAudioNodes(connection: NodeConnectState): boolean {
         return true;
     } else if (destination instanceof AudioParam) {
         source?.node.connect(destination);
+        return true;
     }
     return false;
 }
@@ -141,9 +144,4 @@ export function updateAudioParamValue<T extends AudioNode>(node: T, properties: 
     }
 
     return node;
-}
-
-export interface NodeConnectState {
-    source?: AudioGraphNode;
-    destination?: AudioGraphNode | AudioDestinationNode | AudioParam;
 }

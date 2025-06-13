@@ -7,6 +7,7 @@ import {
     AudioDestinationGraphNode,
     AudioGraphNode,
     AudioNodeType,
+    AudioParamName,
     BiquadFilterGraphNode,
     GainGraphNode,
     NodeConnectState,
@@ -20,16 +21,22 @@ export class WillysRackShackView extends LitElement {
     static styles = [willysRackShackStyles];
 
     @property({ type: Array }) audioGraph: AudioGraphNode[];
+    @property({ type: Array }) connections: Array<[string, string]>;
     @property({ attribute: false }) addNode: (type: AudioNodeType, position: Position) => void;
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
     @property({ attribute: false, type: Object }) nodeConnectState: NodeConnectState;
-    @property({ attribute: false }) updateNodeConnectState: (node: AudioGraphNode | AudioParam) => void;
+    @property({ attribute: false }) updateNodeConnectState: (
+        node: AudioGraphNode | AudioDestinationGraphNode,
+        param?: AudioParam,
+        paramName?: AudioParamName
+    ) => void;
     @property({ attribute: false }) onSelectAudioGraphNode: (node: AudioGraphNode) => void;
 
     private renderNodeView(graphNode: AudioGraphNode): TemplateResult {
         if (graphNode instanceof GainGraphNode) {
             return html`<gain-node-view
                 .graphNode=${graphNode}
+                .connections=${this.connections}
                 .updateNode=${this.updateNode}
                 .nodeConnectState=${this.nodeConnectState}
                 .updateNodeConnectState=${this.updateNodeConnectState}
@@ -38,6 +45,7 @@ export class WillysRackShackView extends LitElement {
         } else if (graphNode instanceof OscillatorGraphNode) {
             return html`<oscillator-node-view
                 .graphNode=${graphNode}
+                .connections=${this.connections}
                 .updateNode=${this.updateNode}
                 .nodeConnectState=${this.nodeConnectState}
                 .updateNodeConnectState=${this.updateNodeConnectState}
@@ -48,6 +56,7 @@ export class WillysRackShackView extends LitElement {
         } else if (graphNode instanceof AudioDestinationGraphNode) {
             return html`<audio-destination-node-view
                 .graphNode=${graphNode}
+                .connections=${this.connections}
                 .nodeConnectState=${this.nodeConnectState}
                 .updateNodeConnectState=${this.updateNodeConnectState}
             ></audio-destination-node-view>`;

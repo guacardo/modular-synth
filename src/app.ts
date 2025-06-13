@@ -11,6 +11,7 @@ import {
     AudioDestinationGraphNode,
     AudioGraphNode,
     AudioNodeType,
+    AudioParamName,
     BiquadFilterGraphNode,
     connectAudioNodes,
     GainGraphNode,
@@ -36,8 +37,7 @@ export class AppView extends LitElement {
     static styles = [appStyles];
 
     @state() AUDIO_GRAPH: AudioGraphNode[] = [];
-    @state() currRow: number = 0;
-    @state() currCol: number = 0;
+    @state() CONNECTIONS: Array<[string, string]> = [];
     @state() nodeConnectState: NodeConnectState = {
         source: undefined,
         destination: undefined,
@@ -51,16 +51,16 @@ export class AppView extends LitElement {
         let newNode: AudioGraphNode;
         switch (type) {
             case "biquad-filter":
-                newNode = new BiquadFilterGraphNode(AUDIO_CONTEXT, [++this.currRow, this.currCol], (this.AUDIO_GRAPH.length + 1).toString());
+                newNode = new BiquadFilterGraphNode(AUDIO_CONTEXT, [0, 0], (this.AUDIO_GRAPH.length + 1).toString());
                 break;
             case "gain":
-                newNode = new GainGraphNode(AUDIO_CONTEXT, [++this.currRow, this.currCol], (this.AUDIO_GRAPH.length + 1).toString());
+                newNode = new GainGraphNode(AUDIO_CONTEXT, [0, 0], (this.AUDIO_GRAPH.length + 1).toString());
                 break;
             case "oscillator":
-                newNode = new OscillatorGraphNode(AUDIO_CONTEXT, [++this.currRow, this.currCol], (this.AUDIO_GRAPH.length + 1).toString());
+                newNode = new OscillatorGraphNode(AUDIO_CONTEXT, [0, 0], (this.AUDIO_GRAPH.length + 1).toString());
                 break;
             case "audio-destination":
-                newNode = new AudioDestinationGraphNode(AUDIO_CONTEXT, [++this.currRow, this.currCol], (this.AUDIO_GRAPH.length + 1).toString());
+                newNode = new AudioDestinationGraphNode(AUDIO_CONTEXT, [0, 0], (this.AUDIO_GRAPH.length + 1).toString());
         }
         this.AUDIO_GRAPH = [...this.AUDIO_GRAPH, newNode];
     };
@@ -69,7 +69,7 @@ export class AppView extends LitElement {
         this.AUDIO_GRAPH = this.AUDIO_GRAPH.map((n) => (n.id === node.id ? Object.assign(Object.create(Object.getPrototypeOf(n)), n, node) : n));
     };
 
-    readonly handleUpdateNodeConnect = (node: AudioGraphNode | AudioDestinationNode | AudioParam) => {
+    readonly handleUpdateNodeConnect = (node: AudioGraphNode | AudioDestinationGraphNode, param?: AudioParam, paramName?: AudioParamName) => {
         if (
             (node instanceof BiquadFilterGraphNode || node instanceof GainGraphNode || node instanceof OscillatorGraphNode) &&
             this.nodeConnectState.source?.id === undefined
@@ -88,10 +88,20 @@ export class AppView extends LitElement {
             };
         } else if (this.nodeConnectState.source?.id) {
             // connect the two nodes if valid
-            connectAudioNodes({
-                source: this.nodeConnectState.source,
-                destination: node,
-            });
+            if (
+                connectAudioNodes({
+                    source: this.nodeConnectState.source,
+                    destination: param !== undefined ? param : node,
+                })
+            ) {
+                // add the connection to the CONNECTIONS array
+                if (param && paramName) {
+                    this.CONNECTIONS = [...this.CONNECTIONS, [this.nodeConnectState.source.id, `${node.id}-${paramName}`]];
+                } else {
+                    this.CONNECTIONS = [...this.CONNECTIONS, [this.nodeConnectState.source.id, node.id]];
+                }
+            }
+
             // reset state
             this.nodeConnectState = {
                 source: undefined,
@@ -128,10 +138,12 @@ export class AppView extends LitElement {
     };
 
     render() {
+        console.log("AppView render", this.AUDIO_GRAPH, this.CONNECTIONS);
         return html` <div class="app">
             <div class="non-desktop-overlay"><p>big boi 'puters only sry</p></div>
             <willys-rack-shack-view
                 .audioGraph=${this.AUDIO_GRAPH}
+                .connections=${this.CONNECTIONS}
                 .addNode=${this.handleAddNode}
                 .updateNode=${this.handleUpdateNode}
                 .nodeConnectState=${this.nodeConnectState}
