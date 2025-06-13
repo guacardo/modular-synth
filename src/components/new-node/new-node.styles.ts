@@ -2,9 +2,8 @@ import { css } from "lit";
 
 export const newNodeStyles = css`
     .new-node-container {
-        width: 100%;
-        height: 100%;
-        border: 1px solid #aaa;
+        border-bottom: 1px solid var(--elevation-2);
+        height: 100px;
         overflow: hidden;
 
         .panel-content {

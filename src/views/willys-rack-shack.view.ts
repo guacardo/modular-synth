@@ -22,15 +22,21 @@ export class WillysRackShackView extends LitElement {
 
     @property({ type: Array }) audioGraph: AudioGraphNode[];
     @property({ type: Array }) connections: Array<[string, string]>;
-    @property({ attribute: false }) addNode: (type: AudioNodeType, position: Position) => void;
+    @property({ attribute: false }) addNode: (
+        type: AudioNodeType,
+        position: Position
+    ) => void;
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
-    @property({ attribute: false, type: Object }) nodeConnectState: NodeConnectState;
+    @property({ attribute: false, type: Object })
+    nodeConnectState: NodeConnectState;
     @property({ attribute: false }) updateNodeConnectState: (
         node: AudioGraphNode | AudioDestinationGraphNode,
         param?: AudioParam,
         paramName?: AudioParamName
     ) => void;
-    @property({ attribute: false }) onSelectAudioGraphNode: (node: AudioGraphNode) => void;
+    @property({ attribute: false }) onSelectAudioGraphNode: (
+        node: AudioGraphNode
+    ) => void;
 
     private renderNodeView(graphNode: AudioGraphNode): TemplateResult {
         if (graphNode instanceof GainGraphNode) {
@@ -52,7 +58,10 @@ export class WillysRackShackView extends LitElement {
                 .onSelectAudioGraphNode=${this.onSelectAudioGraphNode}
             ></oscillator-node-view>`;
         } else if (graphNode instanceof BiquadFilterGraphNode) {
-            return html`<biquad-filter-node-view .graphNode=${graphNode} .updateNode=${this.updateNode}></biquad-filter-node-view>`;
+            return html`<biquad-filter-node-view
+                .graphNode=${graphNode}
+                .updateNode=${this.updateNode}
+            ></biquad-filter-node-view>`;
         } else if (graphNode instanceof AudioDestinationGraphNode) {
             return html`<audio-destination-node-view
                 .graphNode=${graphNode}
@@ -65,18 +74,51 @@ export class WillysRackShackView extends LitElement {
         }
     }
 
+    private buildGrid(): Array<AudioGraphNode[]> {
+        const grid: Array<AudioGraphNode[]> = [[], [], [], [], []];
+
+        for (const node of this.audioGraph) {
+            const [row, col] = node.position;
+            grid[row][col] = node;
+        }
+
+        return grid;
+    }
+
+    private renderGrid(): TemplateResult {
+        const grid = this.buildGrid();
+
+        return html` <div class="grid">
+            ${grid.map((row, rowIndex) => {
+                return html`<div class="grid-column">
+                    ${row.map((node, colIndex) => {
+                        return node
+                            ? html`<div
+                                  class="graph-node-container"
+                                  data-position="${rowIndex},${colIndex}"
+                              >
+                                  ${this.renderNodeView(node)}
+                              </div>`
+                            : null;
+                    })}
+                    <new-node-view
+                        .addNode=${this.addNode}
+                        .audioGraph=${this.audioGraph}
+                        .options=${[
+                            ...AUDIO_DESTINATION_NODES,
+                            ...AUDIO_SOURCE_NODES,
+                            ...AUDIO_PROCESSOR_NODES,
+                        ]}
+                        .position=${[rowIndex, row.length + 1] as const}
+                    ></new-node-view>
+                </div>`;
+            })}
+        </div>`;
+    }
+
     render() {
         return html`
-            <div class="willys-rack-shack-container">
-                ${this.audioGraph.map((graphNode) => {
-                    return this.renderNodeView(graphNode);
-                })}
-                <new-node-view
-                    .addNode=${this.addNode}
-                    .audioGraph=${this.audioGraph}
-                    .options=${[...AUDIO_DESTINATION_NODES, ...AUDIO_SOURCE_NODES, ...AUDIO_PROCESSOR_NODES]}
-                ></new-node-view>
-            </div>
+            <div class="willys-rack-shack-container">${this.renderGrid()}</div>
         `;
     }
 }
