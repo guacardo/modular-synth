@@ -39,17 +39,19 @@ export class DelayNodeView extends LitElement {
         const isConnectedOut = this.connections.some((connection) => connection[0] === this.graphNode.id);
         const isConnectedIn = this.connections.some((connection) => connection[1] === this.graphNode.id);
         return html`<div class="node">
-            <h2>Delay Node</h2>
-            <p>This is a placeholder for the Delay Node view.</p>
-            <input
-                type="range"
-                class="slider"
-                min="0"
-                max="10"
-                step="0.01"
-                .value="${this.graphNode.node.delayTime.value.toFixed(2)}"
-                @input=${(e: Event) => this.updateDelayTime((e.target as HTMLInputElement).valueAsNumber)}
-            />
+            <h2>delay</h2>
+            <div class="slider-container">
+                <label for="delay-slider-${this.graphNode.id}">delay time: ${this.graphNode.node.delayTime.value.toFixed(2)}s</label>
+                <input
+                    type="range"
+                    class="slider"
+                    min="0"
+                    max="10"
+                    step="0.01"
+                    .value="${this.graphNode.node.delayTime.value.toFixed(2)}"
+                    @input=${(e: Event) => this.updateDelayTime((e.target as HTMLInputElement).valueAsNumber)}
+                />
+            </div>
             <div class="button-io-container">
                 <!-- IN -->
                 <div class="io-container">
@@ -63,6 +65,19 @@ export class DelayNodeView extends LitElement {
                         @click=${() => this.updateNodeConnectState(this.graphNode)}
                     ></button>
                     <label class="io-label">in</label>
+                </div>
+                <!-- DELAY MODULATION -->
+                <div class="io-container">
+                    <button
+                        type="button"
+                        class=${classMap({
+                            "io-button": true,
+                            "can-connection": this.isConnectionCandidate(),
+                            connected: this.connections.some((connection) => connection[1] === `${this.graphNode.id}-delayTime`),
+                        })}
+                        @click=${() => this.updateNodeConnectState(this.graphNode, this.graphNode.node.delayTime, "delayTime")}
+                    ></button>
+                    <label class="io-label">delay mod</label>
                 </div>
                 <!-- OUT -->
                 <div class="io-container">

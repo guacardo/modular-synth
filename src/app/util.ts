@@ -13,7 +13,7 @@ export type AudioNodeType = "oscillator" | "gain" | "biquad-filter" | "audio-des
 type AudioProcessorNode = SafeExtract<AudioNodeType, "biquad-filter" | "gain" | "delay">;
 type AudioSourceNode = SafeExtract<AudioNodeType, "oscillator">;
 type AudioGraphDestinationNode = SafeExtract<AudioNodeType, "audio-destination">;
-export type AudioParamName = "gain" | "frequency" | "detune" | "Q" | "pan";
+export type AudioParamName = "gain" | "frequency" | "detune" | "Q" | "pan" | "delayTime";
 
 // =====================
 // Audio Node Constants

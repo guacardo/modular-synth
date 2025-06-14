@@ -74,11 +74,10 @@ export class GainNodeView extends LitElement {
                     ></button>
                     <label class="io-label">in</label>
                 </div>
-                <!-- GAIN MOD -->
+                <!-- GAIN MODULATION -->
                 <div class="io-container">
                     <button
                         type="button"
-                        class="io-button"
                         class=${classMap({
                             "io-button": true,
                             "can-connect": this.isConnectionCandidate(),
