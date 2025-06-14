@@ -1,14 +1,15 @@
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { audioNodeStyles } from "../../audio-node-styles";
-import { AudioDestinationGraphNode, AudioGraphNode, AudioParamName, GainGraphNode, NodeConnectState, updateAudioParamValue } from "../../../../app/util";
 import { classMap } from "lit/directives/class-map.js";
+import { DelayGraphNode } from "./delay-graph-node";
+import { AudioDestinationGraphNode, AudioGraphNode, AudioParamName, NodeConnectState, updateAudioParamValue } from "../../../../app/util";
+import { audioNodeStyles } from "../../audio-node-styles";
 
-@customElement("gain-node-view")
-export class GainNodeView extends LitElement {
+@customElement("delay-node-view")
+export class DelayNodeView extends LitElement {
     static styles = [audioNodeStyles];
 
-    @property({ type: Object, attribute: false }) graphNode: GainGraphNode;
+    @property({ type: Object, attribute: false }) graphNode: DelayGraphNode;
     @property({ type: Array }) connections: Array<[string, string]>;
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
     @property({ attribute: false, type: Object }) nodeConnectState: NodeConnectState;
@@ -19,13 +20,6 @@ export class GainNodeView extends LitElement {
     ) => void;
     @property({ attribute: false }) onSelectAudioGraphNode: (node: AudioGraphNode) => void;
 
-    private updateGain(value: number) {
-        this.updateNode({
-            ...this.graphNode,
-            node: updateAudioParamValue(this.graphNode.node as GainNode, { gain: value } as Partial<Record<keyof GainNode, number>>),
-        });
-    }
-
     private isConnectionCandidate(): boolean {
         if (this.nodeConnectState.source?.node?.numberOfOutputs && this.nodeConnectState.source.id !== this.graphNode.id) {
             return true;
@@ -33,33 +27,29 @@ export class GainNodeView extends LitElement {
         return false;
     }
 
+    private updateDelayTime(value: number) {
+        this.updateNode({
+            ...this.graphNode,
+            node: updateAudioParamValue(this.graphNode.node as DelayNode, { delayTime: value } as Partial<Record<keyof DelayNode, number>>),
+        });
+    }
+
     render() {
         const isConnectSource = this.graphNode.id === this.nodeConnectState.source?.id;
         const isConnectedOut = this.connections.some((connection) => connection[0] === this.graphNode.id);
         const isConnectedIn = this.connections.some((connection) => connection[1] === this.graphNode.id);
-        const isGainModConnected = this.connections.some((connection) => connection[1] === `${this.graphNode.id}-gain`);
-
-        return html`<div class="node" @click=${() => this.onSelectAudioGraphNode(this.graphNode)}>
-            <h2>gain</h2>
-            <div class="slider-container">
-                <label for="gain-slider-${this.graphNode.id}">level: ${(this.graphNode.node as GainNode).gain.value.toFixed(3)}</label>
-                <input
-                    id="gain-slider-${this.graphNode.id}"
-                    class="slider"
-                    type="range"
-                    min="0.001"
-                    max="1.0"
-                    step="0.001"
-                    .value="${(this.graphNode.node as GainNode).gain.value.toString()}"
-                    @click=${(e: MouseEvent) => {
-                        e.stopPropagation();
-                        e.preventDefault();
-                    }}
-                    @input="${(e: Event) => {
-                        this.updateGain((e.target as HTMLInputElement).valueAsNumber);
-                    }}"
-                />
-            </div>
+        return html`<div class="node">
+            <h2>Delay Node</h2>
+            <p>This is a placeholder for the Delay Node view.</p>
+            <input
+                type="range"
+                class="slider"
+                min="0"
+                max="10"
+                step="0.01"
+                .value="${this.graphNode.node.delayTime.value.toFixed(2)}"
+                @input=${(e: Event) => this.updateDelayTime((e.target as HTMLInputElement).valueAsNumber)}
+            />
             <div class="button-io-container">
                 <!-- IN -->
                 <div class="io-container">
@@ -73,20 +63,6 @@ export class GainNodeView extends LitElement {
                         @click=${() => this.updateNodeConnectState(this.graphNode)}
                     ></button>
                     <label class="io-label">in</label>
-                </div>
-                <!-- GAIN MOD -->
-                <div class="io-container">
-                    <button
-                        type="button"
-                        class="io-button"
-                        class=${classMap({
-                            "io-button": true,
-                            "can-connect": this.isConnectionCandidate(),
-                            connected: isGainModConnected,
-                        })}
-                        @click=${() => this.updateNodeConnectState(this.graphNode, this.graphNode.node.gain, "gain")}
-                    ></button>
-                    <label class="io-label">gain mod</label>
                 </div>
                 <!-- OUT -->
                 <div class="io-container">

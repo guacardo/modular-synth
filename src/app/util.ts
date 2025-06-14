@@ -1,3 +1,4 @@
+import { DelayGraphNode } from "../components/audio-nodes/processing/delay/delay-graph-node";
 import { OscillatorGraphNode } from "../components/audio-nodes/source/oscillator-node/oscillator-graph-node";
 
 // =====================
@@ -6,18 +7,18 @@ import { OscillatorGraphNode } from "../components/audio-nodes/source/oscillator
 type SafeExtract<T, U extends T> = U;
 export type Position = [number, number];
 export type AudioNodeProperties = Partial<
-    Record<keyof AudioNode | keyof OscillatorNode | keyof GainNode | keyof BiquadFilterNode, number | [number, number] | OscillatorType>
+    Record<keyof AudioNode | keyof OscillatorNode | keyof GainNode | keyof BiquadFilterNode | keyof DelayNode, number | [number, number] | OscillatorType>
 >;
-export type AudioNodeType = "oscillator" | "gain" | "biquad-filter" | "audio-destination";
-type AudioProcessorNode = SafeExtract<AudioNodeType, "biquad-filter" | "gain">;
+export type AudioNodeType = "oscillator" | "gain" | "biquad-filter" | "audio-destination" | "delay";
+type AudioProcessorNode = SafeExtract<AudioNodeType, "biquad-filter" | "gain" | "delay">;
 type AudioSourceNode = SafeExtract<AudioNodeType, "oscillator">;
 type AudioGraphDestinationNode = SafeExtract<AudioNodeType, "audio-destination">;
-export type AudioParamName = "gain" | "frequency" | "detune" | "Q" | "pan"; // Add others as needed
+export type AudioParamName = "gain" | "frequency" | "detune" | "Q" | "pan";
 
 // =====================
 // Audio Node Constants
 // =====================
-export const AUDIO_PROCESSOR_NODES: AudioProcessorNode[] = ["gain", "biquad-filter"] as const;
+export const AUDIO_PROCESSOR_NODES: AudioProcessorNode[] = ["gain", "biquad-filter", "delay"] as const;
 export const AUDIO_SOURCE_NODES: AudioSourceNode[] = ["oscillator"] as const;
 export const AUDIO_DESTINATION_NODES: AudioGraphDestinationNode[] = ["audio-destination"] as const;
 
@@ -93,7 +94,12 @@ export interface NodeConnectState {
 
 export function connectAudioNodes(connection: NodeConnectState): boolean {
     const { source, destination } = connection;
-    if (destination instanceof OscillatorGraphNode || destination instanceof GainGraphNode || destination instanceof BiquadFilterGraphNode) {
+    if (
+        destination instanceof OscillatorGraphNode ||
+        destination instanceof GainGraphNode ||
+        destination instanceof BiquadFilterGraphNode ||
+        destination instanceof DelayGraphNode
+    ) {
         if (source && destination) {
             if (
                 source.node instanceof AudioNode &&

@@ -23,6 +23,7 @@ import { AudioGraphView } from "./components/audio-graph-view/audio-graph-view.v
 import { KeyboardController } from "./components/keyboard-controller/keyboard-controller.view";
 import "./components/audio-graph-view/audio-graph-view.view";
 import "./components/audio-nodes/processing/biquad-filter/biquad-filter-node.view";
+import "./components/audio-nodes/processing/delay/delay-node.view";
 import "./components/audio-nodes/processing/gain-node/gain-node.view";
 import "./components/audio-nodes/source/oscillator-node/oscillator-node.view";
 import "./components/keyboard-controller/keyboard-controller.view";
@@ -32,6 +33,7 @@ import "./components/audio-nodes/destination/audio-destination-node/audio-destin
 import "./views/willys-rack-shack.view";
 import { OscillatorGraphNode } from "./components/audio-nodes/source/oscillator-node/oscillator-graph-node";
 import { WillysRackShackView } from "./views/willys-rack-shack.view";
+import { DelayGraphNode } from "./components/audio-nodes/processing/delay/delay-graph-node";
 
 @customElement("app-view")
 export class AppView extends LitElement {
@@ -52,57 +54,31 @@ export class AppView extends LitElement {
         let newNode: AudioGraphNode;
         switch (type) {
             case "biquad-filter":
-                newNode = new BiquadFilterGraphNode(
-                    AUDIO_CONTEXT,
-                    position,
-                    (this.AUDIO_GRAPH.length + 1).toString()
-                );
+                newNode = new BiquadFilterGraphNode(AUDIO_CONTEXT, position, (this.AUDIO_GRAPH.length + 1).toString());
                 break;
             case "gain":
-                newNode = new GainGraphNode(
-                    AUDIO_CONTEXT,
-                    position,
-                    (this.AUDIO_GRAPH.length + 1).toString()
-                );
+                newNode = new GainGraphNode(AUDIO_CONTEXT, position, (this.AUDIO_GRAPH.length + 1).toString());
                 break;
             case "oscillator":
-                newNode = new OscillatorGraphNode(
-                    AUDIO_CONTEXT,
-                    position,
-                    (this.AUDIO_GRAPH.length + 1).toString()
-                );
+                newNode = new OscillatorGraphNode(AUDIO_CONTEXT, position, (this.AUDIO_GRAPH.length + 1).toString());
                 break;
             case "audio-destination":
-                newNode = new AudioDestinationGraphNode(
-                    AUDIO_CONTEXT,
-                    position,
-                    (this.AUDIO_GRAPH.length + 1).toString()
-                );
+                newNode = new AudioDestinationGraphNode(AUDIO_CONTEXT, position, (this.AUDIO_GRAPH.length + 1).toString());
+                break;
+            case "delay":
+                newNode = new DelayGraphNode(AUDIO_CONTEXT, position, (this.AUDIO_GRAPH.length + 1).toString());
+                break;
         }
         this.AUDIO_GRAPH = [...this.AUDIO_GRAPH, newNode];
     };
 
     readonly handleUpdateNode = (node: AudioGraphNode) => {
-        this.AUDIO_GRAPH = this.AUDIO_GRAPH.map((n) =>
-            n.id === node.id
-                ? Object.assign(
-                      Object.create(Object.getPrototypeOf(n)),
-                      n,
-                      node
-                  )
-                : n
-        );
+        this.AUDIO_GRAPH = this.AUDIO_GRAPH.map((n) => (n.id === node.id ? Object.assign(Object.create(Object.getPrototypeOf(n)), n, node) : n));
     };
 
-    readonly handleUpdateNodeConnect = (
-        node: AudioGraphNode | AudioDestinationGraphNode,
-        param?: AudioParam,
-        paramName?: AudioParamName
-    ) => {
+    readonly handleUpdateNodeConnect = (node: AudioGraphNode | AudioDestinationGraphNode, param?: AudioParam, paramName?: AudioParamName) => {
         if (
-            (node instanceof BiquadFilterGraphNode ||
-                node instanceof GainGraphNode ||
-                node instanceof OscillatorGraphNode) &&
+            (node instanceof BiquadFilterGraphNode || node instanceof GainGraphNode || node instanceof OscillatorGraphNode || node instanceof DelayGraphNode) &&
             this.nodeConnectState.source?.id === undefined
         ) {
             this.nodeConnectState = {
@@ -110,9 +86,7 @@ export class AppView extends LitElement {
                 destination: undefined,
             };
         } else if (
-            (node instanceof BiquadFilterGraphNode ||
-                node instanceof GainGraphNode ||
-                node instanceof OscillatorGraphNode) &&
+            (node instanceof BiquadFilterGraphNode || node instanceof GainGraphNode || node instanceof OscillatorGraphNode || node instanceof DelayGraphNode) &&
             this.nodeConnectState.source?.id === node.id
         ) {
             this.nodeConnectState = {
@@ -129,18 +103,9 @@ export class AppView extends LitElement {
             ) {
                 // add the connection to the CONNECTIONS array
                 if (param && paramName) {
-                    this.CONNECTIONS = [
-                        ...this.CONNECTIONS,
-                        [
-                            this.nodeConnectState.source.id,
-                            `${node.id}-${paramName}`,
-                        ],
-                    ];
+                    this.CONNECTIONS = [...this.CONNECTIONS, [this.nodeConnectState.source.id, `${node.id}-${paramName}`]];
                 } else {
-                    this.CONNECTIONS = [
-                        ...this.CONNECTIONS,
-                        [this.nodeConnectState.source.id, node.id],
-                    ];
+                    this.CONNECTIONS = [...this.CONNECTIONS, [this.nodeConnectState.source.id, node.id]];
                 }
             }
 
@@ -162,10 +127,7 @@ export class AppView extends LitElement {
                 if (events !== undefined) {
                     for (const [key, eventList] of events.entries()) {
                         if (result.has(key)) {
-                            result.set(key, [
-                                ...(result.get(key) ?? []),
-                                eventList,
-                            ]);
+                            result.set(key, [...(result.get(key) ?? []), eventList]);
                         } else {
                             result.set(key, [eventList]);
                         }
@@ -200,9 +162,7 @@ export class AppView extends LitElement {
                 .onSelectAudioGraphNode=${this.handleSelectAudioGraphNode}
             >
             </willys-rack-shack-view>
-            <keyboard-controller
-                .keyboardAudioEvents=${this.mergeEventMaps()}
-            ></keyboard-controller>
+            <keyboard-controller .keyboardAudioEvents=${this.mergeEventMaps()}></keyboard-controller>
         </div>`;
     }
 }
@@ -212,6 +172,7 @@ declare global {
         "app-view": AppView;
         "audio-graph-view": AudioGraphView;
         "biquad-filter-node-view": BiquadFilterNodeView;
+        "delay-node-view": DelayGraphNode;
         "gain-node-view": GainNodeView;
         "new-node-view": NewNodeView;
         "oscillator-node-view": OscillatorNodeView;
