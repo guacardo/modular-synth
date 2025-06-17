@@ -15,11 +15,9 @@ export const coachingTextStyles = css`
         0%,
         100% {
             transform: scale(1);
-            /* letter-spacing: 0; */
         }
         50% {
             transform: scale(1.08);
-            /* letter-spacing: 1px; */
         }
     }
     .coaching-text-container {
@@ -45,7 +43,13 @@ export const coachingTextStyles = css`
                 var(--accent-2-dark),
                 var(--accent-3),
                 var(--accent-3-dark),
-                var(--accent-0)
+                /* var(--accent-3),
+                var(--accent-2-dark),
+                var(--accent-2),
+                var(--accent-1-dark),
+                var(--accent-1),
+                var(--accent-0-dark), */
+                    var(--accent-0)
             );
             background-size: 400% 400%;
             -webkit-background-clip: text;
