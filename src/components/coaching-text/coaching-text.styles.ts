@@ -21,7 +21,7 @@ export const coachingTextStyles = css`
         }
     }
     .coaching-text-container {
-        padding: 32px 0 0 0;
+        padding: 24px 0 12px 0;
         display: flex;
         flex-direction: column;
         align-items: center;
