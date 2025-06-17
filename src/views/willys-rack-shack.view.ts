@@ -16,6 +16,7 @@ import {
 import { OscillatorGraphNode } from "../components/audio-nodes/source/oscillator-node/oscillator-graph-node";
 import { willysRackShackStyles } from "./willys-rack-shack.styles";
 import { DelayGraphNode } from "../components/audio-nodes/processing/delay/delay-graph-node";
+import { StereoPannerGraphNode } from "../components/audio-nodes/processing/stereo-panner/stereo-panner-graph-node";
 
 @customElement("willys-rack-shack-view")
 export class WillysRackShackView extends LitElement {
@@ -78,6 +79,15 @@ export class WillysRackShackView extends LitElement {
                 .updateNodeConnectState=${this.updateNodeConnectState}
                 .onSelectAudioGraphNode=${this.onSelectAudioGraphNode}
             ></delay-node-view>`;
+        } else if (graphNode instanceof StereoPannerGraphNode) {
+            return html`<stereo-panner-view
+                .graphNode=${graphNode}
+                .connections=${this.connections}
+                .updateNode=${this.updateNode}
+                .nodeConnectState=${this.nodeConnectState}
+                .updateNodeConnectState=${this.updateNodeConnectState}
+                .onSelectAudioGraphNode=${this.onSelectAudioGraphNode}
+            ></stereo-panner-view>`;
         } else {
             return html`<p>ERroR: nOT a n Audio Noooode</p>`;
         }

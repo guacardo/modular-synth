@@ -26,6 +26,7 @@ export class GainNodeView extends LitElement {
         });
     }
 
+    // TODO: DRY
     private isConnectionCandidate(): boolean {
         if (this.nodeConnectState.source?.node?.numberOfOutputs && this.nodeConnectState.source.id !== this.graphNode.id) {
             return true;
@@ -34,6 +35,7 @@ export class GainNodeView extends LitElement {
     }
 
     render() {
+        // TODO: DRY
         const isConnectSource = this.graphNode.id === this.nodeConnectState.source?.id;
         const isConnectedOut = this.connections.some((connection) => connection[0] === this.graphNode.id);
         const isConnectedIn = this.connections.some((connection) => connection[1] === this.graphNode.id);

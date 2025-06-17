@@ -32,10 +32,13 @@ import "./components/side-panel/side-panel.view";
 import "./components/audio-nodes/destination/audio-destination-node/audio-destination-node.view";
 import "./views/willys-rack-shack.view";
 import "./components/coaching-text/coaching-text.view";
+import "./components/audio-nodes/processing/stereo-panner/stereo-panner.view";
 import { OscillatorGraphNode } from "./components/audio-nodes/source/oscillator-node/oscillator-graph-node";
 import { WillysRackShackView } from "./views/willys-rack-shack.view";
 import { DelayGraphNode } from "./components/audio-nodes/processing/delay/delay-graph-node";
 import { CoachingTextView } from "./components/coaching-text/coaching-text.view";
+import { StereoPannerView } from "./components/audio-nodes/processing/stereo-panner/stereo-panner.view";
+import { StereoPannerGraphNode } from "./components/audio-nodes/processing/stereo-panner/stereo-panner-graph-node";
 
 @customElement("app-view")
 export class AppView extends LitElement {
@@ -70,6 +73,8 @@ export class AppView extends LitElement {
             case "delay":
                 newNode = new DelayGraphNode(AUDIO_CONTEXT, position, (this.AUDIO_GRAPH.length + 1).toString());
                 break;
+            case "stereo-panner":
+                newNode = new StereoPannerGraphNode(AUDIO_CONTEXT, position, (this.AUDIO_GRAPH.length + 1).toString());
         }
         this.AUDIO_GRAPH = [...this.AUDIO_GRAPH, newNode];
     };
@@ -80,7 +85,11 @@ export class AppView extends LitElement {
 
     readonly handleUpdateNodeConnect = (node: AudioGraphNode | AudioDestinationGraphNode, param?: AudioParam, paramName?: AudioParamName) => {
         if (
-            (node instanceof BiquadFilterGraphNode || node instanceof GainGraphNode || node instanceof OscillatorGraphNode || node instanceof DelayGraphNode) &&
+            (node instanceof BiquadFilterGraphNode ||
+                node instanceof GainGraphNode ||
+                node instanceof OscillatorGraphNode ||
+                node instanceof DelayGraphNode ||
+                node instanceof StereoPannerGraphNode) &&
             this.nodeConnectState.source?.id === undefined
         ) {
             this.nodeConnectState = {
@@ -88,7 +97,11 @@ export class AppView extends LitElement {
                 destination: undefined,
             };
         } else if (
-            (node instanceof BiquadFilterGraphNode || node instanceof GainGraphNode || node instanceof OscillatorGraphNode || node instanceof DelayGraphNode) &&
+            (node instanceof BiquadFilterGraphNode ||
+                node instanceof GainGraphNode ||
+                node instanceof OscillatorGraphNode ||
+                node instanceof DelayGraphNode ||
+                node instanceof StereoPannerGraphNode) &&
             this.nodeConnectState.source?.id === node.id
         ) {
             this.nodeConnectState = {
@@ -179,6 +192,7 @@ declare global {
         "new-node-view": NewNodeView;
         "oscillator-node-view": OscillatorNodeView;
         "side-panel-view": SidePanelView;
+        "stereo-panner-view": StereoPannerView;
         "keyboard-controller": KeyboardController;
         "willys-rack-shack-view": WillysRackShackView;
     }

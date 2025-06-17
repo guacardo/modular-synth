@@ -1,4 +1,5 @@
 import { DelayGraphNode } from "../components/audio-nodes/processing/delay/delay-graph-node";
+import { StereoPannerGraphNode } from "../components/audio-nodes/processing/stereo-panner/stereo-panner-graph-node";
 import { OscillatorGraphNode } from "../components/audio-nodes/source/oscillator-node/oscillator-graph-node";
 
 // =====================
@@ -7,18 +8,21 @@ import { OscillatorGraphNode } from "../components/audio-nodes/source/oscillator
 type SafeExtract<T, U extends T> = U;
 export type Position = [number, number];
 export type AudioNodeProperties = Partial<
-    Record<keyof AudioNode | keyof OscillatorNode | keyof GainNode | keyof BiquadFilterNode | keyof DelayNode, number | [number, number] | OscillatorType>
+    Record<
+        keyof AudioNode | keyof OscillatorNode | keyof GainNode | keyof BiquadFilterNode | keyof DelayNode | keyof StereoPannerNode,
+        number | [number, number] | OscillatorType
+    >
 >;
-export type AudioNodeType = "oscillator" | "gain" | "biquad-filter" | "audio-destination" | "delay";
-type AudioProcessorNode = SafeExtract<AudioNodeType, "biquad-filter" | "gain" | "delay">;
+export type AudioNodeType = "oscillator" | "gain" | "biquad-filter" | "audio-destination" | "delay" | "stereo-panner";
+type AudioProcessorNode = SafeExtract<AudioNodeType, "biquad-filter" | "gain" | "delay" | "stereo-panner">;
 type AudioSourceNode = SafeExtract<AudioNodeType, "oscillator">;
 type AudioGraphDestinationNode = SafeExtract<AudioNodeType, "audio-destination">;
-export type AudioParamName = "gain" | "frequency" | "detune" | "Q" | "pan" | "delayTime";
+export type AudioParamName = "gain" | "frequency" | "detune" | "Q" | "pan" | "delayTime" | "pan";
 
 // =====================
 // Audio Node Constants
 // =====================
-export const AUDIO_PROCESSOR_NODES: AudioProcessorNode[] = ["gain", "biquad-filter", "delay"] as const;
+export const AUDIO_PROCESSOR_NODES: AudioProcessorNode[] = ["gain", "biquad-filter", "delay", "stereo-panner"] as const;
 export const AUDIO_SOURCE_NODES: AudioSourceNode[] = ["oscillator"] as const;
 export const AUDIO_DESTINATION_NODES: AudioGraphDestinationNode[] = ["audio-destination"] as const;
 
@@ -98,7 +102,8 @@ export function connectAudioNodes(connection: NodeConnectState): boolean {
         destination instanceof OscillatorGraphNode ||
         destination instanceof GainGraphNode ||
         destination instanceof BiquadFilterGraphNode ||
-        destination instanceof DelayGraphNode
+        destination instanceof DelayGraphNode ||
+        destination instanceof StereoPannerGraphNode
     ) {
         if (source && destination) {
             if (

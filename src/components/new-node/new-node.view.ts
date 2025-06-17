@@ -39,7 +39,7 @@ export class NewNodeView extends LitElement {
     }
 
     private panels = (): TemplateResult[] => [
-        html`<div class="panel empty-node-container" @click=${this.moveToNextPanel}><button>+</button></div>`,
+        html`<div class="panel empty-node-container" @click=${this.moveToNextPanel}><button>+ add</button></div>`,
         html`<div class="panel">
             <h6>Node Type</h6>
             <button @click=${this.moveToPrevPanel}>x</button>
