@@ -154,6 +154,54 @@ export class AppView extends LitElement {
         this.handleUpdateNode(updatedNode);
     };
 
+    // TODO: clean up/split apart..multiple responsibilities here.
+    readonly handleLoadAudioGraph = (audioGraph: AudioGraphNode[], connections: Array<[string, string]>) => {
+        console.log("APP: Loading audio graph", audioGraph, connections);
+        // For deserialization, we expect a 'type' property on each node
+        type AudioGraphNodeSerialized = AudioGraphNode & { type: AudioNodeType };
+        const nodeClassMap: Record<AudioNodeType, any> = {
+            oscillator: OscillatorGraphNode,
+            gain: GainGraphNode,
+            "biquad-filter": BiquadFilterGraphNode,
+            "audio-destination": AudioDestinationGraphNode,
+            delay: DelayGraphNode,
+            "stereo-panner": StereoPannerGraphNode,
+        };
+        // Cleanup: disconnect and stop all nodes in the current audio graph
+        this.AUDIO_GRAPH.forEach((node) => {
+            try {
+                node.node.disconnect();
+            } catch (e) {
+                // Already disconnected or not connectable
+            }
+            // Stop oscillators to prevent lingering sound
+            if (node.node instanceof OscillatorNode) {
+                try {
+                    node.node.stop();
+                } catch (e) {
+                    // Already stopped
+                }
+            }
+        });
+        const newGraph: AudioGraphNode[] = (audioGraph as AudioGraphNodeSerialized[]).map((node) => {
+            const NodeClass = nodeClassMap[node.type];
+            if (!NodeClass) throw new Error(`Unknown node type: ${node.type}`);
+            const newNode = new NodeClass(AUDIO_CONTEXT, node.position, node.id);
+            newNode.isSelected = node.isSelected;
+            return newNode;
+        });
+        this.AUDIO_GRAPH = newGraph;
+        // Reconnect audio nodes in the Web Audio graph
+        connections.forEach(([sourceId, destinationId]) => {
+            const source = newGraph.find((node) => node.id === sourceId);
+            const destination = newGraph.find((node) => node.id === destinationId);
+            if (source && destination) {
+                connectAudioNodes({ source, destination });
+            }
+        });
+        this.CONNECTIONS = connections;
+    };
+
     render() {
         console.log("AppView render", this.AUDIO_GRAPH, this.CONNECTIONS);
         return html` <div class="app">
@@ -172,7 +220,11 @@ export class AppView extends LitElement {
             >
             </willys-rack-shack-view>
             <keyboard-controller .keyboardAudioEvents=${this.mergeEventMaps()}></keyboard-controller>
-            <local-storage-view .audioGraph=${this.AUDIO_GRAPH} .connections=${this.CONNECTIONS}></local-storage-view>
+            <local-storage-view
+                .audioGraph=${this.AUDIO_GRAPH}
+                .connections=${this.CONNECTIONS}
+                .loadAudioGraph=${this.handleLoadAudioGraph}
+            ></local-storage-view>
         </div>`;
     }
 }

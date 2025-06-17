@@ -5,11 +5,12 @@ import { AudioGraphNode } from "../../app/util";
 
 @customElement("local-storage-view")
 export class LocalStorageView extends LitElement {
-    styles = [localStorageStyles];
+    static styles = [localStorageStyles];
 
     @state() keyName: string = "";
     @property({ type: Array }) audioGraph: AudioGraphNode[] = [];
     @property({ type: Array }) connections: Array<[string, string]> = [];
+    @property({ attribute: false }) loadAudioGraph: (audioGraph: AudioGraphNode[], connections: Array<[string, string]>) => void;
 
     save = () => {
         const serializedGraph = JSON.stringify(this.audioGraph);
@@ -18,10 +19,23 @@ export class LocalStorageView extends LitElement {
         localStorage.setItem(this.keyName, JSON.stringify({ graph: serializedGraph, connections: serializedConnections }));
     };
 
-    load = () => {
-        // const deserializedGraph = JSON.parse(serializedGraph);
-        // const deserializedConnections = JSON.parse(serializedConnections);
-        // console.log("Deserialized graph", deserializedGraph, "Connections", deserializedConnections);
+    load = (key: string) => {
+        interface StorageData {
+            graph: AudioGraphNode[];
+            connections: Array<[string, string]>;
+        }
+        const raw = localStorage.getItem(key);
+        let data: StorageData = { graph: [], connections: [] };
+        if (raw) {
+            try {
+                const parsed = JSON.parse(raw);
+                data.graph = typeof parsed.graph === "string" ? JSON.parse(parsed.graph) : parsed.graph ?? [];
+                data.connections = typeof parsed.connections === "string" ? JSON.parse(parsed.connections) : parsed.connections ?? [];
+            } catch (e) {
+                console.error("Failed to parse localStorage data", e);
+            }
+        }
+        this.loadAudioGraph(data.graph, data.connections);
     };
 
     render() {
@@ -37,8 +51,11 @@ export class LocalStorageView extends LitElement {
                     placeholder="synth name"
                     @input="${(e: Event) => (this.keyName = (e.target as HTMLInputElement).value)}"
                 />
+                <select @change="${(e: Event) => this.load((e.target as HTMLSelectElement).value)}">
+                    <option value="">-- Select a key --</option>
+                    ${keys.map((key) => html`<option value="${key}" ?selected=${this.keyName === key}>${key}</option>`)}
+                </select>
                 <button type="button" class="button" @click=${this.save}>Save</button>
-                <button type="button" class="button" @click=${this.load}>Load</button>
             </div>
         `;
     }

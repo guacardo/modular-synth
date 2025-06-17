@@ -30,6 +30,7 @@ export const AUDIO_SOURCE_NODES: AudioSourceNode[] = ["oscillator"] as const;
 export const AUDIO_DESTINATION_NODES: AudioGraphDestinationNode[] = ["audio-destination"] as const;
 
 // TODO: Lit will not update for properties, can only call functions.
+// TODO: might be a good idea to "close()" the AudioContext whenever we load a new audio graph to prevent memory leaks.
 export const AUDIO_CONTEXT = new AudioContext();
 
 export interface KeyboardAudioEvent {

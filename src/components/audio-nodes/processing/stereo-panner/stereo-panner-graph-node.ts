@@ -1,4 +1,4 @@
-import { AudioGraphNode, KeyboardAudioEvent, Position, updateAudioParamValue } from "../../../../app/util";
+import { AudioGraphNode, AudioNodeType, KeyboardAudioEvent, Position, updateAudioParamValue } from "../../../../app/util";
 
 export class StereoPannerGraphNode implements AudioGraphNode {
     id: string;
@@ -6,6 +6,7 @@ export class StereoPannerGraphNode implements AudioGraphNode {
     isSelected: boolean;
     node: StereoPannerNode;
     keyboardEvents: Map<string, KeyboardAudioEvent>;
+    type: AudioNodeType = "stereo-panner";
     getKeyboardEvents(updateNode: (node: AudioGraphNode) => void): Map<string, KeyboardAudioEvent> {
         return new Map<string, KeyboardAudioEvent>([
             ["ArrowLeft", { keydown: () => updateNode({ ...this, node: updateAudioParamValue(this.node, { pan: this.node.pan.value - 0.1 }) }) }],

@@ -1,10 +1,11 @@
-import { AudioGraphNode, Position, KeyboardAudioEvent, updateAudioParamValue } from "../../../../app/util";
+import { AudioGraphNode, Position, KeyboardAudioEvent, updateAudioParamValue, AudioNodeType } from "../../../../app/util";
 
 export class DelayGraphNode implements AudioGraphNode {
     id: string;
     position: Position;
     isSelected: boolean;
     node: DelayNode;
+    type: AudioNodeType = "delay";
     getKeyboardEvents(updateNode: (node: AudioGraphNode) => void): Map<string, KeyboardAudioEvent> {
         return new Map<string, KeyboardAudioEvent>([
             [

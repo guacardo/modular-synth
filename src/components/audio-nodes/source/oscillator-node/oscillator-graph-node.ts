@@ -1,4 +1,4 @@
-import { AudioGraphNode, Position, KeyboardAudioEvent, updateAudioParamValue } from "../../../../app/util";
+import { AudioGraphNode, Position, KeyboardAudioEvent, updateAudioParamValue, AudioNodeType } from "../../../../app/util";
 
 export class OscillatorGraphNode implements AudioGraphNode {
     id: string;
@@ -7,6 +7,7 @@ export class OscillatorGraphNode implements AudioGraphNode {
     node: OscillatorNode;
     keyboardEvents: Map<string, KeyboardAudioEvent>;
     dutyCycle: number = 0.5;
+    type: AudioNodeType = "oscillator";
     getKeyboardEvents(updateNode: (node: AudioGraphNode) => void): Map<string, KeyboardAudioEvent> {
         return new Map<string, KeyboardAudioEvent>([
             ["a", { keydown: () => updateNode({ ...this, node: updateAudioParamValue(this.node, { frequency: 200 }) }) }],
