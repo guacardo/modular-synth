@@ -21,20 +21,40 @@ export class CoachingTextView extends LitElement {
     coachingText = () => {
         let text = "uhh...";
 
-        if (this.audioGraph.some((node) => node.isSelected) && this.audioGraph.length > 3) {
-            text = "Be sure to save some of your favorite racks";
-        } else if (this.audioGraph.length > 3) {
+        if (
+            this.audioGraph.some((node) => node.isSelected) &&
+            this.audioGraph.some((node) => node instanceof OscillatorGraphNode) &&
+            this.audioGraph.some((node) => node instanceof GainGraphNode) &&
+            this.audioGraph.some((node) => node instanceof AudioDestinationGraphNode) &&
+            this.audioGraph.length > 3
+        ) {
+            text = "sick.";
+        } else if (
+            this.audioGraph.some((node) => node instanceof OscillatorGraphNode) &&
+            this.audioGraph.some((node) => node instanceof GainGraphNode) &&
+            this.audioGraph.some((node) => node instanceof AudioDestinationGraphNode) &&
+            this.audioGraph.length > 3
+        ) {
             text = "You can 'select' oscillators for some keyboard controls";
-        } else if (this.connections.length > 1) {
-            text = "BEEEEEP! Nice work. Now time to experiment. Add more nodes, like Delay, Biquad Filter, or more Oscillators to modulate the sound.";
-        } else if (this.audioGraph.some((node) => node instanceof AudioDestinationGraphNode)) {
+        } else if (
+            this.audioGraph.some((node) => node instanceof OscillatorGraphNode) &&
+            this.audioGraph.some((node) => node instanceof GainGraphNode) &&
+            this.audioGraph.some((node) => node instanceof AudioDestinationGraphNode) &&
+            this.connections.length > 1
+        ) {
+            text = "BEEEEEP! Nice work. Now time to experiment. Add more nodes: Delay, Biquad Filter, more Oscillators as modulators. Slide the sliders.";
+        } else if (
+            this.audioGraph.some((node) => node instanceof OscillatorGraphNode) &&
+            this.audioGraph.some((node) => node instanceof GainGraphNode) &&
+            this.audioGraph.some((node) => node instanceof AudioDestinationGraphNode)
+        ) {
             text = "Awesome, but still no sound. Let's connect everything. Oscillator:out to Gain:in, Gain:out to Audio Destination:in.";
-        } else if (this.audioGraph.some((node) => node instanceof GainGraphNode)) {
+        } else if (this.audioGraph.some((node) => node instanceof OscillatorGraphNode) && this.audioGraph.some((node) => node instanceof GainGraphNode)) {
             text = "Huge gains. Now let's get some speakers to send this to. Add an Audio Destination.";
         } else if (this.audioGraph.some((node) => node instanceof OscillatorGraphNode)) {
-            text = "Ride the wave. Add a Gain node to control the volume.";
+            text = "Ride the wave 🤙 Add a Gain node to control the volume.";
         } else if (this.audioGraph.length === 0) {
-            text = "Add an audio node: try an Oscillator.";
+            text = "Add an audio node: try an Oscillator...";
         }
 
         return text;

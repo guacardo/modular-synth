@@ -15,9 +15,11 @@ export const coachingTextStyles = css`
         0%,
         100% {
             transform: scale(1);
+            /* letter-spacing: 0; */
         }
         50% {
-            transform: scale(1.025);
+            transform: scale(1.08);
+            /* letter-spacing: 1px; */
         }
     }
     .coaching-text-container {
@@ -51,7 +53,9 @@ export const coachingTextStyles = css`
             background-clip: text;
             color: transparent;
             transform: scale(1);
-            animation: gradient-rotate 18s linear infinite, bounce-scale 2s ease-in-out infinite;
+            transform-origin: center;
+            text-align: center;
+            animation: gradient-rotate 18s linear infinite, bounce-scale 2.4s ease-in-out infinite;
         }
     }
 `;
