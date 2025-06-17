@@ -1,8 +1,10 @@
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { audioNodeStyles } from "../../audio-node-styles";
-import { AudioDestinationGraphNode, AudioGraphNode, AudioParamName, GainGraphNode, NodeConnectState, updateAudioParamValue } from "../../../../app/util";
+import { AudioGraphNode, AudioParamName, NodeConnectState, updateAudioParamValue } from "../../../../app/util";
 import { classMap } from "lit/directives/class-map.js";
+import { AudioDestinationGraphNode } from "../../destination/audio-destination-node/audio-destination-graph-node";
+import { GainGraphNode } from "./gain-graph-node";
 
 @customElement("gain-node-view")
 export class GainNodeView extends LitElement {

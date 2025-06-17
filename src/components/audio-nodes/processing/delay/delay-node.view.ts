@@ -2,8 +2,9 @@ import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { DelayGraphNode } from "./delay-graph-node";
-import { AudioDestinationGraphNode, AudioGraphNode, AudioParamName, NodeConnectState, updateAudioParamValue } from "../../../../app/util";
+import { AudioGraphNode, AudioParamName, NodeConnectState, updateAudioParamValue } from "../../../../app/util";
 import { audioNodeStyles } from "../../audio-node-styles";
+import { AudioDestinationGraphNode } from "../../destination/audio-destination-node/audio-destination-graph-node";
 
 @customElement("delay-node-view")
 export class DelayNodeView extends LitElement {

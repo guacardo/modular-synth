@@ -1,9 +1,10 @@
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { AudioDestinationGraphNode, AudioGraphNode, AudioParamName, NodeConnectState, updateAudioParamValue } from "../../../../app/util";
+import { AudioGraphNode, AudioParamName, NodeConnectState, updateAudioParamValue } from "../../../../app/util";
 import { StereoPannerGraphNode } from "./stereo-panner-graph-node";
 import { audioNodeStyles } from "../../audio-node-styles";
 import { classMap } from "lit/directives/class-map.js";
+import { AudioDestinationGraphNode } from "../../destination/audio-destination-node/audio-destination-graph-node";
 
 @customElement("stereo-panner-view")
 export class StereoPannerView extends LitElement {

@@ -23,6 +23,7 @@
 }
 
 body {
+    position: relative;
     background-color: var(--elevation-0);
     color: var(--text-primary);
     width: 100vw;
