@@ -4,12 +4,9 @@ import {
     AUDIO_DESTINATION_NODES,
     AUDIO_PROCESSOR_NODES,
     AUDIO_SOURCE_NODES,
-    AudioDestinationGraphNode,
     AudioGraphNode,
     AudioNodeType,
     AudioParamName,
-    BiquadFilterGraphNode,
-    GainGraphNode,
     NodeConnectState,
     Position,
 } from "../app/util";
@@ -17,6 +14,9 @@ import { OscillatorGraphNode } from "../components/audio-nodes/source/oscillator
 import { willysRackShackStyles } from "./willys-rack-shack.styles";
 import { DelayGraphNode } from "../components/audio-nodes/processing/delay/delay-graph-node";
 import { StereoPannerGraphNode } from "../components/audio-nodes/processing/stereo-panner/stereo-panner-graph-node";
+import { AudioDestinationGraphNode } from "../components/audio-nodes/destination/audio-destination-node/audio-destination-graph-node";
+import { BiquadFilterGraphNode } from "../components/audio-nodes/processing/biquad-filter/biquad-filter-graph-node";
+import { GainGraphNode } from "../components/audio-nodes/processing/gain-node/gain-graph-node";
 
 @customElement("willys-rack-shack-view")
 export class WillysRackShackView extends LitElement {

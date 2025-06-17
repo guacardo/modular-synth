@@ -1,9 +1,11 @@
 import { html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { AudioDestinationGraphNode, AudioGraphNode, GainGraphNode } from "../../app/util";
+import { AudioGraphNode } from "../../app/util";
 import { OscillatorGraphNode } from "../audio-nodes/source/oscillator-node/oscillator-graph-node";
 import { coachingTextStyles } from "./coaching-text.styles";
 import { appStyles } from "../../styles/app-styles";
+import { AudioDestinationGraphNode } from "../audio-nodes/destination/audio-destination-node/audio-destination-graph-node";
+import { GainGraphNode } from "../audio-nodes/processing/gain-node/gain-graph-node";
 
 @customElement("coaching-text-view")
 export class CoachingTextView extends LitElement {

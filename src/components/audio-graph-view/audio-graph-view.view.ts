@@ -1,18 +1,11 @@
 import { LitElement, TemplateResult, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import {
-    AUDIO_DESTINATION_NODES,
-    AUDIO_PROCESSOR_NODES,
-    AUDIO_SOURCE_NODES,
-    AudioDestinationGraphNode,
-    AudioGraphNode,
-    AudioNodeType,
-    BiquadFilterGraphNode,
-    GainGraphNode,
-    NodeConnectState,
-} from "../../app/util";
+import { AUDIO_DESTINATION_NODES, AUDIO_PROCESSOR_NODES, AUDIO_SOURCE_NODES, AudioGraphNode, AudioNodeType, NodeConnectState } from "../../app/util";
 import { audioGraphStyles } from "./audio-graph-view.styles";
 import { OscillatorGraphNode } from "../audio-nodes/source/oscillator-node/oscillator-graph-node";
+import { AudioDestinationGraphNode } from "../audio-nodes/destination/audio-destination-node/audio-destination-graph-node";
+import { BiquadFilterGraphNode } from "../audio-nodes/processing/biquad-filter/biquad-filter-graph-node";
+import { GainGraphNode } from "../audio-nodes/processing/gain-node/gain-graph-node";
 
 @customElement("audio-graph-view")
 export class AudioGraphView extends LitElement {

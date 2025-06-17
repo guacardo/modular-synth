@@ -1,8 +1,9 @@
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { AUDIO_CONTEXT, AudioDestinationGraphNode, AudioGraphNode, NodeConnectState } from "../../../../app/util";
+import { AUDIO_CONTEXT, AudioGraphNode, NodeConnectState } from "../../../../app/util";
 import { audioNodeStyles } from "../../audio-node-styles";
 import { classMap } from "lit/directives/class-map.js";
+import { AudioDestinationGraphNode } from "./audio-destination-graph-node";
 
 @customElement("audio-destination-node-view")
 export class AudioDestinationNodeView extends LitElement {

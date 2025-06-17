@@ -1,4 +1,7 @@
+import { AudioDestinationGraphNode } from "../components/audio-nodes/destination/audio-destination-node/audio-destination-graph-node";
+import { BiquadFilterGraphNode } from "../components/audio-nodes/processing/biquad-filter/biquad-filter-graph-node";
 import { DelayGraphNode } from "../components/audio-nodes/processing/delay/delay-graph-node";
+import { GainGraphNode } from "../components/audio-nodes/processing/gain-node/gain-graph-node";
 import { StereoPannerGraphNode } from "../components/audio-nodes/processing/stereo-panner/stereo-panner-graph-node";
 import { OscillatorGraphNode } from "../components/audio-nodes/source/oscillator-node/oscillator-graph-node";
 
@@ -26,18 +29,17 @@ export const AUDIO_PROCESSOR_NODES: AudioProcessorNode[] = ["gain", "biquad-filt
 export const AUDIO_SOURCE_NODES: AudioSourceNode[] = ["oscillator"] as const;
 export const AUDIO_DESTINATION_NODES: AudioGraphDestinationNode[] = ["audio-destination"] as const;
 
-// =====================
-// Audio Context & Factory
-// =====================
 // TODO: Lit will not update for properties, can only call functions.
 export const AUDIO_CONTEXT = new AudioContext();
 
-// =====================
-// AudioGraphNode Classes
-// =====================
 export interface KeyboardAudioEvent {
     keydown: () => void;
     keyup?: () => void;
+}
+
+export interface NodeConnectState {
+    source?: AudioGraphNode;
+    destination?: AudioGraphNode | AudioDestinationNode | AudioParam;
 }
 
 export interface AudioGraphNode {
@@ -48,54 +50,11 @@ export interface AudioGraphNode {
     getKeyboardEvents?: (updateNode: (node: AudioGraphNode) => void) => Map<string, KeyboardAudioEvent>;
 }
 
-export class GainGraphNode implements AudioGraphNode {
-    id: string;
-    position: Position;
-    isSelected = false;
-    node: GainNode;
-
-    constructor(context: AudioContext, position: Position, id: string) {
-        this.node = context.createGain();
-        this.position = position;
-        this.id = id;
-    }
-}
-
-export class BiquadFilterGraphNode implements AudioGraphNode {
-    id: string;
-    position: Position;
-    isSelected = false;
-    node: BiquadFilterNode;
-
-    constructor(context: AudioContext, position: Position, id: string) {
-        this.node = context.createBiquadFilter();
-        this.position = position;
-        this.id = id;
-    }
-}
-
-export class AudioDestinationGraphNode implements AudioGraphNode {
-    id: string;
-    position: Position;
-    isSelected = false;
-    node: AudioDestinationNode;
-
-    constructor(context: AudioContext, position: Position, id: string) {
-        this.node = context.destination;
-        this.position = position;
-        this.id = id;
-    }
-}
-
 // =====================
 // Utility Functions
 // =====================
 
-export interface NodeConnectState {
-    source?: AudioGraphNode;
-    destination?: AudioGraphNode | AudioDestinationNode | AudioParam;
-}
-
+// AUDIO CONNECTIONS
 export function connectAudioNodes(connection: NodeConnectState): boolean {
     const { source, destination } = connection;
     if (
