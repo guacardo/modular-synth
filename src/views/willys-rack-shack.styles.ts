@@ -25,6 +25,12 @@ export const willysRackShackStyles = css`
             overflow-y: scroll;
             width: 20%;
             border-right: 1px solid var(--elevation-2);
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .grid-column::-webkit-scrollbar {
+            display: none;
         }
 
         .grid-column:last-child {

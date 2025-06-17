@@ -31,9 +31,11 @@ import "./components/new-node/new-node.view";
 import "./components/side-panel/side-panel.view";
 import "./components/audio-nodes/destination/audio-destination-node/audio-destination-node.view";
 import "./views/willys-rack-shack.view";
+import "./components/coaching-text/coaching-text.view";
 import { OscillatorGraphNode } from "./components/audio-nodes/source/oscillator-node/oscillator-graph-node";
 import { WillysRackShackView } from "./views/willys-rack-shack.view";
 import { DelayGraphNode } from "./components/audio-nodes/processing/delay/delay-graph-node";
+import { CoachingTextView } from "./components/coaching-text/coaching-text.view";
 
 @customElement("app-view")
 export class AppView extends LitElement {
@@ -150,8 +152,7 @@ export class AppView extends LitElement {
             <div class="non-desktop-overlay">
                 <p>big boi 'puters only sry</p>
             </div>
-            <h1 class="title-text">willy's rack shack</h1>
-            <h3>coaching text</h3>
+            <coaching-text-view .audioGraph=${this.AUDIO_GRAPH} .connections=${this.CONNECTIONS}></coaching-text-view>
             <willys-rack-shack-view
                 .audioGraph=${this.AUDIO_GRAPH}
                 .connections=${this.CONNECTIONS}
@@ -172,6 +173,7 @@ declare global {
         "app-view": AppView;
         "audio-graph-view": AudioGraphView;
         "biquad-filter-node-view": BiquadFilterNodeView;
+        "coaching-text-view": CoachingTextView;
         "delay-node-view": DelayGraphNode;
         "gain-node-view": GainNodeView;
         "new-node-view": NewNodeView;
