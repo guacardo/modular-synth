@@ -5,7 +5,10 @@ export const localStorageStyles = [
     appStyles,
     css`
         .container {
-            display: block;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
             position: absolute;
             right: 8px;
             top: 16px;
@@ -13,9 +16,10 @@ export const localStorageStyles = [
             input[type="text"] {
                 width: 100px;
                 padding: 8px 16px;
-                border: 1px solid #ccc;
+                border: 1px solid #aaa;
                 background-color: var(--elevation-0);
                 color: var(--text-primary);
+                font-family: "Courier New", monospace;
             }
         }
     `,

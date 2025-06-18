@@ -48,15 +48,14 @@ export const appStyles = css`
 
     .custom-select {
         background: #181818;
-        color: #fff;
+        color: var(--text-primary);
         border: 1px solid #444;
         padding: 6px 32px 6px 12px;
         font-family: "Courier New", monospace;
-        font-size: 1rem;
+        font-size: 12px;
         appearance: none;
         outline: none;
         transition: border 0.2s;
-        width: 100%;
         box-sizing: border-box;
         margin: 0 4px;
     }
