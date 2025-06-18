@@ -54,7 +54,7 @@ export class CoachingTextView extends LitElement {
         } else if (this.audioGraph.some((node) => node instanceof OscillatorGraphNode) && this.audioGraph.some((node) => node instanceof GainGraphNode)) {
             text = "Huge gains. Now let's get some speakers to send this to. Add an Audio Destination.";
         } else if (this.audioGraph.some((node) => node instanceof OscillatorGraphNode)) {
-            text = "Ride the wave 🤙 Add a Gain node to control the volume.";
+            text = "Ride the wave. add a gain node to control the volume.";
         } else if (this.audioGraph.length === 0) {
             text = "Add an audio node: try an Oscillator...";
         }

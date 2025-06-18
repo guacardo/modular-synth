@@ -6,10 +6,6 @@ export const keyboardControllerStyles = css`
         justify-content: center;
         align-items: center;
         gap: 4px;
-        position: absolute;
-        bottom: 24px;
-        left: 50%;
-        transform: translateX(-50%);
     }
 
     .keyboard-button {

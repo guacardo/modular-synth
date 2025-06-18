@@ -13,6 +13,7 @@ export class StereoPannerView extends LitElement {
     @property({ type: Object, attribute: false }) graphNode: StereoPannerGraphNode;
     @property({ type: Array }) connections: Array<[string, string]>;
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
+    @property({ attribute: false }) removeNode: (node: AudioGraphNode) => void;
     @property({ attribute: false, type: Object }) nodeConnectState: NodeConnectState;
     @property({ attribute: false }) updateNodeConnectState: (
         node: AudioGraphNode | AudioDestinationGraphNode,
@@ -55,6 +56,7 @@ export class StereoPannerView extends LitElement {
                         }}"
                     />
                 </div>
+                <button class="button" type="button" @click=${() => this.removeNode(this.graphNode)}>x</button>
                 <div class="button-io-container">
                     <!-- IN -->
                     <div class="io-container">

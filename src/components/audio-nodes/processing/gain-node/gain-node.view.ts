@@ -13,6 +13,7 @@ export class GainNodeView extends LitElement {
     @property({ type: Object, attribute: false }) graphNode: GainGraphNode;
     @property({ type: Array }) connections: Array<[string, string]>;
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
+    @property({ attribute: false }) removeNode: (node: AudioGraphNode) => void;
     @property({ attribute: false, type: Object }) nodeConnectState: NodeConnectState;
     @property({ attribute: false }) updateNodeConnectState: (
         node: AudioGraphNode | AudioDestinationGraphNode,
@@ -43,7 +44,7 @@ export class GainNodeView extends LitElement {
         const isConnectedIn = this.connections.some((connection) => connection[1] === this.graphNode.id);
         const isGainModConnected = this.connections.some((connection) => connection[1] === `${this.graphNode.id}-gain`);
 
-        return html`<div class="node" @click=${() => this.onSelectAudioGraphNode(this.graphNode)}>
+        return html`<div class="node">
             <h2>gain</h2>
             <div class="slider-container">
                 <label for="gain-slider-${this.graphNode.id}">level: ${(this.graphNode.node as GainNode).gain.value.toFixed(3)}</label>
@@ -55,15 +56,12 @@ export class GainNodeView extends LitElement {
                     max="1.0"
                     step="0.001"
                     .value="${(this.graphNode.node as GainNode).gain.value.toString()}"
-                    @click=${(e: MouseEvent) => {
-                        e.stopPropagation();
-                        e.preventDefault();
-                    }}
                     @input="${(e: Event) => {
                         this.updateGain((e.target as HTMLInputElement).valueAsNumber);
                     }}"
                 />
             </div>
+            <button class="button" type="button" @click=${() => this.removeNode(this.graphNode)}>x</button>
             <div class="button-io-container">
                 <!-- IN -->
                 <div class="io-container">

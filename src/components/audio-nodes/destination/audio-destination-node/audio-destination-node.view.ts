@@ -13,6 +13,7 @@ export class AudioDestinationNodeView extends LitElement {
     @property({ type: Array }) connections: Array<[string, string]>;
     @property({ attribute: false, type: Object }) nodeConnectState: NodeConnectState;
     @property({ attribute: false }) updateNodeConnectState: (node: AudioGraphNode) => void;
+    @property({ attribute: false }) removeNode: (node: AudioGraphNode) => void;
 
     private isConnectionCandidate(): boolean {
         if (this.nodeConnectState.source?.node?.numberOfOutputs) {
@@ -30,6 +31,7 @@ export class AudioDestinationNodeView extends LitElement {
                 <p>Channel Interpretation: ${this.graphNode.node.channelInterpretation}</p>
                 <p>Base Latency: ${AUDIO_CONTEXT.baseLatency}</p>
                 <p>Output Latency: ${AUDIO_CONTEXT.outputLatency}</p>
+                <button class="button" type="button" @click=${() => this.removeNode(this.graphNode)}>x</button>
                 <!-- IN -->
                 <div class="io-container">
                     <button

@@ -41,6 +41,7 @@ export class WillysRackShackView extends LitElement {
                 .graphNode=${graphNode}
                 .connections=${this.connections}
                 .updateNode=${this.updateNode}
+                .removeNode=${this.removeNode}
                 .nodeConnectState=${this.nodeConnectState}
                 .updateNodeConnectState=${this.updateNodeConnectState}
                 .onSelectAudioGraphNode=${this.onSelectAudioGraphNode}
@@ -60,6 +61,7 @@ export class WillysRackShackView extends LitElement {
                 .graphNode=${graphNode}
                 .connections=${this.connections}
                 .updateNode=${this.updateNode}
+                .removeNode=${this.removeNode}
                 .nodeConnectState=${this.nodeConnectState}
                 .updateNodeConnectState=${this.updateNodeConnectState}
                 .onSelectAudioGraphNode=${this.onSelectAudioGraphNode}
@@ -70,12 +72,14 @@ export class WillysRackShackView extends LitElement {
                 .connections=${this.connections}
                 .nodeConnectState=${this.nodeConnectState}
                 .updateNodeConnectState=${this.updateNodeConnectState}
+                .removeNode=${this.removeNode}
             ></audio-destination-node-view>`;
         } else if (graphNode instanceof DelayGraphNode) {
             return html`<delay-node-view
                 .graphNode=${graphNode}
                 .connections=${this.connections}
                 .updateNode=${this.updateNode}
+                .removeNode=${this.removeNode}
                 .nodeConnectState=${this.nodeConnectState}
                 .updateNodeConnectState=${this.updateNodeConnectState}
                 .onSelectAudioGraphNode=${this.onSelectAudioGraphNode}
@@ -85,6 +89,7 @@ export class WillysRackShackView extends LitElement {
                 .graphNode=${graphNode}
                 .connections=${this.connections}
                 .updateNode=${this.updateNode}
+                .removeNode=${this.removeNode}
                 .nodeConnectState=${this.nodeConnectState}
                 .updateNodeConnectState=${this.updateNodeConnectState}
                 .onSelectAudioGraphNode=${this.onSelectAudioGraphNode}

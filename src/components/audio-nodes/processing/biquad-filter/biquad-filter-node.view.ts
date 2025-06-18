@@ -24,6 +24,7 @@ export class BiquadFilterNodeView extends LitElement {
     @property({ attribute: false }) readonly graphNode: BiquadFilterGraphNode;
     @property({ type: Array }) connections: Array<[string, string]>;
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
+    @property({ attribute: false }) removeNode: (node: AudioGraphNode) => void;
     @property({ attribute: false, type: Object })
     nodeConnectState: NodeConnectState;
     @property({ attribute: false }) updateNodeConnectState: (
@@ -119,6 +120,7 @@ export class BiquadFilterNodeView extends LitElement {
                     }}
                 />
             </div>
+            <button class="button" type="button" @click=${() => this.removeNode(this.graphNode)}>x</button>
             <div class="button-io-container">
                 <!-- IN -->
                 <div class="io-container">

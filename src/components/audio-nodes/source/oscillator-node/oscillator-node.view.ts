@@ -48,7 +48,6 @@ export class OscillatorNodeView extends LitElement {
         return html`<div class="node">
             <h2>oscillator</h2>
             <div class="slider-container">
-                <button class="button" type="button" @click=${() => this.removeNode(this.graphNode)}>x</button>
                 <label class="label"><span class="unit">freq:</span> <span class="value">${audioNode.frequency.value.toString()}</span></label>
                 <input
                     class="slider"
@@ -90,6 +89,7 @@ export class OscillatorNodeView extends LitElement {
                 @click=${() => this.onSelectAudioGraphNode(this.graphNode)}
                 >Select</button
             >
+            <button class="button" type="button" @click=${() => this.removeNode(this.graphNode)}>x</button>
             <div class="io-container">
                 <button
                     type="button"

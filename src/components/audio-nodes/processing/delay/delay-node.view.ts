@@ -13,6 +13,7 @@ export class DelayNodeView extends LitElement {
     @property({ type: Object, attribute: false }) graphNode: DelayGraphNode;
     @property({ type: Array }) connections: Array<[string, string]>;
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
+    @property({ attribute: false }) removeNode: (node: AudioGraphNode) => void;
     @property({ attribute: false, type: Object }) nodeConnectState: NodeConnectState;
     @property({ attribute: false }) updateNodeConnectState: (
         node: AudioGraphNode | AudioDestinationGraphNode,
@@ -53,6 +54,7 @@ export class DelayNodeView extends LitElement {
                     @input=${(e: Event) => this.updateDelayTime((e.target as HTMLInputElement).valueAsNumber)}
                 />
             </div>
+            <button class="button" type="button" @click=${() => this.removeNode(this.graphNode)}>x</button>
             <div class="button-io-container">
                 <!-- IN -->
                 <div class="io-container">
