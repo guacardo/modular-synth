@@ -51,8 +51,8 @@ export class LocalStorageView extends LitElement {
                 />
                 <button type="button" class="button" @click=${this.save}>Save</button>
                 <button type="button" class="button" @click=${this.clearAudioGraph}>Clear</button>
-                <select @change="${(e: Event) => this.load((e.target as HTMLSelectElement).value)}">
-                    <option value="">-- Select a key --</option>
+                <select class="custom-select" @change="${(e: Event) => this.load((e.target as HTMLSelectElement).value)}">
+                    <option disabled selected value="">-- Select a synth --</option>
                     ${keys.map((key) => html`<option value="${key}" ?selected=${this.keyName === key}>${key}</option>`)}
                 </select>
             </div>

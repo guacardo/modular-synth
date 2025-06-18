@@ -56,6 +56,7 @@ export class BiquadFilterNodeView extends LitElement {
         return html`<div class=${classMap({ node: true })}>
             <h2>Biquad Filter</h2>
             <select
+                class="custom-select"
                 .value=${(this.graphNode.node as BiquadFilterNode).type}
                 @change=${(e: Event) => {
                     this.updateBiquadFilterParam("type", (e.target as HTMLSelectElement).value as BiquadFilterType);

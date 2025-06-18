@@ -25,7 +25,7 @@ export type AudioParamName = "gain" | "frequency" | "detune" | "Q" | "pan" | "de
 // =====================
 // Audio Node Constants
 // =====================
-export const AUDIO_PROCESSOR_NODES: AudioProcessorNode[] = ["gain", "biquad-filter", "delay", "stereo-panner"] as const;
+export const AUDIO_PROCESSOR_NODES: AudioProcessorNode[] = ["biquad-filter", "delay", "gain", "stereo-panner"] as const;
 export const AUDIO_SOURCE_NODES: AudioSourceNode[] = ["oscillator"] as const;
 export const AUDIO_DESTINATION_NODES: AudioGraphDestinationNode[] = ["audio-destination"] as const;
 

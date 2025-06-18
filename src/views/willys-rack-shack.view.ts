@@ -1,15 +1,6 @@
 import { html, LitElement, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import {
-    AUDIO_DESTINATION_NODES,
-    AUDIO_PROCESSOR_NODES,
-    AUDIO_SOURCE_NODES,
-    AudioGraphNode,
-    AudioNodeType,
-    AudioParamName,
-    NodeConnectState,
-    Position,
-} from "../app/util";
+import { AudioGraphNode, AudioNodeType, AudioParamName, NodeConnectState, Position } from "../app/util";
 import { OscillatorGraphNode } from "../components/audio-nodes/source/oscillator-node/oscillator-graph-node";
 import { willysRackShackStyles } from "./willys-rack-shack.styles";
 import { DelayGraphNode } from "../components/audio-nodes/processing/delay/delay-graph-node";
@@ -119,12 +110,7 @@ export class WillysRackShackView extends LitElement {
                     ${row.map((node, colIndex) => {
                         return node ? html`<div class="graph-node-container" data-position="${rowIndex},${colIndex}">${this.renderNodeView(node)}</div>` : null;
                     })}
-                    <new-node-view
-                        .addNode=${this.addNode}
-                        .audioGraph=${this.audioGraph}
-                        .options=${[...AUDIO_DESTINATION_NODES, ...AUDIO_SOURCE_NODES, ...AUDIO_PROCESSOR_NODES]}
-                        .position=${[rowIndex, row.length + 1] as const}
-                    ></new-node-view>
+                    <new-node-view .addNode=${this.addNode} .audioGraph=${this.audioGraph} .position=${[rowIndex, row.length + 1] as const}></new-node-view>
                 </div>`;
             })}
         </div>`;

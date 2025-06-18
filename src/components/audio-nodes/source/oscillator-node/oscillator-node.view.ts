@@ -73,6 +73,7 @@ export class OscillatorNodeView extends LitElement {
                 />
             </div>
             <select
+                class="custom-select"
                 .value=${this.graphNode.node.type}
                 @change=${(e: Event) => {
                     this.updateOscillatorParam("type", (e.target as HTMLSelectElement).value as OscillatorType);

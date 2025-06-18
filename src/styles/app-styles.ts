@@ -46,6 +46,33 @@ export const appStyles = css`
         }
     }
 
+    .custom-select {
+        background: #181818;
+        color: #fff;
+        border: 1px solid #444;
+        padding: 6px 32px 6px 12px;
+        font-family: "Courier New", monospace;
+        font-size: 1rem;
+        appearance: none;
+        outline: none;
+        transition: border 0.2s;
+        width: 100%;
+        box-sizing: border-box;
+        margin: 0 4px;
+    }
+    .custom-select:focus {
+        border-color: #4ecdc4;
+    }
+    .custom-select option {
+        background: #222;
+        color: #fff;
+    }
+
+    .custom-select optgroup {
+        font-style: normal;
+        color: #aaa;
+    }
+
     .non-desktop-overlay {
         position: fixed;
         top: 0;
