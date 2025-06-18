@@ -11,7 +11,7 @@ export const localStorageStyles = [
             top: 16px;
 
             input[type="text"] {
-                width: 200px;
+                width: 100px;
                 padding: 8px 16px;
                 border: 1px solid #ccc;
                 background-color: var(--elevation-0);

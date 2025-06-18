@@ -14,6 +14,7 @@ export class OscillatorNodeView extends LitElement {
     @property({ attribute: false, type: Object }) readonly graphNode: OscillatorGraphNode;
     @property({ type: Array }) connections: Array<[string, string]>;
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
+    @property({ attribute: false }) removeNode: (node: AudioGraphNode) => void;
     @property({ attribute: false, type: Object }) nodeConnectState: NodeConnectState;
     @property({ attribute: false }) updateNodeConnectState: (node: AudioGraphNode) => void;
     @property({ attribute: false }) onSelectAudioGraphNode: (node: AudioGraphNode) => void;
@@ -47,6 +48,7 @@ export class OscillatorNodeView extends LitElement {
         return html`<div class="node">
             <h2>oscillator</h2>
             <div class="slider-container">
+                <button class="button" type="button" @click=${() => this.removeNode(this.graphNode)}>x</button>
                 <label class="label"><span class="unit">freq:</span> <span class="value">${audioNode.frequency.value.toString()}</span></label>
                 <input
                     class="slider"

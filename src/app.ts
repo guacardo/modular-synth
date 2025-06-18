@@ -45,6 +45,7 @@ export class AppView extends LitElement {
         source: undefined,
         destination: undefined,
     };
+    @state() creationCounter: number = 0;
 
     connectedCallback(): void {
         super.connectedCallback();
@@ -54,24 +55,53 @@ export class AppView extends LitElement {
         let newNode: AudioGraphNode;
         switch (type) {
             case "biquad-filter":
-                newNode = new BiquadFilterGraphNode(AUDIO_CONTEXT, position, (this.AUDIO_GRAPH.length + 1).toString());
+                newNode = new BiquadFilterGraphNode(AUDIO_CONTEXT, position, (this.creationCounter++).toString());
                 break;
             case "gain":
-                newNode = new GainGraphNode(AUDIO_CONTEXT, position, (this.AUDIO_GRAPH.length + 1).toString());
+                newNode = new GainGraphNode(AUDIO_CONTEXT, position, (this.creationCounter++).toString());
                 break;
             case "oscillator":
-                newNode = new OscillatorGraphNode(AUDIO_CONTEXT, position, (this.AUDIO_GRAPH.length + 1).toString());
+                newNode = new OscillatorGraphNode(AUDIO_CONTEXT, position, (this.creationCounter++).toString());
                 break;
             case "audio-destination":
-                newNode = new AudioDestinationGraphNode(AUDIO_CONTEXT, position, (this.AUDIO_GRAPH.length + 1).toString());
+                newNode = new AudioDestinationGraphNode(AUDIO_CONTEXT, position, (this.creationCounter++).toString());
                 break;
             case "delay":
-                newNode = new DelayGraphNode(AUDIO_CONTEXT, position, (this.AUDIO_GRAPH.length + 1).toString());
+                newNode = new DelayGraphNode(AUDIO_CONTEXT, position, (this.creationCounter++).toString());
                 break;
             case "stereo-panner":
-                newNode = new StereoPannerGraphNode(AUDIO_CONTEXT, position, (this.AUDIO_GRAPH.length + 1).toString());
+                newNode = new StereoPannerGraphNode(AUDIO_CONTEXT, position, (this.creationCounter++).toString());
         }
         this.AUDIO_GRAPH = [...this.AUDIO_GRAPH, newNode];
+    };
+
+    readonly handleRemoveNode = (node: AudioGraphNode) => {
+        try {
+            node.node.disconnect();
+        } catch {}
+        if (node.node instanceof OscillatorNode) {
+            try {
+                node.node.stop();
+            } catch {}
+        }
+
+        // Disconnect all sources that were connected to this node as a destination
+        this.CONNECTIONS.forEach(([src, dest]) => {
+            if (dest === node.id) {
+                const sourceNode = this.AUDIO_GRAPH.find((n) => n.id === src);
+                if (sourceNode) {
+                    try {
+                        sourceNode.node.disconnect(node.node);
+                    } catch {}
+                }
+            }
+        });
+
+        // Remove all connections involving this node
+        this.CONNECTIONS = this.CONNECTIONS.filter(([src, dest]) => src !== node.id && dest !== node.id);
+
+        // Remove from graph
+        this.AUDIO_GRAPH = this.AUDIO_GRAPH.filter((n) => n.id !== node.id);
     };
 
     readonly handleUpdateNode = (node: AudioGraphNode) => {
@@ -154,20 +184,7 @@ export class AppView extends LitElement {
         this.handleUpdateNode(updatedNode);
     };
 
-    // TODO: clean up/split apart..multiple responsibilities here.
-    readonly handleLoadAudioGraph = (audioGraph: AudioGraphNode[], connections: Array<[string, string]>) => {
-        console.log("APP: Loading audio graph", audioGraph, connections);
-        // For deserialization, we expect a 'type' property on each node
-        type AudioGraphNodeSerialized = AudioGraphNode & { type: AudioNodeType };
-        const nodeClassMap: Record<AudioNodeType, any> = {
-            oscillator: OscillatorGraphNode,
-            gain: GainGraphNode,
-            "biquad-filter": BiquadFilterGraphNode,
-            "audio-destination": AudioDestinationGraphNode,
-            delay: DelayGraphNode,
-            "stereo-panner": StereoPannerGraphNode,
-        };
-        // Cleanup: disconnect and stop all nodes in the current audio graph
+    private cleanAudioGraph = () => {
         this.AUDIO_GRAPH.forEach((node) => {
             try {
                 node.node.disconnect();
@@ -183,6 +200,23 @@ export class AppView extends LitElement {
                 }
             }
         });
+    };
+
+    // TODO: clean up/split apart..multiple responsibilities here.
+    readonly handleLoadAudioGraph = (audioGraph: AudioGraphNode[], connections: Array<[string, string]>) => {
+        type AudioGraphNodeSerialized = AudioGraphNode & { type: AudioNodeType };
+        const nodeClassMap: Record<AudioNodeType, any> = {
+            oscillator: OscillatorGraphNode,
+            gain: GainGraphNode,
+            "biquad-filter": BiquadFilterGraphNode,
+            "audio-destination": AudioDestinationGraphNode,
+            delay: DelayGraphNode,
+            "stereo-panner": StereoPannerGraphNode,
+        };
+
+        // Cleanup: disconnect and stop all nodes in the current audio graph
+        this.cleanAudioGraph();
+
         const newGraph: AudioGraphNode[] = (audioGraph as AudioGraphNodeSerialized[]).map((node) => {
             const NodeClass = nodeClassMap[node.type];
             if (!NodeClass) throw new Error(`Unknown node type: ${node.type}`);
@@ -202,8 +236,15 @@ export class AppView extends LitElement {
         this.CONNECTIONS = connections;
     };
 
+    readonly clearAudioGraph = () => {
+        this.cleanAudioGraph();
+        this.AUDIO_GRAPH = [];
+        this.CONNECTIONS = [];
+        this.creationCounter = 0;
+    };
+
     render() {
-        console.log("AppView render", this.AUDIO_GRAPH, this.CONNECTIONS);
+        console.log(this.AUDIO_GRAPH);
         return html` <div class="app">
             <div class="non-desktop-overlay">
                 <p>big boi 'puters only sry</p>
@@ -214,6 +255,7 @@ export class AppView extends LitElement {
                 .connections=${this.CONNECTIONS}
                 .addNode=${this.handleAddNode}
                 .updateNode=${this.handleUpdateNode}
+                .removeNode=${this.handleRemoveNode}
                 .nodeConnectState=${this.nodeConnectState}
                 .updateNodeConnectState=${this.handleUpdateNodeConnect}
                 .onSelectAudioGraphNode=${this.handleSelectAudioGraphNode}
@@ -224,6 +266,7 @@ export class AppView extends LitElement {
                 .audioGraph=${this.AUDIO_GRAPH}
                 .connections=${this.CONNECTIONS}
                 .loadAudioGraph=${this.handleLoadAudioGraph}
+                .clearAudioGraph=${this.clearAudioGraph}
             ></local-storage-view>
         </div>`;
     }

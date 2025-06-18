@@ -26,8 +26,8 @@ export class WillysRackShackView extends LitElement {
     @property({ type: Array }) connections: Array<[string, string]>;
     @property({ attribute: false }) addNode: (type: AudioNodeType, position: Position) => void;
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
-    @property({ attribute: false, type: Object })
-    nodeConnectState: NodeConnectState;
+    @property({ attribute: false }) removeNode: (node: AudioGraphNode) => void;
+    @property({ attribute: false, type: Object }) nodeConnectState: NodeConnectState;
     @property({ attribute: false }) updateNodeConnectState: (
         node: AudioGraphNode | AudioDestinationGraphNode,
         param?: AudioParam,
@@ -50,6 +50,7 @@ export class WillysRackShackView extends LitElement {
                 .graphNode=${graphNode}
                 .connections=${this.connections}
                 .updateNode=${this.updateNode}
+                .removeNode=${this.removeNode}
                 .nodeConnectState=${this.nodeConnectState}
                 .updateNodeConnectState=${this.updateNodeConnectState}
                 .onSelectAudioGraphNode=${this.onSelectAudioGraphNode}

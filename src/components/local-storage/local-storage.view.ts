@@ -11,11 +11,11 @@ export class LocalStorageView extends LitElement {
     @property({ type: Array }) audioGraph: AudioGraphNode[] = [];
     @property({ type: Array }) connections: Array<[string, string]> = [];
     @property({ attribute: false }) loadAudioGraph: (audioGraph: AudioGraphNode[], connections: Array<[string, string]>) => void;
+    @property({ attribute: false }) clearAudioGraph: () => void;
 
     save = () => {
         const serializedGraph = JSON.stringify(this.audioGraph);
         const serializedConnections = JSON.stringify(this.connections);
-        console.log("Saving to local storage", serializedGraph, serializedConnections);
         localStorage.setItem(this.keyName, JSON.stringify({ graph: serializedGraph, connections: serializedConnections }));
     };
 
@@ -40,10 +40,8 @@ export class LocalStorageView extends LitElement {
 
     render() {
         const keys = Object.keys(localStorage);
-        console.log("Local Storage Keys:", keys);
         return html`
             <div class="container">
-                <label for="keyName">${this.keyName}</label>
                 <input
                     id="keyName"
                     type="text"
@@ -51,11 +49,12 @@ export class LocalStorageView extends LitElement {
                     placeholder="synth name"
                     @input="${(e: Event) => (this.keyName = (e.target as HTMLInputElement).value)}"
                 />
+                <button type="button" class="button" @click=${this.save}>Save</button>
+                <button type="button" class="button" @click=${this.clearAudioGraph}>Clear</button>
                 <select @change="${(e: Event) => this.load((e.target as HTMLSelectElement).value)}">
                     <option value="">-- Select a key --</option>
                     ${keys.map((key) => html`<option value="${key}" ?selected=${this.keyName === key}>${key}</option>`)}
                 </select>
-                <button type="button" class="button" @click=${this.save}>Save</button>
             </div>
         `;
     }
