@@ -24,12 +24,6 @@ export class NewNodeView extends LitElement {
         }
     }
 
-    private moveToPrevPanel() {
-        if (this.currentPanel > 0) {
-            this.currentPanel = this.currentPanel - 1;
-        }
-    }
-
     private handleNodeChange(e: Event) {
         const selectElement = e.target as HTMLSelectElement;
         this.addNode((e.target as HTMLSelectElement).value as AudioNodeType, this.position);
