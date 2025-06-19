@@ -234,13 +234,13 @@ export class AppView extends LitElement {
             }
         });
         this.CONNECTIONS = connections;
+        this.creationCounter = this.AUDIO_GRAPH.length + 1;
     };
 
     readonly clearAudioGraph = () => {
         this.cleanAudioGraph();
         this.AUDIO_GRAPH = [];
         this.CONNECTIONS = [];
-        this.creationCounter = 0;
     };
 
     render() {
