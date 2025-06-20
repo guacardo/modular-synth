@@ -55,7 +55,17 @@ export interface AudioGraphNode {
 // Utility Functions
 // =====================
 
-// AUDIO CONNECTIONS
+export interface NodeConnectState {
+    source?: AudioGraphNode;
+    destination?: AudioGraphNode | AudioDestinationNode | AudioParam;
+}
+
+export const isConnectableGraphNode = (
+    node: unknown
+): node is BiquadFilterGraphNode | GainGraphNode | OscillatorGraphNode | DelayGraphNode | StereoPannerGraphNode => {
+    return [BiquadFilterGraphNode, GainGraphNode, OscillatorGraphNode, DelayGraphNode, StereoPannerGraphNode].some((Ctor) => node instanceof Ctor);
+};
+
 export function connectAudioNodes(connection: NodeConnectState): boolean {
     const { source, destination } = connection;
     if (

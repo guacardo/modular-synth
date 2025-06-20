@@ -1,7 +1,17 @@
 import { LitElement, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 
-import { AUDIO_CONTEXT, AudioGraphNode, AudioNodeType, AudioParamName, connectAudioNodes, KeyboardAudioEvent, NodeConnectState, Position } from "./app/util";
+import {
+    AUDIO_CONTEXT,
+    AudioGraphNode,
+    AudioNodeType,
+    AudioParamName,
+    connectAudioNodes,
+    isConnectableGraphNode,
+    KeyboardAudioEvent,
+    NodeConnectState,
+    Position,
+} from "./app/util";
 import { AudioDestinationGraphNode } from "./components/audio-nodes/destination/audio-destination-node/audio-destination-graph-node";
 import { BiquadFilterGraphNode } from "./components/audio-nodes/processing/biquad-filter/biquad-filter-graph-node";
 import { BiquadFilterNodeView } from "./components/audio-nodes/processing/biquad-filter/biquad-filter-node.view";
@@ -109,26 +119,12 @@ export class AppView extends LitElement {
     };
 
     readonly handleUpdateNodeConnect = (node: AudioGraphNode | AudioDestinationGraphNode, param?: AudioParam, paramName?: AudioParamName) => {
-        if (
-            (node instanceof BiquadFilterGraphNode ||
-                node instanceof GainGraphNode ||
-                node instanceof OscillatorGraphNode ||
-                node instanceof DelayGraphNode ||
-                node instanceof StereoPannerGraphNode) &&
-            this.nodeConnectState.source?.id === undefined
-        ) {
+        if (isConnectableGraphNode(node) && this.nodeConnectState.source?.id === undefined) {
             this.nodeConnectState = {
                 source: node,
                 destination: undefined,
             };
-        } else if (
-            (node instanceof BiquadFilterGraphNode ||
-                node instanceof GainGraphNode ||
-                node instanceof OscillatorGraphNode ||
-                node instanceof DelayGraphNode ||
-                node instanceof StereoPannerGraphNode) &&
-            this.nodeConnectState.source?.id === node.id
-        ) {
+        } else if (isConnectableGraphNode(node) && this.nodeConnectState.source?.id === node.id) {
             this.nodeConnectState = {
                 source: undefined,
                 destination: undefined,
