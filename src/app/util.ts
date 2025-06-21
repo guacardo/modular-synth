@@ -4,11 +4,12 @@ import { DelayGraphNode } from "../components/audio-nodes/processing/delay/delay
 import { GainGraphNode } from "../components/audio-nodes/processing/gain-node/gain-graph-node";
 import { StereoPannerGraphNode } from "../components/audio-nodes/processing/stereo-panner/stereo-panner-graph-node";
 import { OscillatorGraphNode } from "../components/audio-nodes/source/oscillator-node/oscillator-graph-node";
+import { DelayDenyComposeGraphNode } from "../components/audio-nodes/super/delay-deny-compose/delay-deny-compose-node";
 
 // =====================
 // Types & Type Aliases
 // =====================
-type SafeExtract<T, U extends T> = U;
+export type SafeExtract<T, U extends T> = U;
 export type Position = [number, number];
 export type AudioNodeProperties = Partial<
     Record<
@@ -16,10 +17,12 @@ export type AudioNodeProperties = Partial<
         number | [number, number] | OscillatorType
     >
 >;
-export type AudioNodeType = "oscillator" | "gain" | "biquad-filter" | "audio-destination" | "delay" | "stereo-panner";
+export type AudioNodeType = "oscillator" | "gain" | "biquad-filter" | "audio-destination" | "delay" | "stereo-panner" | "delay-deny-compose";
 type AudioProcessorNode = SafeExtract<AudioNodeType, "biquad-filter" | "gain" | "delay" | "stereo-panner">;
 type AudioSourceNode = SafeExtract<AudioNodeType, "oscillator">;
 type AudioGraphDestinationNode = SafeExtract<AudioNodeType, "audio-destination">;
+type AudioSuperNode = SafeExtract<AudioNodeType, "delay-deny-compose">;
+
 export type AudioParamName = "gain" | "frequency" | "detune" | "Q" | "pan" | "delayTime" | "pan";
 
 // =====================
@@ -28,6 +31,7 @@ export type AudioParamName = "gain" | "frequency" | "detune" | "Q" | "pan" | "de
 export const AUDIO_PROCESSOR_NODES: AudioProcessorNode[] = ["biquad-filter", "delay", "gain", "stereo-panner"] as const;
 export const AUDIO_SOURCE_NODES: AudioSourceNode[] = ["oscillator"] as const;
 export const AUDIO_DESTINATION_NODES: AudioGraphDestinationNode[] = ["audio-destination"] as const;
+export const AUDIO_SUPER_NODES: AudioSuperNode[] = ["delay-deny-compose"] as const;
 
 // TODO: Lit will not update for properties, can only call functions.
 // TODO: might be a good idea to "close()" the AudioContext whenever we load a new audio graph to prevent memory leaks.
@@ -62,8 +66,10 @@ export interface NodeConnectState {
 
 export const isConnectableGraphNode = (
     node: unknown
-): node is BiquadFilterGraphNode | GainGraphNode | OscillatorGraphNode | DelayGraphNode | StereoPannerGraphNode => {
-    return [BiquadFilterGraphNode, GainGraphNode, OscillatorGraphNode, DelayGraphNode, StereoPannerGraphNode].some((Ctor) => node instanceof Ctor);
+): node is BiquadFilterGraphNode | GainGraphNode | OscillatorGraphNode | DelayGraphNode | StereoPannerGraphNode | DelayDenyComposeGraphNode => {
+    return [BiquadFilterGraphNode, GainGraphNode, OscillatorGraphNode, DelayGraphNode, StereoPannerGraphNode, DelayDenyComposeGraphNode].some(
+        (Ctor) => node instanceof Ctor
+    );
 };
 
 export function connectAudioNodes(connection: NodeConnectState): boolean {

@@ -1,0 +1,36 @@
+import { AudioGraphNode, Position, KeyboardAudioEvent, updateAudioParamValue, AudioNodeType } from "../../../../app/util";
+
+export class DelayDenyComposeGraphNode implements AudioGraphNode {
+    id: string;
+    position: Position;
+    isSelected: boolean;
+    node: AudioNode;
+    keyboardEvents: Map<string, KeyboardAudioEvent>;
+    dutyCycle: number = 0.5;
+    type: AudioNodeType = "delay-deny-compose";
+    oscillator: OscillatorNode;
+    gainNode: GainNode;
+    delayNode: DelayNode;
+    feedbackGain: GainNode;
+
+    getKeyboardEvents(updateNode: (node: AudioGraphNode) => void): Map<string, KeyboardAudioEvent> {
+        return new Map<string, KeyboardAudioEvent>([
+            // Define keyboard events here if needed
+        ]);
+    }
+
+    constructor(context: AudioContext, position: Position, id: string) {
+        this.node = context.createDelay();
+        this.position = position;
+        this.id = id;
+        this.oscillator = context.createOscillator();
+        this.gainNode = context.createGain();
+        this.delayNode = context.createDelay();
+        this.feedbackGain = context.createGain();
+        this.oscillator.connect(this.gainNode);
+        this.gainNode.connect(this.delayNode);
+        this.delayNode.connect(this.feedbackGain);
+        this.feedbackGain.connect(this.gainNode);
+        this.oscillator.start();
+    }
+}

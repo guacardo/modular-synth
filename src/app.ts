@@ -43,7 +43,9 @@ import "./components/keyboard-controller/keyboard-controller.view";
 import "./components/local-storage/local-storage.view";
 import "./components/new-node/new-node.view";
 import "./components/side-panel/side-panel.view";
+import "./components/audio-nodes/super/delay-deny-compose/delay-deny-compose.view";
 import "./views/willys-rack-shack.view";
+import { DelayDenyComposeGraphNode } from "./components/audio-nodes/super/delay-deny-compose/delay-deny-compose-node";
 
 @customElement("app-view")
 export class AppView extends LitElement {
@@ -81,6 +83,10 @@ export class AppView extends LitElement {
                 break;
             case "stereo-panner":
                 newNode = new StereoPannerGraphNode(AUDIO_CONTEXT, position, (this.creationCounter++).toString());
+                break;
+            case "delay-deny-compose":
+                newNode = new DelayDenyComposeGraphNode(AUDIO_CONTEXT, position, (this.creationCounter++).toString());
+                break;
         }
         this.AUDIO_GRAPH = [...this.AUDIO_GRAPH, newNode];
     };
@@ -145,6 +151,8 @@ export class AppView extends LitElement {
                 }
             }
 
+            console.log("connect", this.nodeConnectState);
+
             // reset state
             this.nodeConnectState = {
                 source: undefined,
@@ -208,6 +216,7 @@ export class AppView extends LitElement {
             "audio-destination": AudioDestinationGraphNode,
             delay: DelayGraphNode,
             "stereo-panner": StereoPannerGraphNode,
+            "delay-deny-compose": DelayDenyComposeGraphNode,
         };
 
         // Cleanup: disconnect and stop all nodes in the current audio graph

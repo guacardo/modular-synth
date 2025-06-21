@@ -1,7 +1,7 @@
 import { LitElement, TemplateResult, html } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { newNodeStyles } from "./new-node.styles";
-import { AUDIO_DESTINATION_NODES, AUDIO_PROCESSOR_NODES, AUDIO_SOURCE_NODES, AudioGraphNode, AudioNodeType, Position } from "../../app/util";
+import { AUDIO_DESTINATION_NODES, AUDIO_PROCESSOR_NODES, AUDIO_SOURCE_NODES, AUDIO_SUPER_NODES, AudioGraphNode, AudioNodeType, Position } from "../../app/util";
 
 @customElement("new-node-view")
 export class NewNodeView extends LitElement {
@@ -48,6 +48,11 @@ export class NewNodeView extends LitElement {
                 </optgroup>
                 <optgroup label="destinations">
                     ${AUDIO_DESTINATION_NODES.map((option) => {
+                        return html`<option value=${option} ?selected=${this.selectedNodeType === option}>${option}</option>`;
+                    })}
+                </optgroup>
+                <optgroup label="super">
+                    ${AUDIO_SUPER_NODES.map((option) => {
                         return html`<option value=${option} ?selected=${this.selectedNodeType === option}>${option}</option>`;
                     })}
                 </optgroup>

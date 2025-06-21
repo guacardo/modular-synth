@@ -23,6 +23,7 @@ export class OscillatorNodeView extends LitElement {
         this.updateNode({ ...this.graphNode, node: updateAudioParamValue(this.graphNode.node, { [property]: value }) });
     }
 
+    // TODO: DRY
     private setPulseWave(dutyCycle: number = 0.5) {
         const audioCtx = this.graphNode.node.context;
         const n = 4096; // Number of samples for the wave
@@ -88,8 +89,9 @@ export class OscillatorNodeView extends LitElement {
                 class=${classMap({ button: true, "button-active": this.graphNode.isSelected })}
                 type="button"
                 @click=${() => this.onSelectAudioGraphNode(this.graphNode)}
-                >Select</button
             >
+                Select
+            </button>
             <button class="button" type="button" @click=${() => this.removeNode(this.graphNode)}>x</button>
             <div class="io-container">
                 <button

@@ -8,6 +8,7 @@ import { StereoPannerGraphNode } from "../components/audio-nodes/processing/ster
 import { AudioDestinationGraphNode } from "../components/audio-nodes/destination/audio-destination-node/audio-destination-graph-node";
 import { BiquadFilterGraphNode } from "../components/audio-nodes/processing/biquad-filter/biquad-filter-graph-node";
 import { GainGraphNode } from "../components/audio-nodes/processing/gain-node/gain-graph-node";
+import { DelayDenyComposeGraphNode } from "../components/audio-nodes/super/delay-deny-compose/delay-deny-compose-node";
 
 @customElement("willys-rack-shack-view")
 export class WillysRackShackView extends LitElement {
@@ -85,6 +86,16 @@ export class WillysRackShackView extends LitElement {
                 .updateNodeConnectState=${this.updateNodeConnectState}
                 .onSelectAudioGraphNode=${this.onSelectAudioGraphNode}
             ></stereo-panner-view>`;
+        } else if (graphNode instanceof DelayDenyComposeGraphNode) {
+            return html`<delay-deny-compose-view
+                .graphNode=${graphNode}
+                .connections=${this.connections}
+                .updateNode=${this.updateNode}
+                .removeNode=${this.removeNode}
+                .nodeConnectState=${this.nodeConnectState}
+                .updateNodeConnectState=${this.updateNodeConnectState}
+                .onSelectAudioGraphNode=${this.onSelectAudioGraphNode}
+            ></delay-deny-compose-view>`;
         } else {
             return html`<p>ERroR: nOT a n Audio Noooode</p>`;
         }

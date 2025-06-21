@@ -55,6 +55,13 @@ export class DelayNodeView extends LitElement {
                 />
             </div>
             <button class="button" type="button" @click=${() => this.removeNode(this.graphNode)}>x</button>
+            <button
+                class=${classMap({ button: true, "button-active": this.graphNode.isSelected })}
+                type="button"
+                @click=${() => this.onSelectAudioGraphNode(this.graphNode)}
+            >
+                Select
+            </button>
             <div class="button-io-container">
                 <!-- IN -->
                 <div class="io-container">
