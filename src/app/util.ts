@@ -74,15 +74,14 @@ export const isConnectableGraphNode = (
 
 export function connectAudioNodes(connection: NodeConnectState): boolean {
     const { source, destination } = connection;
-    if (
-        destination instanceof OscillatorGraphNode ||
-        destination instanceof GainGraphNode ||
-        destination instanceof BiquadFilterGraphNode ||
-        destination instanceof DelayGraphNode ||
-        destination instanceof StereoPannerGraphNode
-    ) {
+    if (isConnectableGraphNode(destination)) {
         if (source && destination) {
-            if (
+            // connecting DelayDenyComposeGraphNode to AudioNode
+            if (source instanceof DelayDenyComposeGraphNode && destination.node instanceof AudioNode && destination.node.numberOfInputs > 0) {
+                source.oscillator.connect(destination.node);
+                return true;
+                // connecting other general AudioGraphNode
+            } else if (
                 source.node instanceof AudioNode &&
                 source.node.numberOfOutputs > 0 &&
                 destination.node instanceof AudioNode &&
@@ -98,7 +97,11 @@ export function connectAudioNodes(connection: NodeConnectState): boolean {
         }
         return false;
     } else if (destination instanceof AudioDestinationGraphNode) {
-        source?.node.connect(destination.node.context.destination);
+        if (source instanceof DelayDenyComposeGraphNode) {
+            source.gainNode.connect(destination.node.context.destination);
+        } else {
+            source?.node.connect(destination.node.context.destination);
+        }
         return true;
     } else if (destination instanceof AudioParam) {
         source?.node.connect(destination);
@@ -112,6 +115,7 @@ export function updateAudioParamValue<T extends AudioNode>(node: T, properties: 
     for (const [property, value] of Object.entries(properties)) {
         if (property in node) {
             const propKey = property as keyof T;
+            console.log(node[propKey]);
             if (node[propKey] instanceof AudioParam) {
                 if (Array.isArray(value)) {
                     const [targetValue, rampTime] = value;

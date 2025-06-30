@@ -124,8 +124,9 @@ export class AppView extends LitElement {
         this.AUDIO_GRAPH = this.AUDIO_GRAPH.map((n) => (n.id === node.id ? Object.assign(Object.create(Object.getPrototypeOf(n)), n, node) : n));
     };
 
+    // TODO: cool with organic for now, but need to really think about supprting connections of Graph Nodes, Audio Nodes, Audio Params, what else?
     readonly handleUpdateNodeConnect = (node: AudioGraphNode | AudioDestinationGraphNode, param?: AudioParam, paramName?: AudioParamName) => {
-        if (isConnectableGraphNode(node) && this.nodeConnectState.source?.id === undefined) {
+        if (isConnectableGraphNode(node) && this.nodeConnectState.source === undefined) {
             this.nodeConnectState = {
                 source: node,
                 destination: undefined,
@@ -135,7 +136,7 @@ export class AppView extends LitElement {
                 source: undefined,
                 destination: undefined,
             };
-        } else if (this.nodeConnectState.source?.id) {
+        } else if (this.nodeConnectState.source !== undefined) {
             // connect the two nodes if valid
             if (
                 connectAudioNodes({
@@ -249,11 +250,7 @@ export class AppView extends LitElement {
     };
 
     render() {
-        console.log(this.AUDIO_GRAPH);
         return html` <div class="app">
-            <div class="non-desktop-overlay">
-                <p>big boi 'puters only sry</p>
-            </div>
             <coaching-text-view .audioGraph=${this.AUDIO_GRAPH} .connections=${this.CONNECTIONS}></coaching-text-view>
             <willys-rack-shack-view
                 .audioGraph=${this.AUDIO_GRAPH}

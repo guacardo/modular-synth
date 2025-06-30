@@ -15,7 +15,7 @@ export class DelayDenyComposeGraphNode implements AudioGraphNode {
 
     getKeyboardEvents(updateNode: (node: AudioGraphNode) => void): Map<string, KeyboardAudioEvent> {
         return new Map<string, KeyboardAudioEvent>([
-            // Define keyboard events here if needed
+            ["a", { keydown: () => updateNode({ ...this, oscillator: updateAudioParamValue(this.oscillator, { frequency: 200 }) }) }],
         ]);
     }
 

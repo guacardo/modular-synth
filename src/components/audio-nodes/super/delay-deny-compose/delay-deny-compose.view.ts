@@ -26,9 +26,11 @@ export class DelayDenyComposeView extends LitElement {
     private updateAudioParam<T extends keyof DelayDenyComposeGraphNode, K extends keyof DelayDenyComposeGraphNode[T]>(
         nodeType: T,
         property: K,
-        value: DelayDenyComposeGraphNode[T][K]
+        value: number | OscillatorType
     ) {
-        const updated = updateAudioParamValue(this.graphNode[nodeType] as AudioNode, { [property]: value });
+        const audioNode = this.graphNode[nodeType] as AudioNode;
+        const updated = updateAudioParamValue(audioNode, { [property]: value });
+        console.log(`Updating ${String(nodeType)}.${String(property)} to`, value, updated);
         this.updateNode({
             ...this.graphNode,
             [nodeType]: updated,
@@ -79,9 +81,8 @@ export class DelayDenyComposeView extends LitElement {
                     max="2000"
                     .value="${this.graphNode.oscillator.frequency.value.toString()}"
                     @input=${(e: Event) => {
-                        const freqParam = this.graphNode.oscillator.frequency;
-                        freqParam.value = (e.target as HTMLInputElement).valueAsNumber;
-                        this.updateAudioParam("oscillator", "frequency", freqParam);
+                        const value = (e.target as HTMLInputElement).valueAsNumber;
+                        this.updateAudioParam("oscillator", "frequency", value);
                     }}
                 />
             </div>
@@ -119,9 +120,8 @@ export class DelayDenyComposeView extends LitElement {
                     step="0.001"
                     .value="${this.graphNode.gainNode.gain.value.toString()}"
                     @input="${(e: Event) => {
-                        const gainParam = this.graphNode.gainNode.gain;
-                        gainParam.value = (e.target as HTMLInputElement).valueAsNumber;
-                        this.updateAudioParam("gainNode", "gain", gainParam);
+                        const value = (e.target as HTMLInputElement).valueAsNumber;
+                        this.updateAudioParam("gainNode", "gain", value);
                     }}"
                 />
             </div>
@@ -135,33 +135,15 @@ export class DelayDenyComposeView extends LitElement {
                     step="0.001"
                     .value="${this.graphNode.delayNode.delayTime.value.toString()}"
                     @input="${(e: Event) => {
-                        const delayParam = this.graphNode.delayNode.delayTime;
-                        delayParam.value = (e.target as HTMLInputElement).valueAsNumber;
-                        this.updateAudioParam("delayNode", "delayTime", delayParam);
+                        const value = (e.target as HTMLInputElement).valueAsNumber;
+                        this.updateAudioParam("delayNode", "delayTime", value);
                     }}"
                 />
             </div>
             <div class="slider-container">
-                <label for="gain-slider-${this.graphNode.id}">level: ${this.graphNode.delayNode.delayTime.value.toFixed(3)}</label>
+                <label for="level-slider-${this.graphNode.id}">level: ${this.graphNode.feedbackGain.gain.value.toFixed(3)}</label>
                 <input
-                    id="gain-slider-${this.graphNode.id}"
-                    class="slider"
-                    type="range"
-                    min="0.001"
-                    max="1.0"
-                    step="0.001"
-                    .value="${this.graphNode.delayNode.delayTime.value.toString()}"
-                    @input="${(e: Event) => {
-                        const delayParam = this.graphNode.delayNode.delayTime;
-                        delayParam.value = (e.target as HTMLInputElement).valueAsNumber;
-                        this.updateAudioParam("delayNode", "delayTime", delayParam);
-                    }}"
-                />
-            </div>
-            <div class="slider-container">
-                <label>delay gain: ${this.graphNode.feedbackGain.gain.value.toFixed(3)}</label>
-                <input
-                    id="gain-slider-${this.graphNode.id}"
+                    id="level-slider-${this.graphNode.id}"
                     class="slider"
                     type="range"
                     min="0.001"
@@ -169,12 +151,18 @@ export class DelayDenyComposeView extends LitElement {
                     step="0.001"
                     .value="${this.graphNode.feedbackGain.gain.value.toString()}"
                     @input="${(e: Event) => {
-                        const feedbackGainParam = this.graphNode.feedbackGain.gain;
-                        feedbackGainParam.value = (e.target as HTMLInputElement).valueAsNumber;
-                        this.updateAudioParam("feedbackGain", "gain", feedbackGainParam);
+                        const value = (e.target as HTMLInputElement).valueAsNumber;
+                        this.updateAudioParam("feedbackGain", "gain", value);
                     }}"
                 />
             </div>
+            <button
+                class=${classMap({ button: true, "button-active": this.graphNode.isSelected })}
+                type="button"
+                @click=${() => this.onSelectAudioGraphNode(this.graphNode)}
+            >
+                keyboard
+            </button>
             <div class="button-io-container">
                 <!-- IN -->
                 <div class="io-container">

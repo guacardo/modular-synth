@@ -43,7 +43,7 @@ export class OscillatorNodeView extends LitElement {
     }
 
     render() {
-        const audioNode = this.graphNode.node as OscillatorNode;
+        const audioNode = this.graphNode.node;
         const isConnectSource = this.graphNode.id === this.nodeConnectState.source?.id;
         const isConnected = this.connections.some((connection) => connection[0] === this.graphNode.id || connection[1] === this.graphNode.id);
         return html`<div class="node">
@@ -55,7 +55,7 @@ export class OscillatorNodeView extends LitElement {
                     type="range"
                     min="0"
                     max="2000"
-                    .value="${(this.graphNode.node as OscillatorNode).frequency.value.toString()}"
+                    .value="${this.graphNode.node.frequency.value.toString()}"
                     @input=${(e: Event) => {
                         this.updateOscillatorParam("frequency", (e.target as HTMLInputElement).valueAsNumber);
                     }}
@@ -90,7 +90,7 @@ export class OscillatorNodeView extends LitElement {
                 type="button"
                 @click=${() => this.onSelectAudioGraphNode(this.graphNode)}
             >
-                Select
+                keyboard
             </button>
             <button class="button" type="button" @click=${() => this.removeNode(this.graphNode)}>x</button>
             <div class="io-container">
