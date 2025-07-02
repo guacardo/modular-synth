@@ -7,3 +7,16 @@ export {
     type ElementPositionProvider,
     type ConnectionRendererOptions,
 } from "./connection-renderer";
+export {
+    createNodeDataAttributes,
+    createIODataAttributes,
+    createIOClassMap,
+    convertConnectionsToCanvasFormat,
+    getNodeType,
+    getNodeParameters,
+    createEnhancedElementPositionProvider,
+    enhanceAudioNodeView,
+    enhanceAllAudioNodeViews,
+    type CanvasDataAttributes,
+} from "./integration-helpers";
+export { canvasIO, canvasNode } from "./canvas-directives";
