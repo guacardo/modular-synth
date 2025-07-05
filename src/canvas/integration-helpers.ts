@@ -1,9 +1,4 @@
-// Note: Import path may need adjustment based on your project structure
-// import { AudioGraphNode, AudioParamName } from '../../app/util';
-
-// Temporary type definitions - replace with actual imports
-type AudioGraphNode = any;
-type AudioParamName = string;
+import { AudioGraphNode, AudioParamName } from "../app/util";
 
 /**
  * Data attributes for canvas overlay integration

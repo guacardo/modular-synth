@@ -34,8 +34,14 @@ export class CanvasOverlay extends LitElement {
     }
 
     private initializeCanvas(): void {
+        console.log("🎨 Initializing canvas overlay...");
         const canvas = this.shadowRoot?.querySelector("canvas") as HTMLCanvasElement;
-        if (!canvas) return;
+        if (!canvas) {
+            console.error("❌ Canvas element not found!");
+            return;
+        }
+
+        console.log("✅ Canvas element found:", canvas);
 
         // Create canvas manager
         this.canvasManager = new CanvasManager({
@@ -61,8 +67,13 @@ export class CanvasOverlay extends LitElement {
             animationSpeed: 0.5,
         });
 
+        console.log("✅ Canvas manager created");
+        console.log("✅ Connection renderer created");
+
         // Add renderer to canvas manager
         this.canvasManager.addRenderer(this.connectionRenderer);
+
+        console.log("✅ Renderer added to canvas manager");
 
         // Initial connection update
         this.updateConnections();
@@ -70,6 +81,8 @@ export class CanvasOverlay extends LitElement {
 
     private createElementPositionProvider(): ElementPositionProvider {
         return (nodeId: string, paramName?: string): DOMRect | null => {
+            console.log(`🔍 Looking for element: nodeId=${nodeId}, paramName=${paramName}`);
+
             // Strategy: Find the audio node element, then find the specific IO button
 
             // First, find the node element by looking for elements that might contain the node ID
@@ -83,11 +96,15 @@ export class CanvasOverlay extends LitElement {
             let nodeElement: Element | null = null;
             for (const selector of nodeSelectors) {
                 nodeElement = document.querySelector(selector);
-                if (nodeElement) break;
+                if (nodeElement) {
+                    console.log(`✅ Found node element with selector: ${selector}`);
+                    break;
+                }
             }
 
             // If we still don't have the node element, try a more general approach
             if (!nodeElement) {
+                console.log("🔍 Trying fallback element detection...");
                 // Look for any audio node component that might contain this ID
                 const audioNodeElements = document.querySelectorAll(
                     "oscillator-node-view, delay-node-view, gain-node-view, biquad-filter-node-view, stereo-panner-view, audio-destination-node-view"
@@ -98,12 +115,14 @@ export class CanvasOverlay extends LitElement {
                     const litElement = element as any;
                     if (litElement.graphNode?.id === nodeId) {
                         nodeElement = element;
+                        console.log(`✅ Found node element via component property: ${element.tagName}`);
                         break;
                     }
                 }
             }
 
             if (!nodeElement) {
+                console.error(`❌ Could not find node element for: ${nodeId}`);
                 return null;
             }
 
@@ -180,10 +199,17 @@ export class CanvasOverlay extends LitElement {
     }
 
     private updateConnections(): void {
-        if (!this.connectionRenderer) return;
+        console.log("🔗 Updating connections...", this.connections);
+
+        if (!this.connectionRenderer) {
+            console.error("❌ Connection renderer not found!");
+            return;
+        }
 
         // Convert the connections array to Connection objects
         const connectionObjects: Connection[] = this.connections.map(([sourceId, targetId]) => {
+            console.log(`🔗 Processing connection: ${sourceId} -> ${targetId}`);
+
             // Handle parameter connections (e.g., "nodeId-paramName")
             const sourceMatch = sourceId.match(/^(.+)-(.+)$/);
             const targetMatch = targetId.match(/^(.+)-(.+)$/);
@@ -208,6 +234,7 @@ export class CanvasOverlay extends LitElement {
             };
         });
 
+        console.log("🔗 Connection objects created:", connectionObjects);
         this.connectionRenderer.setConnections(connectionObjects);
     }
 

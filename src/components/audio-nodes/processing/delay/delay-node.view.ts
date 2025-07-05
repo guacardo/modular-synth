@@ -5,6 +5,7 @@ import { DelayGraphNode } from "./delay-graph-node";
 import { AudioGraphNode, AudioParamName, NodeConnectState, updateAudioParamValue } from "../../../../app/util";
 import { audioNodeStyles } from "../../audio-node-styles";
 import { AudioDestinationGraphNode } from "../../destination/audio-destination-node/audio-destination-graph-node";
+import { canvasNode, canvasIO } from "../../../../canvas";
 
 @customElement("delay-node-view")
 export class DelayNodeView extends LitElement {
@@ -40,7 +41,7 @@ export class DelayNodeView extends LitElement {
         const isConnectSource = this.graphNode.id === this.nodeConnectState.source?.id;
         const isConnectedOut = this.connections.some((connection) => connection[0] === this.graphNode.id);
         const isConnectedIn = this.connections.some((connection) => connection[1] === this.graphNode.id);
-        return html`<div class="node">
+        return html`<div class="node" ${canvasNode(this.graphNode.id, "delay")}>
             <h2>delay</h2>
             <div class="slider-container">
                 <label for="delay-slider-${this.graphNode.id}">delay time: ${this.graphNode.node.delayTime.value.toFixed(2)}s</label>
@@ -72,6 +73,7 @@ export class DelayNodeView extends LitElement {
                             "can-connect": this.isConnectionCandidate(),
                             connected: isConnectedIn,
                         })}
+                        ${canvasIO(this.graphNode.id, "input")}
                         @click=${() => this.updateNodeConnectState(this.graphNode)}
                     ></button>
                     <label class="io-label">in</label>
@@ -85,6 +87,7 @@ export class DelayNodeView extends LitElement {
                             "can-connection": this.isConnectionCandidate(),
                             connected: this.connections.some((connection) => connection[1] === `${this.graphNode.id}-delayTime`),
                         })}
+                        ${canvasIO(this.graphNode.id, "param", "delayTime")}
                         @click=${() => this.updateNodeConnectState(this.graphNode, this.graphNode.node.delayTime, "delayTime")}
                     ></button>
                     <label class="io-label">delay mod</label>
@@ -98,6 +101,7 @@ export class DelayNodeView extends LitElement {
                             "connection-source": isConnectSource,
                             connected: isConnectedOut,
                         })}
+                        ${canvasIO(this.graphNode.id, "output")}
                         @click=${() => this.updateNodeConnectState(this.graphNode)}
                     ></button>
                     <label class="io-label">out</label>

@@ -44,6 +44,7 @@ import "./components/local-storage/local-storage.view";
 import "./components/new-node/new-node.view";
 import "./components/side-panel/side-panel.view";
 import "./components/audio-nodes/super/delay-deny-compose/delay-deny-compose.view";
+import "./components/canvas-overlay/canvas-overlay.view";
 import "./views/willys-rack-shack.view";
 import { DelayDenyComposeGraphNode } from "./components/audio-nodes/super/delay-deny-compose/delay-deny-compose-node";
 
@@ -270,6 +271,9 @@ export class AppView extends LitElement {
                 .loadAudioGraph=${this.handleLoadAudioGraph}
                 .clearAudioGraph=${this.clearAudioGraph}
             ></local-storage-view>
+
+            <!-- Canvas overlay for connection visualization -->
+            <canvas-overlay .connections=${this.CONNECTIONS} .audioNodes=${this.AUDIO_GRAPH} .nodeConnectState=${this.nodeConnectState}> </canvas-overlay>
         </div>`;
     }
 }
