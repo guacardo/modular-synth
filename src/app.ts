@@ -63,7 +63,7 @@ export class AppView extends LitElement {
 
     connectedCallback(): void {
         super.connectedCallback();
-        
+
         // Test our new connection managers
         testConnectionManagers();
     }

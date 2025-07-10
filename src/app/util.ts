@@ -82,14 +82,14 @@ export function connectToAudioParam(source: Connectable, destination: AudioParam
 
 // New function to connect nodes using connection managers
 export function connectNodesWithManager(
-    sourceNode: AudioGraphNode, 
-    destinationNode: AudioGraphNode, 
+    sourceNode: AudioGraphNode,
+    destinationNode: AudioGraphNode,
     sourceNodeType: AudioNodeType,
     destinationNodeType: AudioNodeType
 ): boolean {
     const sourceManager = ConnectionManagerFactory.create(sourceNode, sourceNodeType);
     const destinationManager = ConnectionManagerFactory.create(destinationNode, destinationNodeType);
-    
+
     return connectConnectableNodes(sourceManager, destinationManager);
 }
 
@@ -199,13 +199,13 @@ export interface SerializableAudioGraphNode {
 // Base connection manager class
 export abstract class NodeConnectionManager implements Connectable {
     constructor(protected graphNode: AudioGraphNode) {}
-    
+
     abstract connectTo(destination: AudioNode | AudioParam): boolean;
     abstract getOutputNode(): AudioNode;
     abstract getInputNode(): AudioNode;
     abstract canConnectTo(destination: Connectable): boolean;
     abstract getAudioParams(): Map<string, AudioParam>;
-    
+
     // Get the node this manager is responsible for
     getGraphNode(): AudioGraphNode {
         return this.graphNode;
@@ -327,43 +327,93 @@ export class GainConnectionManager extends NodeConnectionManager {
 }
 
 export class BiquadFilterConnectionManager extends NodeConnectionManager {
-    connectTo(destination: AudioNode | AudioParam): boolean { throw new Error("Not implemented yet"); }
-    getOutputNode(): AudioNode { throw new Error("Not implemented yet"); }
-    getInputNode(): AudioNode { throw new Error("Not implemented yet"); }
-    canConnectTo(destination: Connectable): boolean { throw new Error("Not implemented yet"); }
-    getAudioParams(): Map<string, AudioParam> { throw new Error("Not implemented yet"); }
+    connectTo(destination: AudioNode | AudioParam): boolean {
+        throw new Error("Not implemented yet");
+    }
+    getOutputNode(): AudioNode {
+        throw new Error("Not implemented yet");
+    }
+    getInputNode(): AudioNode {
+        throw new Error("Not implemented yet");
+    }
+    canConnectTo(destination: Connectable): boolean {
+        throw new Error("Not implemented yet");
+    }
+    getAudioParams(): Map<string, AudioParam> {
+        throw new Error("Not implemented yet");
+    }
 }
 
 export class DelayConnectionManager extends NodeConnectionManager {
-    connectTo(destination: AudioNode | AudioParam): boolean { throw new Error("Not implemented yet"); }
-    getOutputNode(): AudioNode { throw new Error("Not implemented yet"); }
-    getInputNode(): AudioNode { throw new Error("Not implemented yet"); }
-    canConnectTo(destination: Connectable): boolean { throw new Error("Not implemented yet"); }
-    getAudioParams(): Map<string, AudioParam> { throw new Error("Not implemented yet"); }
+    connectTo(destination: AudioNode | AudioParam): boolean {
+        throw new Error("Not implemented yet");
+    }
+    getOutputNode(): AudioNode {
+        throw new Error("Not implemented yet");
+    }
+    getInputNode(): AudioNode {
+        throw new Error("Not implemented yet");
+    }
+    canConnectTo(destination: Connectable): boolean {
+        throw new Error("Not implemented yet");
+    }
+    getAudioParams(): Map<string, AudioParam> {
+        throw new Error("Not implemented yet");
+    }
 }
 
 export class StereoPannerConnectionManager extends NodeConnectionManager {
-    connectTo(destination: AudioNode | AudioParam): boolean { throw new Error("Not implemented yet"); }
-    getOutputNode(): AudioNode { throw new Error("Not implemented yet"); }
-    getInputNode(): AudioNode { throw new Error("Not implemented yet"); }
-    canConnectTo(destination: Connectable): boolean { throw new Error("Not implemented yet"); }
-    getAudioParams(): Map<string, AudioParam> { throw new Error("Not implemented yet"); }
+    connectTo(destination: AudioNode | AudioParam): boolean {
+        throw new Error("Not implemented yet");
+    }
+    getOutputNode(): AudioNode {
+        throw new Error("Not implemented yet");
+    }
+    getInputNode(): AudioNode {
+        throw new Error("Not implemented yet");
+    }
+    canConnectTo(destination: Connectable): boolean {
+        throw new Error("Not implemented yet");
+    }
+    getAudioParams(): Map<string, AudioParam> {
+        throw new Error("Not implemented yet");
+    }
 }
 
 export class AudioDestinationConnectionManager extends NodeConnectionManager {
-    connectTo(destination: AudioNode | AudioParam): boolean { throw new Error("Not implemented yet"); }
-    getOutputNode(): AudioNode { throw new Error("Not implemented yet"); }
-    getInputNode(): AudioNode { throw new Error("Not implemented yet"); }
-    canConnectTo(destination: Connectable): boolean { throw new Error("Not implemented yet"); }
-    getAudioParams(): Map<string, AudioParam> { throw new Error("Not implemented yet"); }
+    connectTo(destination: AudioNode | AudioParam): boolean {
+        throw new Error("Not implemented yet");
+    }
+    getOutputNode(): AudioNode {
+        throw new Error("Not implemented yet");
+    }
+    getInputNode(): AudioNode {
+        throw new Error("Not implemented yet");
+    }
+    canConnectTo(destination: Connectable): boolean {
+        throw new Error("Not implemented yet");
+    }
+    getAudioParams(): Map<string, AudioParam> {
+        throw new Error("Not implemented yet");
+    }
 }
 
 export class DelayDenyComposeConnectionManager extends NodeConnectionManager {
-    connectTo(destination: AudioNode | AudioParam): boolean { throw new Error("Not implemented yet"); }
-    getOutputNode(): AudioNode { throw new Error("Not implemented yet"); }
-    getInputNode(): AudioNode { throw new Error("Not implemented yet"); }
-    canConnectTo(destination: Connectable): boolean { throw new Error("Not implemented yet"); }
-    getAudioParams(): Map<string, AudioParam> { throw new Error("Not implemented yet"); }
+    connectTo(destination: AudioNode | AudioParam): boolean {
+        throw new Error("Not implemented yet");
+    }
+    getOutputNode(): AudioNode {
+        throw new Error("Not implemented yet");
+    }
+    getInputNode(): AudioNode {
+        throw new Error("Not implemented yet");
+    }
+    canConnectTo(destination: Connectable): boolean {
+        throw new Error("Not implemented yet");
+    }
+    getAudioParams(): Map<string, AudioParam> {
+        throw new Error("Not implemented yet");
+    }
 }
 
 // =====================
@@ -373,41 +423,41 @@ export class DelayDenyComposeConnectionManager extends NodeConnectionManager {
 // Test function to demonstrate the new connection system
 export function testConnectionManagers(): void {
     console.log("Testing Connection Managers...");
-    
+
     // Create test nodes
     const carrierOsc = new OscillatorGraphNode(AUDIO_CONTEXT, [100, 100], "carrier-osc");
     const modulatorOsc = new OscillatorGraphNode(AUDIO_CONTEXT, [50, 50], "modulator-osc");
     const gainNode = new GainGraphNode(AUDIO_CONTEXT, [200, 200], "test-gain");
-    
+
     // Create connection managers
     const carrierManager = new OscillatorConnectionManager(carrierOsc);
     const modulatorManager = new OscillatorConnectionManager(modulatorOsc);
     const gainManager = new GainConnectionManager(gainNode);
-    
+
     // Test 1: Regular audio connection (carrier oscillator -> gain input)
     console.log("=== Test 1: Audio Connection ===");
     const audioConnected = connectConnectableNodes(carrierManager, gainManager);
     console.log("Carrier -> Gain audio connection:", audioConnected);
-    
+
     // Test 2: Parameter modulation using helper function
     console.log("=== Test 2: Parameter Modulation ===");
-    
+
     // AM: Modulator oscillator -> gain parameter (amplitude modulation)
     const amConnected = connectToParameter(modulatorOsc, "oscillator", gainNode, "gain", "gain");
     console.log("AM connection (modulator -> gain.gain):", amConnected);
-    
-    // FM: Modulator oscillator -> carrier frequency parameter (frequency modulation)  
+
+    // FM: Modulator oscillator -> carrier frequency parameter (frequency modulation)
     const fmConnected = connectToParameter(modulatorOsc, "oscillator", carrierOsc, "oscillator", "frequency");
     console.log("FM connection (modulator -> carrier.frequency):", fmConnected);
-    
+
     // Test 3: Show available parameters
     console.log("=== Test 3: Available Parameters ===");
     const carrierParams = carrierManager.getAudioParams();
     const gainParams = gainManager.getAudioParams();
-    
+
     console.log("Carrier oscillator params:", Array.from(carrierParams.keys()));
     console.log("Gain node params:", Array.from(gainParams.keys()));
-    
+
     console.log("=== Connection Manager Test Complete! ===");
     console.log("🎵 You now have:");
     console.log("   - Carrier oscillator connected to gain (audio signal)");
@@ -425,15 +475,15 @@ export function connectToParameter(
 ): boolean {
     const sourceManager = ConnectionManagerFactory.create(sourceNode, sourceNodeType);
     const destinationManager = ConnectionManagerFactory.create(destinationNode, destinationNodeType);
-    
+
     const params = destinationManager.getAudioParams();
     const targetParam = params.get(parameterName);
-    
+
     if (!targetParam) {
         console.error(`Parameter '${parameterName}' not found on destination node`);
         return false;
     }
-    
+
     return sourceManager.connectTo(targetParam);
 }
 
