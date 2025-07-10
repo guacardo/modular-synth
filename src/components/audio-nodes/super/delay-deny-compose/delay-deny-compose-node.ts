@@ -19,6 +19,14 @@ export class DelayDenyComposeGraphNode implements AudioGraphNode {
         ]);
     }
 
+    connectTo(target: AudioGraphNode | AudioParam): boolean {
+        if ("node" in target && target.node instanceof AudioNode && target.node.numberOfInputs > 0) {
+            this.gainNode.connect(target.node);
+            return true;
+        }
+        return false;
+    }
+
     constructor(context: AudioContext, position: Position, id: string) {
         this.node = context.createDelay();
         this.position = position;

@@ -6,6 +6,16 @@ export class GainGraphNode implements AudioGraphNode {
     isSelected = false;
     node: GainNode;
     type: AudioNodeType = "gain";
+
+    connectTo(target: AudioGraphNode | AudioParam): boolean {
+        if ("node" in target && target.node instanceof AudioNode && target.node.numberOfInputs > 0) {
+            this.node.connect(target.node);
+            return true;
+        } else if (target instanceof AudioParam) {
+            this.node.connect(target);
+        }
+        return false;
+    }
     constructor(context: AudioContext, position: Position, id: string) {
         this.node = context.createGain();
         this.position = position;

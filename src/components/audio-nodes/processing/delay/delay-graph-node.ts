@@ -41,6 +41,17 @@ export class DelayGraphNode implements AudioGraphNode {
         ]);
     }
 
+    connectTo(target: AudioGraphNode | AudioParam): boolean {
+        if ("node" in target && target.node instanceof AudioNode && target.node.numberOfInputs > 0) {
+            this.node.connect(target.node);
+            return true;
+        } else if (target instanceof AudioParam) {
+            this.node.connect(target);
+            return true;
+        }
+        return false;
+    }
+
     constructor(context: AudioContext, position: Position, id: string) {
         this.node = context.createDelay();
         this.node.delayTime.value = 0.5; // Default delay time

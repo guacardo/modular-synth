@@ -5,6 +5,7 @@ export class OscillatorGraphNode implements AudioGraphNode {
     position: Position;
     isSelected: boolean;
     node: OscillatorNode;
+    gainNode: GainNode;
     keyboardEvents: Map<string, KeyboardAudioEvent>;
     dutyCycle: number = 0.5;
     type: AudioNodeType = "oscillator";
@@ -22,8 +23,21 @@ export class OscillatorGraphNode implements AudioGraphNode {
             ["ArrowDown", { keydown: () => updateNode({ ...this, node: updateAudioParamValue(this.node, { frequency: this.node.frequency.value - 10 }) }) }],
         ]);
     }
+    connectTo(target: AudioGraphNode | AudioParam): boolean {
+        console.log(target);
+        if ("node" in target && target.node instanceof AudioNode && target.node.numberOfInputs > 0) {
+            this.node.connect(target.node);
+            return true;
+        } else if (target instanceof AudioParam) {
+            this.node.connect(target);
+            return true;
+        }
+        return false;
+    }
     constructor(context: AudioContext, position: Position, id: string) {
         this.node = context.createOscillator();
+        this.gainNode = context.createGain();
+        this.node.connect(this.gainNode);
         this.node.start();
         this.position = position;
         this.id = id;

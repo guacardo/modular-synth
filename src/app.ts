@@ -1,17 +1,7 @@
 import { LitElement, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 
-import {
-    AUDIO_CONTEXT,
-    AudioGraphNode,
-    AudioNodeType,
-    AudioParamName,
-    connectAudioNodes,
-    isConnectableGraphNode,
-    KeyboardAudioEvent,
-    NodeConnectState,
-    Position,
-} from "./app/util";
+import { AUDIO_CONTEXT, AudioGraphNode, AudioNodeType, AudioParamName, connectAudioNodes, KeyboardAudioEvent, NodeConnectState, Position } from "./app/util";
 import { AudioDestinationGraphNode } from "./components/audio-nodes/destination/audio-destination-node/audio-destination-graph-node";
 import { BiquadFilterGraphNode } from "./components/audio-nodes/processing/biquad-filter/biquad-filter-graph-node";
 import { BiquadFilterNodeView } from "./components/audio-nodes/processing/biquad-filter/biquad-filter-node.view";
@@ -126,41 +116,29 @@ export class AppView extends LitElement {
 
     // TODO: cool with organic for now, but need to really think about supprting connections of Graph Nodes, Audio Nodes, Audio Params, what else?
     readonly handleUpdateNodeConnect = (node: AudioGraphNode | AudioDestinationGraphNode, param?: AudioParam, paramName?: AudioParamName) => {
-        if (isConnectableGraphNode(node) && this.nodeConnectState.source === undefined) {
+        if (this.nodeConnectState.source === undefined) {
             this.nodeConnectState = {
                 source: node,
                 destination: undefined,
             };
-        } else if (isConnectableGraphNode(node) && this.nodeConnectState.source?.id === node.id) {
+        } else if (this.nodeConnectState.source?.id === node.id) {
             this.nodeConnectState = {
                 source: undefined,
                 destination: undefined,
             };
         } else if (this.nodeConnectState.source !== undefined) {
-            // connect the two nodes if valid
-            if (
-                connectAudioNodes({
-                    source: this.nodeConnectState.source,
-                    destination: param !== undefined ? param : node,
-                })
-            ) {
-                // add the connection to the CONNECTIONS array
+            if (this.nodeConnectState.source?.connectTo?.(param !== undefined ? param : node)) {
                 if (param && paramName) {
                     this.CONNECTIONS = [...this.CONNECTIONS, [this.nodeConnectState.source.id, `${node.id}-${paramName}`]];
                 } else {
                     this.CONNECTIONS = [...this.CONNECTIONS, [this.nodeConnectState.source.id, node.id]];
                 }
+                this.nodeConnectState = {
+                    source: undefined,
+                    destination: undefined,
+                };
+                console.log(this.CONNECTIONS);
             }
-
-            console.log("connect", this.nodeConnectState);
-
-            // reset state
-            this.nodeConnectState = {
-                source: undefined,
-                destination: undefined,
-            };
-        } else {
-            console.warn("Cannot connect to node or param");
         }
     };
 
@@ -236,7 +214,10 @@ export class AppView extends LitElement {
             const source = newGraph.find((node) => node.id === sourceId);
             const destination = newGraph.find((node) => node.id === destinationId);
             if (source && destination) {
-                connectAudioNodes({ source, destination });
+                source.connectTo?.(destination);
+            } else {
+                // todo: connect to AudioParam, not just AudioNode
+                console.log("could not find connection", sourceId, destinationId);
             }
         });
         this.CONNECTIONS = connections;

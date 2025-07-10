@@ -1,9 +1,4 @@
 import { AudioDestinationGraphNode } from "../components/audio-nodes/destination/audio-destination-node/audio-destination-graph-node";
-import { BiquadFilterGraphNode } from "../components/audio-nodes/processing/biquad-filter/biquad-filter-graph-node";
-import { DelayGraphNode } from "../components/audio-nodes/processing/delay/delay-graph-node";
-import { GainGraphNode } from "../components/audio-nodes/processing/gain-node/gain-graph-node";
-import { StereoPannerGraphNode } from "../components/audio-nodes/processing/stereo-panner/stereo-panner-graph-node";
-import { OscillatorGraphNode } from "../components/audio-nodes/source/oscillator-node/oscillator-graph-node";
 import { DelayDenyComposeGraphNode } from "../components/audio-nodes/super/delay-deny-compose/delay-deny-compose-node";
 
 // =====================
@@ -53,6 +48,7 @@ export interface AudioGraphNode {
     isSelected: boolean;
     node: AudioNode;
     getKeyboardEvents?: (updateNode: (node: AudioGraphNode) => void) => Map<string, KeyboardAudioEvent>;
+    connectTo?: (target: AudioGraphNode | AudioParam, paramName?: AudioParamName) => boolean;
 }
 
 // =====================
@@ -64,39 +60,9 @@ export interface NodeConnectState {
     destination?: AudioGraphNode | AudioDestinationNode | AudioParam;
 }
 
-export const isConnectableGraphNode = (
-    node: unknown
-): node is BiquadFilterGraphNode | GainGraphNode | OscillatorGraphNode | DelayGraphNode | StereoPannerGraphNode | DelayDenyComposeGraphNode => {
-    return [BiquadFilterGraphNode, GainGraphNode, OscillatorGraphNode, DelayGraphNode, StereoPannerGraphNode, DelayDenyComposeGraphNode].some(
-        (Ctor) => node instanceof Ctor
-    );
-};
-
 export function connectAudioNodes(connection: NodeConnectState): boolean {
     const { source, destination } = connection;
-    if (isConnectableGraphNode(destination)) {
-        if (source && destination) {
-            // connecting DelayDenyComposeGraphNode to AudioNode
-            if (source instanceof DelayDenyComposeGraphNode && destination.node instanceof AudioNode && destination.node.numberOfInputs > 0) {
-                source.oscillator.connect(destination.node);
-                return true;
-                // connecting other general AudioGraphNode
-            } else if (
-                source.node instanceof AudioNode &&
-                source.node.numberOfOutputs > 0 &&
-                destination.node instanceof AudioNode &&
-                destination.node.numberOfInputs > 0
-            ) {
-                source.node.connect(destination.node);
-                return true;
-            } else {
-                console.error("Invalid nodes for connection");
-            }
-        } else {
-            console.error("Source or destination node is undefined");
-        }
-        return false;
-    } else if (destination instanceof AudioDestinationGraphNode) {
+    if (destination instanceof AudioDestinationGraphNode) {
         if (source instanceof DelayDenyComposeGraphNode) {
             source.gainNode.connect(destination.node.context.destination);
         } else {
