@@ -7,10 +7,12 @@ import {
     AudioNodeType,
     AudioParamName,
     connectAudioNodes,
+    connectToParameter,
     isConnectableGraphNode,
     KeyboardAudioEvent,
     NodeConnectState,
     Position,
+    testConnectionManagers,
 } from "./app/util";
 import { AudioDestinationGraphNode } from "./components/audio-nodes/destination/audio-destination-node/audio-destination-graph-node";
 import { BiquadFilterGraphNode } from "./components/audio-nodes/processing/biquad-filter/biquad-filter-graph-node";
@@ -61,6 +63,9 @@ export class AppView extends LitElement {
 
     connectedCallback(): void {
         super.connectedCallback();
+        
+        // Test our new connection managers
+        testConnectionManagers();
     }
 
     readonly handleAddNode = (type: AudioNodeType, position: Position) => {
