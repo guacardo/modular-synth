@@ -23,6 +23,12 @@ export class OscillatorNodeView extends LitElement {
         this.updateNode({ ...this.graphNode, node: updateAudioParamValue(this.graphNode.node, { [property]: value }) });
     }
 
+    private updateGain(value: number) {
+        this.graphNode.updateGain(value);
+        // Force a re-render by updating the node reference
+        this.updateNode({ ...this.graphNode });
+    }
+
     // TODO: DRY
     private setPulseWave(dutyCycle: number = 0.5) {
         const audioCtx = this.graphNode.node.context;
@@ -58,6 +64,20 @@ export class OscillatorNodeView extends LitElement {
                     .value="${this.graphNode.node.frequency.value.toString()}"
                     @input=${(e: Event) => {
                         this.updateOscillatorParam("frequency", (e.target as HTMLInputElement).valueAsNumber);
+                    }}
+                />
+            </div>
+            <div class="slider-container">
+                <label class="label"><span class="unit">gain:</span> <span class="value">${this.graphNode.gainNode.gain.value.toFixed(3)}</span></label>
+                <input
+                    class="slider"
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.001"
+                    .value="${this.graphNode.gainNode.gain.value.toString()}"
+                    @input=${(e: Event) => {
+                        this.updateGain((e.target as HTMLInputElement).valueAsNumber);
                     }}
                 />
             </div>
