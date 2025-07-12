@@ -120,6 +120,7 @@ export class OscillatorNodeView extends LitElement {
                     @click=${() => this.updateNodeConnectState(this.graphNode)}
                 ></button>
                 <label class="io-label">out</label>
+                <input-output-jack-view .graphNode=${this.graphNode} .updateNodeConnectState=${this.updateNodeConnectState}></input-output-jack-view>
             </div>
         </div>`;
     }

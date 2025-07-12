@@ -28,7 +28,9 @@ import "./components/audio-nodes/processing/delay/delay-node.view";
 import "./components/audio-nodes/processing/gain-node/gain-node.view";
 import "./components/audio-nodes/processing/stereo-panner/stereo-panner.view";
 import "./components/audio-nodes/source/oscillator-node/oscillator-node.view";
+import "./components/canvas-overlay/canvas-overlay.view";
 import "./components/coaching-text/coaching-text.view";
+import "./components/input-output-jack/input-output-jack.view";
 import "./components/keyboard-controller/keyboard-controller.view";
 import "./components/local-storage/local-storage.view";
 import "./components/new-node/new-node.view";
@@ -36,6 +38,8 @@ import "./components/side-panel/side-panel.view";
 import "./components/audio-nodes/super/delay-deny-compose/delay-deny-compose.view";
 import "./views/willys-rack-shack.view";
 import { DelayDenyComposeGraphNode } from "./components/audio-nodes/super/delay-deny-compose/delay-deny-compose-node";
+import { CanvasOverlay } from "./components/canvas-overlay/canvas-overlay.view";
+import { InputOutputJackView } from "./components/input-output-jack/input-output-jack.view";
 
 @customElement("app-view")
 export class AppView extends LitElement {
@@ -114,7 +118,6 @@ export class AppView extends LitElement {
         this.AUDIO_GRAPH = this.AUDIO_GRAPH.map((n) => (n.id === node.id ? Object.assign(Object.create(Object.getPrototypeOf(n)), n, node) : n));
     };
 
-    // TODO: cool with organic for now, but need to really think about supprting connections of Graph Nodes, Audio Nodes, Audio Params, what else?
     readonly handleUpdateNodeConnect = (node: AudioGraphNode | AudioDestinationGraphNode, param?: AudioParam, paramName?: AudioParamName) => {
         if (this.nodeConnectState.source === undefined) {
             this.nodeConnectState = {
@@ -233,6 +236,7 @@ export class AppView extends LitElement {
     render() {
         return html` <div class="app">
             <coaching-text-view .audioGraph=${this.AUDIO_GRAPH} .connections=${this.CONNECTIONS}></coaching-text-view>
+            <!-- <canvas-overlay .connections=${this.CONNECTIONS}></canvas-overlay> -->
             <willys-rack-shack-view
                 .audioGraph=${this.AUDIO_GRAPH}
                 .connections=${this.CONNECTIONS}
@@ -260,9 +264,11 @@ declare global {
         "app-view": AppView;
         "audio-graph-view": AudioGraphView;
         "biquad-filter-node-view": BiquadFilterNodeView;
+        "canvas-overlay": CanvasOverlay;
         "coaching-text-view": CoachingTextView;
         "delay-node-view": DelayGraphNode;
         "gain-node-view": GainNodeView;
+        "input-output-jack-view": InputOutputJackView;
         "local-storage-view": LocalStorageView;
         "new-node-view": NewNodeView;
         "oscillator-node-view": OscillatorNodeView;

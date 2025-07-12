@@ -64,44 +64,33 @@ export class GainNodeView extends LitElement {
             <button class="button" type="button" @click=${() => this.removeNode(this.graphNode)}>x</button>
             <div class="button-io-container">
                 <!-- IN -->
-                <div class="io-container">
-                    <button
-                        type="button"
-                        class=${classMap({
-                            "io-button": true,
-                            "can-connect": this.isConnectionCandidate(),
-                            connected: isConnectedIn,
-                        })}
-                        @click=${() => this.updateNodeConnectState(this.graphNode)}
-                    ></button>
-                    <label class="io-label">in</label>
-                </div>
+                <input-output-jack-view
+                    .graphNode=${this.graphNode}
+                    .updateNodeConnectState=${this.updateNodeConnectState}
+                    .label=${"in"}
+                    .isConnected=${isConnectedIn}
+                    .canConnect=${this.isConnectionCandidate()}
+                ></input-output-jack-view>
                 <!-- GAIN MODULATION -->
-                <div class="io-container">
-                    <button
-                        type="button"
-                        class=${classMap({
-                            "io-button": true,
-                            "can-connect": this.isConnectionCandidate(),
-                            connected: isGainModConnected,
-                        })}
-                        @click=${() => this.updateNodeConnectState(this.graphNode, this.graphNode.node.gain, "gain")}
-                    ></button>
-                    <label class="io-label">gain mod</label>
-                </div>
+                <input-output-jack-view
+                    .graphNode=${this.graphNode}
+                    .updateNodeConnectState=${this.updateNodeConnectState}
+                    .canConnect=${this.isConnectionCandidate()}
+                    .label=${"mod"}
+                    .isConnectionSource=${isConnectSource}
+                    .isConnected=${isGainModConnected}
+                    .param=${this.graphNode.node.gain}
+                    .paramName=${"gain"}
+                >
+                </input-output-jack-view>
                 <!-- OUT -->
-                <div class="io-container">
-                    <button
-                        type="button"
-                        class=${classMap({
-                            "io-button": true,
-                            "connection-source": isConnectSource,
-                            connected: isConnectedOut,
-                        })}
-                        @click=${() => this.updateNodeConnectState(this.graphNode)}
-                    ></button>
-                    <label class="io-label">out</label>
-                </div>
+                <input-output-jack-view
+                    .graphNode=${this.graphNode}
+                    .updateNodeConnectState=${this.updateNodeConnectState}
+                    .label=${"out"}
+                    .isConnected=${isConnectedOut}
+                    .isConnectionSource=${isConnectSource}
+                ></input-output-jack-view>
             </div>
         </div>`;
     }

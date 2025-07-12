@@ -18,7 +18,7 @@ type AudioSourceNode = SafeExtract<AudioNodeType, "oscillator">;
 type AudioGraphDestinationNode = SafeExtract<AudioNodeType, "audio-destination">;
 type AudioSuperNode = SafeExtract<AudioNodeType, "delay-deny-compose">;
 
-export type AudioParamName = "gain" | "frequency" | "detune" | "Q" | "pan" | "delayTime" | "pan";
+export type AudioParamName = "gain" | "frequency" | "detune" | "Q" | "delayTime" | "pan";
 
 // =====================
 // Audio Node Constants
