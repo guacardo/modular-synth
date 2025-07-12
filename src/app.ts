@@ -1,7 +1,7 @@
 import { LitElement, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 
-import { AUDIO_CONTEXT, AudioGraphNode, AudioNodeType, AudioParamName, connectAudioNodes, KeyboardAudioEvent, NodeConnectState, Position } from "./app/util";
+import { AUDIO_CONTEXT, AudioGraphNode, AudioNodeType, AudioParamName, KeyboardAudioEvent, NodeConnectState, Position } from "./app/util";
 import { AudioDestinationGraphNode } from "./components/audio-nodes/destination/audio-destination-node/audio-destination-graph-node";
 import { BiquadFilterGraphNode } from "./components/audio-nodes/processing/biquad-filter/biquad-filter-graph-node";
 import { BiquadFilterNodeView } from "./components/audio-nodes/processing/biquad-filter/biquad-filter-node.view";

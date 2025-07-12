@@ -60,22 +60,6 @@ export interface NodeConnectState {
     destination?: AudioGraphNode | AudioDestinationNode | AudioParam;
 }
 
-export function connectAudioNodes(connection: NodeConnectState): boolean {
-    const { source, destination } = connection;
-    if (destination instanceof AudioDestinationGraphNode) {
-        if (source instanceof DelayDenyComposeGraphNode) {
-            source.gainNode.connect(destination.node.context.destination);
-        } else {
-            source?.node.connect(destination.node.context.destination);
-        }
-        return true;
-    } else if (destination instanceof AudioParam) {
-        source?.node.connect(destination);
-        return true;
-    }
-    return false;
-}
-
 // UPDATE AUDIO PARAMS
 export function updateAudioParamValue<T extends AudioNode>(node: T, properties: AudioNodeProperties): AudioNode {
     for (const [property, value] of Object.entries(properties)) {

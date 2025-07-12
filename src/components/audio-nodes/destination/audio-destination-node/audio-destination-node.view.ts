@@ -26,21 +26,20 @@ export class AudioDestinationNodeView extends LitElement {
         const isConnected = this.connections.some((connection) => connection[0] === this.graphNode.id || connection[1] === this.graphNode.id);
         return html`
             <div class=${classMap({ node: true, connectionCandidate: this.isConnectionCandidate() })}>
-                <h1>Audio Destination</h1>
-                <p>Channel Count: ${this.graphNode.node.channelCount}</p>
-                <p>Channel Interpretation: ${this.graphNode.node.channelInterpretation}</p>
-                <p>Base Latency: ${AUDIO_CONTEXT.baseLatency}</p>
-                <p>Output Latency: ${AUDIO_CONTEXT.outputLatency}</p>
+                <h1>audio destination</h1>
+                <p>channels: ${this.graphNode.node.channelCount}</p>
+                <p>channel interpretation: ${this.graphNode.node.channelInterpretation}</p>
+                <p>base latency: ${AUDIO_CONTEXT.baseLatency}</p>
+                <p>output latency: ${AUDIO_CONTEXT.outputLatency}</p>
                 <button class="button" type="button" @click=${() => this.removeNode(this.graphNode)}>x</button>
                 <!-- IN -->
-                <div class="io-container">
-                    <button
-                        type="button"
-                        class=${classMap({ "io-button": true, "can-connect": this.isConnectionCandidate(), connected: isConnected })}
-                        @click=${() => this.updateNodeConnectState(this.graphNode)}
-                    ></button>
-                    <label class="io-label">in</label>
-                </div>
+                <input-output-jack-view
+                    .graphNode=${this.graphNode}
+                    .updateNodeConnectState=${this.updateNodeConnectState}
+                    .label=${"in"}
+                    .isConnected=${isConnected}
+                    .canConnect=${this.isConnectionCandidate()}
+                ></input-output-jack-view>
             </div>
         `;
     }
