@@ -76,7 +76,6 @@ export class GainNodeView extends LitElement {
                     .updateNodeConnectState=${this.updateNodeConnectState}
                     .canConnect=${this.isConnectionCandidate()}
                     .label=${"mod"}
-                    .isConnectionSource=${isConnectSource}
                     .isConnected=${isGainModConnected}
                     .param=${this.graphNode.node.gain}
                     .paramName=${"gain"}

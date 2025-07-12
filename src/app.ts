@@ -140,7 +140,6 @@ export class AppView extends LitElement {
                     source: undefined,
                     destination: undefined,
                 };
-                console.log(this.CONNECTIONS);
             }
         }
     };
@@ -236,7 +235,7 @@ export class AppView extends LitElement {
     render() {
         return html` <div class="app">
             <coaching-text-view .audioGraph=${this.AUDIO_GRAPH} .connections=${this.CONNECTIONS}></coaching-text-view>
-            <!-- <canvas-overlay .connections=${this.CONNECTIONS}></canvas-overlay> -->
+            <canvas-overlay .connections=${this.CONNECTIONS}></canvas-overlay>
             <willys-rack-shack-view
                 .audioGraph=${this.AUDIO_GRAPH}
                 .connections=${this.CONNECTIONS}

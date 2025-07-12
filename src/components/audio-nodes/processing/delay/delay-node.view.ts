@@ -36,6 +36,11 @@ export class DelayNodeView extends LitElement {
         });
     }
 
+    private updateGain(value: number) {
+        this.graphNode.updateGain(value);
+        this.updateNode({ ...this.graphNode });
+    }
+
     render() {
         const isConnectSource = this.graphNode.id === this.nodeConnectState.source?.id;
         const isConnectedOut = this.connections.some((connection) => connection[0] === this.graphNode.id);
@@ -54,6 +59,20 @@ export class DelayNodeView extends LitElement {
                     @input=${(e: Event) => this.updateDelayTime((e.target as HTMLInputElement).valueAsNumber)}
                 />
             </div>
+            <div class="slider-container">
+                <label class="label"><span class="unit">gain:</span> <span class="value">${this.graphNode.gainNode.gain.value.toFixed(3)}</span></label>
+                <input
+                    class="slider"
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.001"
+                    .value="${this.graphNode.gainNode.gain.value.toString()}"
+                    @input=${(e: Event) => {
+                        this.updateGain((e.target as HTMLInputElement).valueAsNumber);
+                    }}
+                />
+            </div>
             <button class="button" type="button" @click=${() => this.removeNode(this.graphNode)}>x</button>
             <button
                 class=${classMap({ button: true, "button-active": this.graphNode.isSelected })}
@@ -64,18 +83,13 @@ export class DelayNodeView extends LitElement {
             </button>
             <div class="button-io-container">
                 <!-- IN -->
-                <div class="io-container">
-                    <button
-                        type="button"
-                        class=${classMap({
-                            "io-button": true,
-                            "can-connect": this.isConnectionCandidate(),
-                            connected: isConnectedIn,
-                        })}
-                        @click=${() => this.updateNodeConnectState(this.graphNode)}
-                    ></button>
-                    <label class="io-label">in</label>
-                </div>
+                <input-output-jack-view
+                    .graphNode=${this.graphNode}
+                    .updateNodeConnectState=${this.updateNodeConnectState}
+                    .label=${"in"}
+                    .isConnected=${isConnectedIn}
+                    .canConnect=${this.isConnectionCandidate()}
+                ></input-output-jack-view>
                 <!-- DELAY MODULATION -->
                 <div class="io-container">
                     <button
@@ -90,18 +104,13 @@ export class DelayNodeView extends LitElement {
                     <label class="io-label">delay mod</label>
                 </div>
                 <!-- OUT -->
-                <div class="io-container">
-                    <button
-                        type="button"
-                        class=${classMap({
-                            "io-button": true,
-                            "connection-source": isConnectSource,
-                            connected: isConnectedOut,
-                        })}
-                        @click=${() => this.updateNodeConnectState(this.graphNode)}
-                    ></button>
-                    <label class="io-label">out</label>
-                </div>
+                <input-output-jack-view
+                    .graphNode=${this.graphNode}
+                    .updateNodeConnectState=${this.updateNodeConnectState}
+                    .label=${"out"}
+                    .isConnected=${isConnectedOut}
+                    .isConnectionSource=${isConnectSource}
+                ></input-output-jack-view>
             </div>
         </div>`;
     }

@@ -65,7 +65,6 @@ export function updateAudioParamValue<T extends AudioNode>(node: T, properties: 
     for (const [property, value] of Object.entries(properties)) {
         if (property in node) {
             const propKey = property as keyof T;
-            console.log(node[propKey]);
             if (node[propKey] instanceof AudioParam) {
                 if (Array.isArray(value)) {
                     const [targetValue, rampTime] = value;

@@ -12,9 +12,9 @@ export class OscillatorGraphNode implements AudioGraphNode {
     getKeyboardEvents(updateNode: (node: AudioGraphNode) => void): Map<string, KeyboardAudioEvent> {
         return new Map<string, KeyboardAudioEvent>([
             ["a", { keydown: () => updateNode({ ...this, node: updateAudioParamValue(this.node, { frequency: 200 }) }) }],
-            ["s", { keydown: () => updateNode({ ...this, node: updateAudioParamValue(this.node, { frequency: 400 }) }) }],
-            ["d", { keydown: () => updateNode({ ...this, node: updateAudioParamValue(this.node, { frequency: 800 }) }) }],
-            ["f", { keydown: () => updateNode({ ...this, node: updateAudioParamValue(this.node, { frequency: 1600 }) }) }],
+            ["s", { keydown: () => updateNode({ ...this, node: updateAudioParamValue(this.node, { frequency: 300 }) }) }],
+            ["d", { keydown: () => updateNode({ ...this, node: updateAudioParamValue(this.node, { frequency: 400 }) }) }],
+            ["f", { keydown: () => updateNode({ ...this, node: updateAudioParamValue(this.node, { frequency: 500 }) }) }],
             ["g", { keydown: () => updateNode({ ...this, node: updateAudioParamValue(this.node, { type: "sine" }) }) }],
             ["h", { keydown: () => updateNode({ ...this, node: updateAudioParamValue(this.node, { type: "square" }) }) }],
             ["j", { keydown: () => updateNode({ ...this, node: updateAudioParamValue(this.node, { type: "sawtooth" }) }) }],
@@ -41,8 +41,8 @@ export class OscillatorGraphNode implements AudioGraphNode {
             ],
         ]);
     }
+
     connectTo(target: AudioGraphNode | AudioParam): boolean {
-        console.log(target);
         if ("node" in target && target.node instanceof AudioNode && target.node.numberOfInputs > 0) {
             // Connect the gain node (output) instead of the oscillator directly
             this.gainNode.connect(target.node);
@@ -54,16 +54,18 @@ export class OscillatorGraphNode implements AudioGraphNode {
         }
         return false;
     }
+
+    updateGain(value: number): void {
+        this.gainNode.gain.setValueAtTime(value, this.gainNode.context.currentTime);
+    }
+
     constructor(context: AudioContext, position: Position, id: string) {
         this.node = context.createOscillator();
         this.gainNode = context.createGain();
-        this.gainNode.gain.setValueAtTime(0.5, context.currentTime); // Set default gain to 0.5
+        this.gainNode.gain.setValueAtTime(1.0, context.currentTime);
         this.node.connect(this.gainNode);
         this.node.start();
         this.position = position;
         this.id = id;
-    }
-    updateGain(value: number): void {
-        this.gainNode.gain.setValueAtTime(value, this.gainNode.context.currentTime);
     }
 }

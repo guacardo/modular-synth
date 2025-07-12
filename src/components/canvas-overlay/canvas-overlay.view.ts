@@ -57,6 +57,7 @@ export class CanvasOverlay extends LitElement {
     }
 
     render() {
+        console.log(this.connections);
         return html`
             <div class="canvas-overlay">
                 <canvas id="canvas"></canvas>

@@ -30,7 +30,6 @@ export class DelayDenyComposeView extends LitElement {
     ) {
         const audioNode = this.graphNode[nodeType] as AudioNode;
         const updated = updateAudioParamValue(audioNode, { [property]: value });
-        console.log(`Updating ${String(nodeType)}.${String(property)} to`, value, updated);
         this.updateNode({
             ...this.graphNode,
             [nodeType]: updated,

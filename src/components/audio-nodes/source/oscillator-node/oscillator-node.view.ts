@@ -25,7 +25,6 @@ export class OscillatorNodeView extends LitElement {
 
     private updateGain(value: number) {
         this.graphNode.updateGain(value);
-        // Force a re-render by updating the node reference
         this.updateNode({ ...this.graphNode });
     }
 
