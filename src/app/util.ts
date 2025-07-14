@@ -26,7 +26,7 @@ export interface KeyboardAudioEvent {
     keyup?: () => void;
 }
 
-export interface Repository<T> {
+export interface ImmutableRepository<T> {
     add: (...args: any[]) => T[];
     remove: (item: T) => T[];
     update: (item: T) => T[];

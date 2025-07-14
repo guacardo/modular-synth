@@ -2,46 +2,51 @@ import { LitElement, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 
 import { AudioGraphNode, AudioNodeType, AudioParamName, KeyboardAudioEvent, NodeConnectState, Position } from "./app/util";
-import { AudioDestinationGraphNode } from "./components/audio-nodes/destination/audio-destination-node/audio-destination-graph-node";
-import { BiquadFilterGraphNode } from "./components/audio-nodes/processing/biquad-filter/biquad-filter-graph-node";
-import { BiquadFilterNodeView } from "./components/audio-nodes/processing/biquad-filter/biquad-filter-node.view";
-import { CoachingTextView } from "./components/coaching-text/coaching-text.view";
-import { DelayGraphNode } from "./components/audio-nodes/processing/delay/delay-graph-node";
-import { GainGraphNode } from "./components/audio-nodes/processing/gain-node/gain-graph-node";
-import { GainNodeView } from "./components/audio-nodes/processing/gain-node/gain-node.view";
-import { KeyboardController } from "./components/keyboard-controller/keyboard-controller.view";
-import { LocalStorageView } from "./components/local-storage/local-storage.view";
-import { NewNodeView } from "./components/new-node/new-node.view";
-import { OscillatorGraphNode } from "./components/audio-nodes/source/oscillator-node/oscillator-graph-node";
-import { OscillatorNodeView } from "./components/audio-nodes/source/oscillator-node/oscillator-node.view";
-import { SidePanelView } from "./components/side-panel/side-panel.view";
-import { StereoPannerGraphNode } from "./components/audio-nodes/processing/stereo-panner/stereo-panner-graph-node";
-import { StereoPannerView } from "./components/audio-nodes/processing/stereo-panner/stereo-panner.view";
-import { WillysRackShackView } from "./views/willys-rack-shack.view";
-import { appStyles } from "./styles/app-styles";
-import { AudioGraphView } from "./components/audio-graph-view/audio-graph-view.view";
-
-import "./components/audio-graph-view/audio-graph-view.view";
-import "./components/audio-nodes/destination/audio-destination-node/audio-destination-node.view";
-import "./components/audio-nodes/processing/biquad-filter/biquad-filter-node.view";
-import "./components/audio-nodes/processing/delay/delay-node.view";
-import "./components/audio-nodes/processing/gain-node/gain-node.view";
-import "./components/audio-nodes/processing/stereo-panner/stereo-panner.view";
-import "./components/audio-nodes/source/oscillator-node/oscillator-node.view";
-import "./components/canvas-overlay/canvas-overlay.view";
-import "./components/coaching-text/coaching-text.view";
-import "./components/input-output-jack/input-output-jack.view";
-import "./components/keyboard-controller/keyboard-controller.view";
-import "./components/local-storage/local-storage.view";
-import "./components/new-node/new-node.view";
-import "./components/side-panel/side-panel.view";
-import "./components/audio-nodes/super/delay-deny-compose/delay-deny-compose.view";
-import "./views/willys-rack-shack.view";
-import { DelayDenyComposeGraphNode } from "./components/audio-nodes/super/delay-deny-compose/delay-deny-compose-node";
-import { CanvasOverlay } from "./components/canvas-overlay/canvas-overlay.view";
-import { InputOutputJackView } from "./components/input-output-jack/input-output-jack.view";
 import { getAudioContext } from "./app/audio-context";
 import { AudioGraphRepo } from "./app/audio-graph";
+import { appStyles } from "./styles/app-styles";
+
+// Component imports
+import {
+    AudioDestinationGraphNode,
+    AudioGraphView,
+    BiquadFilterGraphNode,
+    BiquadFilterNodeView,
+    CanvasOverlay,
+    CoachingTextView,
+    DelayDenyComposeGraphNode,
+    DelayGraphNode,
+    GainGraphNode,
+    GainNodeView,
+    InputOutputJackView,
+    KeyboardController,
+    LocalStorageView,
+    NewNodeView,
+    OscillatorGraphNode,
+    OscillatorNodeView,
+    SidePanelView,
+    StereoPannerGraphNode,
+    StereoPannerView,
+} from "./components";
+import { WillysRackShackView } from "./views";
+
+// Component registration imports
+import "./components/audio-graph-view";
+import "./components/audio-nodes/destination";
+import "./components/audio-nodes/processing/biquad-filter";
+import "./components/audio-nodes/processing/delay";
+import "./components/audio-nodes/processing/gain-node";
+import "./components/audio-nodes/processing/stereo-panner";
+import "./components/audio-nodes/source/oscillator-node";
+import "./components/audio-nodes/super/delay-deny-compose";
+import "./components/canvas-overlay";
+import "./components/coaching-text";
+import "./components/input-output-jack";
+import "./components/keyboard-controller";
+import "./components/local-storage";
+import "./components/new-node";
+import "./components/side-panel";
+import "./views";
 
 @customElement("app-view")
 export class AppView extends LitElement {

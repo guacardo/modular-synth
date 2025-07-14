@@ -1,4 +1,4 @@
-import { AudioGraphNode, AudioNodeType, AudioParamName, KeyboardAudioEvent, Position, updateAudioParamValue } from "../../../../app/util";
+import { AudioGraphNode, AudioNodeType, KeyboardAudioEvent, Position, updateAudioParamValue } from "../../../../app/util";
 
 export class StereoPannerGraphNode implements AudioGraphNode {
     id: string;

@@ -6,9 +6,9 @@ import { StereoPannerGraphNode } from "../components/audio-nodes/processing/ster
 import { OscillatorGraphNode } from "../components/audio-nodes/source/oscillator-node/oscillator-graph-node";
 import { DelayDenyComposeGraphNode } from "../components/audio-nodes/super/delay-deny-compose/delay-deny-compose-node";
 import { getAudioContext } from "./audio-context";
-import { AudioGraphNode, AudioNodeType, Position, Repository } from "./util";
+import { AudioGraphNode, AudioNodeType, Position, ImmutableRepository } from "./util";
 
-export class AudioGraphRepo implements Repository<AudioGraphNode> {
+export class AudioGraphRepo implements ImmutableRepository<AudioGraphNode> {
     private nodes: AudioGraphNode[] = [];
     private created: number = 0;
 
@@ -45,7 +45,6 @@ export class AudioGraphRepo implements Repository<AudioGraphNode> {
     }
 
     remove(node: AudioGraphNode): AudioGraphNode[] {
-        //disconnect from audio graph
         node.node.disconnect();
 
         if (node.node instanceof OscillatorNode) {
