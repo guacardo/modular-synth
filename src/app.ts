@@ -41,12 +41,14 @@ import { DelayDenyComposeGraphNode } from "./components/audio-nodes/super/delay-
 import { CanvasOverlay } from "./components/canvas-overlay/canvas-overlay.view";
 import { InputOutputJackView } from "./components/input-output-jack/input-output-jack.view";
 import { getAudioContext } from "./app/audio-context";
+import { AudioGraphRepo } from "./app/audio-graph";
 
 @customElement("app-view")
 export class AppView extends LitElement {
     static styles = [appStyles];
 
-    @state() AUDIO_GRAPH: AudioGraphNode[] = [];
+    private _audioGraphRepo = new AudioGraphRepo();
+    @state() audioGraph: AudioGraphNode[] = [];
     @state() CONNECTIONS: Array<[string, string]> = [];
     @state() nodeConnectState: NodeConnectState = {
         source: undefined,
@@ -59,52 +61,17 @@ export class AppView extends LitElement {
     }
 
     readonly handleAddNode = (type: AudioNodeType, position: Position) => {
-        const audioContext = getAudioContext();
-        let newNode: AudioGraphNode;
-        switch (type) {
-            case "biquad-filter":
-                newNode = new BiquadFilterGraphNode(audioContext, position, (this.creationCounter++).toString());
-                break;
-            case "gain":
-                newNode = new GainGraphNode(audioContext, position, (this.creationCounter++).toString());
-                break;
-            case "oscillator":
-                newNode = new OscillatorGraphNode(audioContext, position, (this.creationCounter++).toString());
-                break;
-            case "audio-destination":
-                newNode = new AudioDestinationGraphNode(audioContext, position, (this.creationCounter++).toString());
-                break;
-            case "delay":
-                newNode = new DelayGraphNode(audioContext, position, (this.creationCounter++).toString());
-                break;
-            case "stereo-panner":
-                newNode = new StereoPannerGraphNode(audioContext, position, (this.creationCounter++).toString());
-                break;
-            case "delay-deny-compose":
-                newNode = new DelayDenyComposeGraphNode(audioContext, position, (this.creationCounter++).toString());
-                break;
-        }
-        this.AUDIO_GRAPH = [...this.AUDIO_GRAPH, newNode];
+        this.audioGraph = this._audioGraphRepo.add(type, position);
     };
 
+    // TODO: abstract connections into a repo class, integrate with AudioGraphRepo.
     readonly handleRemoveNode = (node: AudioGraphNode) => {
-        try {
-            node.node.disconnect();
-        } catch {}
-        if (node.node instanceof OscillatorNode) {
-            try {
-                node.node.stop();
-            } catch {}
-        }
-
         // Disconnect all sources that were connected to this node as a destination
         this.CONNECTIONS.forEach(([src, dest]) => {
             if (dest === node.id) {
-                const sourceNode = this.AUDIO_GRAPH.find((n) => n.id === src);
+                const sourceNode = this.audioGraph.find((n) => n.id === src);
                 if (sourceNode) {
-                    try {
-                        sourceNode.node.disconnect(node.node);
-                    } catch {}
+                    sourceNode.node.disconnect(node.node);
                 }
             }
         });
@@ -113,13 +80,18 @@ export class AppView extends LitElement {
         this.CONNECTIONS = this.CONNECTIONS.filter(([src, dest]) => src !== node.id && dest !== node.id);
 
         // Remove from graph
-        this.AUDIO_GRAPH = this.AUDIO_GRAPH.filter((n) => n.id !== node.id);
+        this.audioGraph = this._audioGraphRepo.remove(node);
     };
 
     readonly handleUpdateNode = (node: AudioGraphNode) => {
-        this.AUDIO_GRAPH = this.AUDIO_GRAPH.map((n) => (n.id === node.id ? Object.assign(Object.create(Object.getPrototypeOf(n)), n, node) : n));
+        this.audioGraph = this._audioGraphRepo.update(node);
     };
 
+    readonly handleSelectAudioGraphNode = (node: AudioGraphNode) => {
+        this.audioGraph = this._audioGraphRepo.update({ ...node, isSelected: !node.isSelected });
+    };
+
+    // TODO: build ConnectionRepo. Integrate ConnectionRepo w/ AudioGraphRepo
     readonly handleUpdateNodeConnect = (node: AudioGraphNode | AudioDestinationGraphNode, param?: AudioParam, paramName?: AudioParamName) => {
         if (this.nodeConnectState.source === undefined) {
             this.nodeConnectState = {
@@ -148,7 +120,7 @@ export class AppView extends LitElement {
 
     mergeEventMaps(): Map<string, KeyboardAudioEvent[]> {
         const result = new Map<string, KeyboardAudioEvent[]>();
-        for (const node of this.AUDIO_GRAPH) {
+        for (const node of this.audioGraph) {
             if (node.isSelected) {
                 const events = node.getKeyboardEvents?.(this.handleUpdateNode);
                 if (events !== undefined) {
@@ -166,29 +138,6 @@ export class AppView extends LitElement {
         return result;
     }
 
-    readonly handleSelectAudioGraphNode = (node: AudioGraphNode) => {
-        const updatedNode = { ...node, isSelected: !node.isSelected };
-        this.handleUpdateNode(updatedNode);
-    };
-
-    private cleanAudioGraph = () => {
-        this.AUDIO_GRAPH.forEach((node) => {
-            try {
-                node.node.disconnect();
-            } catch (e) {
-                // Already disconnected or not connectable
-            }
-            // Stop oscillators to prevent lingering sound
-            if (node.node instanceof OscillatorNode) {
-                try {
-                    node.node.stop();
-                } catch (e) {
-                    // Already stopped
-                }
-            }
-        });
-    };
-
     // TODO: clean up/split apart..multiple responsibilities here.
     readonly handleLoadAudioGraph = (audioGraph: AudioGraphNode[], connections: Array<[string, string]>) => {
         const audioContext = getAudioContext();
@@ -203,8 +152,7 @@ export class AppView extends LitElement {
             "delay-deny-compose": DelayDenyComposeGraphNode,
         };
 
-        // Cleanup: disconnect and stop all nodes in the current audio graph
-        this.cleanAudioGraph();
+        this._audioGraphRepo.clean();
 
         const newGraph: AudioGraphNode[] = (audioGraph as AudioGraphNodeSerialized[]).map((node) => {
             const NodeClass = nodeClassMap[node.type];
@@ -213,7 +161,7 @@ export class AppView extends LitElement {
             newNode.isSelected = node.isSelected;
             return newNode;
         });
-        this.AUDIO_GRAPH = newGraph;
+        this.audioGraph = newGraph;
         // Reconnect audio nodes in the Web Audio graph
         connections.forEach(([sourceId, destinationId]) => {
             const source = newGraph.find((node) => node.id === sourceId);
@@ -226,21 +174,20 @@ export class AppView extends LitElement {
             }
         });
         this.CONNECTIONS = connections;
-        this.creationCounter = this.AUDIO_GRAPH.length + 1;
+        this.creationCounter = this.audioGraph.length + 1;
     };
 
     readonly clearAudioGraph = () => {
-        this.cleanAudioGraph();
-        this.AUDIO_GRAPH = [];
+        this.audioGraph = this._audioGraphRepo.clear();
         this.CONNECTIONS = [];
     };
 
     render() {
         return html` <div class="app">
-            <coaching-text-view .audioGraph=${this.AUDIO_GRAPH} .connections=${this.CONNECTIONS}></coaching-text-view>
+            <coaching-text-view .audioGraph=${this.audioGraph} .connections=${this.CONNECTIONS}></coaching-text-view>
             <canvas-overlay .connections=${this.CONNECTIONS}></canvas-overlay>
             <willys-rack-shack-view
-                .audioGraph=${this.AUDIO_GRAPH}
+                .audioGraph=${this.audioGraph}
                 .connections=${this.CONNECTIONS}
                 .addNode=${this.handleAddNode}
                 .updateNode=${this.handleUpdateNode}
@@ -252,7 +199,7 @@ export class AppView extends LitElement {
             </willys-rack-shack-view>
             <keyboard-controller .keyboardAudioEvents=${this.mergeEventMaps()}></keyboard-controller>
             <local-storage-view
-                .audioGraph=${this.AUDIO_GRAPH}
+                .audioGraph=${this.audioGraph}
                 .connections=${this.CONNECTIONS}
                 .loadAudioGraph=${this.handleLoadAudioGraph}
                 .clearAudioGraph=${this.clearAudioGraph}

@@ -26,6 +26,14 @@ export interface KeyboardAudioEvent {
     keyup?: () => void;
 }
 
+export interface Repository<T> {
+    add: (...args: any[]) => T[];
+    remove: (item: T) => T[];
+    update: (item: T) => T[];
+    findById(id: string): T | undefined;
+    getAll: () => T[];
+}
+
 export interface NodeConnectState {
     source?: AudioGraphNode;
     destination?: AudioGraphNode | AudioDestinationNode | AudioParam;
@@ -38,11 +46,6 @@ export interface AudioGraphNode {
     node: AudioNode;
     getKeyboardEvents?: (updateNode: (node: AudioGraphNode) => void) => Map<string, KeyboardAudioEvent>;
     connectTo?: (target: AudioGraphNode | AudioParam, paramName?: AudioParamName) => boolean;
-}
-
-export interface NodeConnectState {
-    source?: AudioGraphNode;
-    destination?: AudioGraphNode | AudioDestinationNode | AudioParam;
 }
 
 export function updateAudioParamValue<T extends AudioNode>(node: T, properties: AudioNodeProperties): AudioNode {
