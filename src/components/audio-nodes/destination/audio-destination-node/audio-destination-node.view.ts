@@ -1,6 +1,6 @@
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { AudioGraphNode, NodeConnectState } from "../../../../app/util";
+import { AudioGraphNode } from "../../../../app/util";
 import { audioNodeStyles } from "../../audio-node-styles";
 import { classMap } from "lit/directives/class-map.js";
 import { AudioDestinationGraphNode } from "./audio-destination-graph-node";
@@ -12,22 +12,14 @@ export class AudioDestinationNodeView extends LitElement {
 
     @property({ type: Object, attribute: false }) graphNode: AudioDestinationGraphNode;
     @property({ type: Array }) connections: Array<[string, string]>;
-    @property({ attribute: false, type: Object }) nodeConnectState: NodeConnectState;
-    @property({ attribute: false }) updateNodeConnectState: (node: AudioGraphNode) => void;
+    @property({ attribute: false }) updatePendingConnectionState: (id: string) => void;
     @property({ attribute: false }) removeNode: (node: AudioGraphNode) => void;
-
-    private isConnectionCandidate(): boolean {
-        if (this.nodeConnectState.source?.node?.numberOfOutputs) {
-            return true;
-        }
-        return false;
-    }
 
     render() {
         const audioContext = getAudioContext();
         const isConnected = this.connections.some((connection) => connection[0] === this.graphNode.id || connection[1] === this.graphNode.id);
         return html`
-            <div class=${classMap({ node: true, connectionCandidate: this.isConnectionCandidate() })}>
+            <div class=${classMap({ node: true, connectionCandidate: true })}>
                 <h1>audio destination</h1>
                 <p>channels: ${this.graphNode.node.channelCount}</p>
                 <p>channel interpretation: ${this.graphNode.node.channelInterpretation}</p>
@@ -37,10 +29,9 @@ export class AudioDestinationNodeView extends LitElement {
                 <!-- IN -->
                 <input-output-jack-view
                     .graphNode=${this.graphNode}
-                    .updateNodeConnectState=${this.updateNodeConnectState}
+                    .updatePendingConnectionState=${this.updatePendingConnectionState}
                     .label=${"in"}
                     .isConnected=${isConnected}
-                    .canConnect=${this.isConnectionCandidate()}
                 ></input-output-jack-view>
             </div>
         `;

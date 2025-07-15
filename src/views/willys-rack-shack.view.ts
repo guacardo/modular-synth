@@ -1,6 +1,6 @@
 import { html, LitElement, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { AudioGraphNode, AudioNodeType, AudioParamName, NodeConnectState, Position } from "../app/util";
+import { AudioGraphNode, AudioNodeType, Position } from "../app/util";
 import { OscillatorGraphNode } from "../components/audio-nodes/source/oscillator-node/oscillator-graph-node";
 import { willysRackShackStyles } from "./willys-rack-shack.styles";
 import { DelayGraphNode } from "../components/audio-nodes/processing/delay/delay-graph-node";
@@ -14,87 +14,77 @@ import { DelayDenyComposeGraphNode } from "../components/audio-nodes/super/delay
 export class WillysRackShackView extends LitElement {
     static styles = [willysRackShackStyles];
 
-    @property({ type: Array }) audioGraph: AudioGraphNode[];
-    @property({ type: Array }) connections: Array<[string, string]>;
+    @property({ attribute: false, type: Array }) audioGraph: AudioGraphNode[];
+    @property({ attribute: false, type: Array }) connections: Array<[string, string]>;
+    @property({ attribute: false, type: Array }) pendingConnectionState: [string, string];
     @property({ attribute: false }) addNode: (type: AudioNodeType, position: Position) => void;
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
     @property({ attribute: false }) removeNode: (node: AudioGraphNode) => void;
-    @property({ attribute: false, type: Object }) nodeConnectState: NodeConnectState;
-    @property({ attribute: false }) updateNodeConnectState: (
-        node: AudioGraphNode | AudioDestinationGraphNode,
-        param?: AudioParam,
-        paramName?: AudioParamName
-    ) => void;
-    @property({ attribute: false }) onSelectAudioGraphNode: (node: AudioGraphNode) => void;
+    @property({ attribute: false }) updatePendingConnectionState: (id: string) => void;
 
     private renderNodeView(graphNode: AudioGraphNode): TemplateResult {
         if (graphNode instanceof GainGraphNode) {
             return html`<gain-node-view
                 .graphNode=${graphNode}
                 .connections=${this.connections}
+                .pendingConnectionState=${this.pendingConnectionState}
                 .updateNode=${this.updateNode}
                 .removeNode=${this.removeNode}
-                .nodeConnectState=${this.nodeConnectState}
-                .updateNodeConnectState=${this.updateNodeConnectState}
-                .onSelectAudioGraphNode=${this.onSelectAudioGraphNode}
+                .updatePendingConnectionState=${this.updatePendingConnectionState}
             ></gain-node-view>`;
         } else if (graphNode instanceof OscillatorGraphNode) {
             return html`<oscillator-node-view
                 .graphNode=${graphNode}
                 .connections=${this.connections}
+                .pendingConnectionState=${this.pendingConnectionState}
                 .updateNode=${this.updateNode}
                 .removeNode=${this.removeNode}
-                .nodeConnectState=${this.nodeConnectState}
-                .updateNodeConnectState=${this.updateNodeConnectState}
-                .onSelectAudioGraphNode=${this.onSelectAudioGraphNode}
+                .updatePendingConnectionState=${this.updatePendingConnectionState}
             ></oscillator-node-view>`;
         } else if (graphNode instanceof BiquadFilterGraphNode) {
             return html`<biquad-filter-node-view
                 .graphNode=${graphNode}
                 .connections=${this.connections}
+                .pendingConnectionState=${this.pendingConnectionState}
                 .updateNode=${this.updateNode}
                 .removeNode=${this.removeNode}
-                .nodeConnectState=${this.nodeConnectState}
-                .updateNodeConnectState=${this.updateNodeConnectState}
-                .onSelectAudioGraphNode=${this.onSelectAudioGraphNode}
+                .updatePendingConnectionState=${this.updatePendingConnectionState}
             ></biquad-filter-node-view>`;
         } else if (graphNode instanceof AudioDestinationGraphNode) {
             return html`<audio-destination-node-view
                 .graphNode=${graphNode}
                 .connections=${this.connections}
-                .nodeConnectState=${this.nodeConnectState}
-                .updateNodeConnectState=${this.updateNodeConnectState}
+                .pendingConnectionState=${this.pendingConnectionState}
+                .updateNode=${this.updateNode}
                 .removeNode=${this.removeNode}
+                .updatePendingConnectionState=${this.updatePendingConnectionState}
             ></audio-destination-node-view>`;
         } else if (graphNode instanceof DelayGraphNode) {
             return html`<delay-node-view
                 .graphNode=${graphNode}
                 .connections=${this.connections}
+                .pendingConnectionState=${this.pendingConnectionState}
                 .updateNode=${this.updateNode}
                 .removeNode=${this.removeNode}
-                .nodeConnectState=${this.nodeConnectState}
-                .updateNodeConnectState=${this.updateNodeConnectState}
-                .onSelectAudioGraphNode=${this.onSelectAudioGraphNode}
+                .updatePendingConnectionState=${this.updatePendingConnectionState}
             ></delay-node-view>`;
         } else if (graphNode instanceof StereoPannerGraphNode) {
             return html`<stereo-panner-view
                 .graphNode=${graphNode}
                 .connections=${this.connections}
+                .pendingConnectionState=${this.pendingConnectionState}
                 .updateNode=${this.updateNode}
                 .removeNode=${this.removeNode}
-                .nodeConnectState=${this.nodeConnectState}
-                .updateNodeConnectState=${this.updateNodeConnectState}
-                .onSelectAudioGraphNode=${this.onSelectAudioGraphNode}
+                .updatePendingConnectionState=${this.updatePendingConnectionState}
             ></stereo-panner-view>`;
         } else if (graphNode instanceof DelayDenyComposeGraphNode) {
             return html`<delay-deny-compose-view
                 .graphNode=${graphNode}
                 .connections=${this.connections}
+                .pendingConnectionState=${this.pendingConnectionState}
                 .updateNode=${this.updateNode}
                 .removeNode=${this.removeNode}
-                .nodeConnectState=${this.nodeConnectState}
-                .updateNodeConnectState=${this.updateNodeConnectState}
-                .onSelectAudioGraphNode=${this.onSelectAudioGraphNode}
+                .updatePendingConnectionState=${this.updatePendingConnectionState}
             ></delay-deny-compose-view>`;
         } else {
             return html`<p>ERroR: nOT a n Audio Noooode</p>`;

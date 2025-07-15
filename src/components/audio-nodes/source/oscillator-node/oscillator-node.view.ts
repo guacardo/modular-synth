@@ -1,12 +1,13 @@
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { audioNodeStyles } from "../../audio-node-styles";
-import { AudioGraphNode, NodeConnectState, updateAudioParamValue } from "../../../../app/util";
+import { AudioGraphNode, updateAudioParamValue } from "../../../../app/util";
 import { classMap } from "lit/directives/class-map.js";
 import { OscillatorGraphNode } from "./oscillator-graph-node";
 
 export const settableOscillatorTypes: readonly OscillatorType[] = ["sawtooth", "sine", "square", "triangle"] as const;
 
+// TODO: should make a an AudioNodeView interface/base class to reduce duplication, give implementation of update/select/keyboard/etc.
 @customElement("oscillator-node-view")
 export class OscillatorNodeView extends LitElement {
     static styles = [audioNodeStyles];
@@ -15,9 +16,7 @@ export class OscillatorNodeView extends LitElement {
     @property({ type: Array }) connections: Array<[string, string]>;
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
     @property({ attribute: false }) removeNode: (node: AudioGraphNode) => void;
-    @property({ attribute: false, type: Object }) nodeConnectState: NodeConnectState;
-    @property({ attribute: false }) updateNodeConnectState: (node: AudioGraphNode) => void;
-    @property({ attribute: false }) onSelectAudioGraphNode: (node: AudioGraphNode) => void;
+    @property({ attribute: false }) updatePendingConnectionState: (id: string) => void;
 
     private updateOscillatorParam<T extends keyof OscillatorNode>(property: T, value: number | OscillatorType) {
         this.updateNode({ ...this.graphNode, node: updateAudioParamValue(this.graphNode.node, { [property]: value }) });
@@ -26,6 +25,10 @@ export class OscillatorNodeView extends LitElement {
     private updateGain(value: number) {
         this.graphNode.updateGain(value);
         this.updateNode({ ...this.graphNode });
+    }
+
+    private updateSelected() {
+        this.updateNode({ ...this.graphNode, isSelected: !this.graphNode.isSelected });
     }
 
     // TODO: DRY
@@ -49,7 +52,6 @@ export class OscillatorNodeView extends LitElement {
 
     render() {
         const audioNode = this.graphNode.node;
-        const isConnectSource = this.graphNode.id === this.nodeConnectState.source?.id;
         const isConnected = this.connections.some((connection) => connection[0] === this.graphNode.id || connection[1] === this.graphNode.id);
         return html`<div class="node">
             <h2>oscillator</h2>
@@ -104,21 +106,16 @@ export class OscillatorNodeView extends LitElement {
                 })}
                 <option disabled value="custom" ?selected=${this.graphNode.node.type === "custom"}>custom</option>
             </select>
-            <button
-                class=${classMap({ button: true, "button-active": this.graphNode.isSelected })}
-                type="button"
-                @click=${() => this.onSelectAudioGraphNode(this.graphNode)}
-            >
+            <button class=${classMap({ button: true, "button-active": this.graphNode.isSelected })} type="button" @click=${this.updateSelected}>
                 keyboard
             </button>
             <button class="button" type="button" @click=${() => this.removeNode(this.graphNode)}>x</button>
             <div class="io-container">
                 <input-output-jack-view
                     .graphNode=${this.graphNode}
-                    .updateNodeConnectState=${this.updateNodeConnectState}
+                    .updatePendingConnectionState=${this.updatePendingConnectionState}
                     .label=${"out"}
                     .isConnected=${isConnected}
-                    .isConnectionSource=${isConnectSource}
                 ></input-output-jack-view>
             </div>
         </div>`;

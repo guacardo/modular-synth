@@ -1,25 +1,20 @@
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { audioNodeStyles } from "../../audio-node-styles";
-import { AudioGraphNode, AudioParamName, NodeConnectState, updateAudioParamValue } from "../../../../app/util";
-import { AudioDestinationGraphNode } from "../../destination/audio-destination-node/audio-destination-graph-node";
+import { AudioGraphNode, updateAudioParamValue } from "../../../../app/util";
 import { GainGraphNode } from "./gain-graph-node";
 
 @customElement("gain-node-view")
 export class GainNodeView extends LitElement {
     static styles = [audioNodeStyles];
 
-    @property({ type: Object, attribute: false }) graphNode: GainGraphNode;
-    @property({ type: Array }) connections: Array<[string, string]>;
+    @property({ attribute: false, type: Object }) graphNode: GainGraphNode;
+    @property({ attribute: false, type: Array }) connections: Array<[string, string]>;
+    @property({ attribute: false, type: Array }) pendingConnectionState: [string, string];
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
     @property({ attribute: false }) removeNode: (node: AudioGraphNode) => void;
-    @property({ attribute: false, type: Object }) nodeConnectState: NodeConnectState;
-    @property({ attribute: false }) updateNodeConnectState: (
-        node: AudioGraphNode | AudioDestinationGraphNode,
-        param?: AudioParam,
-        paramName?: AudioParamName
-    ) => void;
     @property({ attribute: false }) onSelectAudioGraphNode: (node: AudioGraphNode) => void;
+    @property({ attribute: false }) updatePendingConnectionState: (id: string) => void;
 
     private updateGain(value: number) {
         this.updateNode({
@@ -28,17 +23,8 @@ export class GainNodeView extends LitElement {
         });
     }
 
-    // TODO: DRY
-    private isConnectionCandidate(): boolean {
-        if (this.nodeConnectState.source?.node?.numberOfOutputs && this.nodeConnectState.source.id !== this.graphNode.id) {
-            return true;
-        }
-        return false;
-    }
-
     render() {
         // TODO: DRY
-        const isConnectSource = this.graphNode.id === this.nodeConnectState.source?.id;
         const isConnectedOut = this.connections.some((connection) => connection[0] === this.graphNode.id);
         const isConnectedIn = this.connections.some((connection) => connection[1] === this.graphNode.id);
         const isGainModConnected = this.connections.some((connection) => connection[1] === `${this.graphNode.id}-gain`);
@@ -65,16 +51,14 @@ export class GainNodeView extends LitElement {
                 <!-- IN -->
                 <input-output-jack-view
                     .graphNode=${this.graphNode}
-                    .updateNodeConnectState=${this.updateNodeConnectState}
+                    .updatePendingConnectionState=${this.updatePendingConnectionState}
                     .label=${"in"}
                     .isConnected=${isConnectedIn}
-                    .canConnect=${this.isConnectionCandidate()}
                 ></input-output-jack-view>
                 <!-- GAIN MODULATION -->
                 <input-output-jack-view
                     .graphNode=${this.graphNode}
-                    .updateNodeConnectState=${this.updateNodeConnectState}
-                    .canConnect=${this.isConnectionCandidate()}
+                    .updatePendingConnectionState=${this.updatePendingConnectionState}
                     .label=${"mod"}
                     .isConnected=${isGainModConnected}
                     .param=${this.graphNode.node.gain}
@@ -84,10 +68,9 @@ export class GainNodeView extends LitElement {
                 <!-- OUT -->
                 <input-output-jack-view
                     .graphNode=${this.graphNode}
-                    .updateNodeConnectState=${this.updateNodeConnectState}
+                    .updatePendingConnectionState=${this.updatePendingConnectionState}
                     .label=${"out"}
                     .isConnected=${isConnectedOut}
-                    .isConnectionSource=${isConnectSource}
                 ></input-output-jack-view>
             </div>
         </div>`;

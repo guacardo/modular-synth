@@ -18,25 +18,25 @@ export class AudioGraphRepo implements ImmutableRepository<AudioGraphNode> {
 
         switch (type) {
             case "biquad-filter":
-                newNode = new BiquadFilterGraphNode(audioContext, position, (this.created++).toString());
+                newNode = new BiquadFilterGraphNode(audioContext, position, `${(this.created++).toString()}-biquadFilter`);
                 break;
             case "gain":
-                newNode = new GainGraphNode(audioContext, position, (this.created++).toString());
+                newNode = new GainGraphNode(audioContext, position, `${(this.created++).toString()}-gain`);
                 break;
             case "oscillator":
-                newNode = new OscillatorGraphNode(audioContext, position, (this.created++).toString());
+                newNode = new OscillatorGraphNode(audioContext, position, `${(this.created++).toString()}-oscillator`);
                 break;
             case "audio-destination":
-                newNode = new AudioDestinationGraphNode(audioContext, position, (this.created++).toString());
+                newNode = new AudioDestinationGraphNode(audioContext, position, `${(this.created++).toString()}-audioDestination`);
                 break;
             case "delay":
-                newNode = new DelayGraphNode(audioContext, position, (this.created++).toString());
+                newNode = new DelayGraphNode(audioContext, position, `${(this.created++).toString()}-delay`);
                 break;
             case "stereo-panner":
-                newNode = new StereoPannerGraphNode(audioContext, position, (this.created++).toString());
+                newNode = new StereoPannerGraphNode(audioContext, position, `${(this.created++).toString()}-stereoPanner`);
                 break;
             case "delay-deny-compose":
-                newNode = new DelayDenyComposeGraphNode(audioContext, position, (this.created++).toString());
+                newNode = new DelayDenyComposeGraphNode(audioContext, position, `${(this.created++).toString()}-delayDenyCompose`);
                 break;
         }
 
@@ -45,6 +45,8 @@ export class AudioGraphRepo implements ImmutableRepository<AudioGraphNode> {
     }
 
     remove(node: AudioGraphNode): AudioGraphNode[] {
+        // disconnect from all connections, both as source and target
+        this.disconnectFrom(node);
         node.node.disconnect();
 
         if (node.node instanceof OscillatorNode) {
@@ -82,5 +84,17 @@ export class AudioGraphRepo implements ImmutableRepository<AudioGraphNode> {
         this.clean();
         this.nodes = [];
         return this.nodes;
+    }
+
+    disconnectFrom(node: AudioGraphNode): void {
+        this.nodes.forEach((n) => {
+            if (n.id !== node.id) {
+                try {
+                    n.node.disconnect(node.node);
+                } catch (e) {
+                    console.warn("Tried to disconnect node that was not connected:", e);
+                }
+            }
+        });
     }
 }

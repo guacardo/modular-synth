@@ -1,7 +1,7 @@
 import { LitElement, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 
-import { AudioGraphNode, AudioNodeType, AudioParamName, KeyboardAudioEvent, NodeConnectState, Position } from "./app/util";
+import { AudioGraphNode, AudioNodeType, KeyboardAudioEvent, Position } from "./app/util";
 import { getAudioContext } from "./app/audio-context";
 import { AudioGraphRepo } from "./app/audio-graph";
 import { appStyles } from "./styles/app-styles";
@@ -47,18 +47,17 @@ import "./components/local-storage";
 import "./components/new-node";
 import "./components/side-panel";
 import "./views";
+import { ConnectionRepo } from "./app/connections";
 
 @customElement("app-view")
 export class AppView extends LitElement {
     static styles = [appStyles];
 
     private _audioGraphRepo = new AudioGraphRepo();
-    @state() audioGraph: AudioGraphNode[] = [];
-    @state() CONNECTIONS: Array<[string, string]> = [];
-    @state() nodeConnectState: NodeConnectState = {
-        source: undefined,
-        destination: undefined,
-    };
+    private _connectionRepo = new ConnectionRepo();
+    @state() audioGraph: AudioGraphNode[] = this._audioGraphRepo.getAll();
+    @state() connections: Array<[string, string]> = this._connectionRepo.getAll();
+    @state() pendingConnectionState: [string, string] = this._connectionRepo.getPendingConnectionState();
     @state() creationCounter: number = 0;
 
     connectedCallback(): void {
@@ -69,58 +68,22 @@ export class AppView extends LitElement {
         this.audioGraph = this._audioGraphRepo.add(type, position);
     };
 
-    // TODO: abstract connections into a repo class, integrate with AudioGraphRepo.
     readonly handleRemoveNode = (node: AudioGraphNode) => {
-        // Disconnect all sources that were connected to this node as a destination
-        this.CONNECTIONS.forEach(([src, dest]) => {
-            if (dest === node.id) {
-                const sourceNode = this.audioGraph.find((n) => n.id === src);
-                if (sourceNode) {
-                    sourceNode.node.disconnect(node.node);
-                }
-            }
-        });
-
-        // Remove all connections involving this node
-        this.CONNECTIONS = this.CONNECTIONS.filter(([src, dest]) => src !== node.id && dest !== node.id);
-
-        // Remove from graph
         this.audioGraph = this._audioGraphRepo.remove(node);
+        this.connections = this._connectionRepo.removeAllById(node.id);
     };
 
     readonly handleUpdateNode = (node: AudioGraphNode) => {
         this.audioGraph = this._audioGraphRepo.update(node);
     };
 
-    readonly handleSelectAudioGraphNode = (node: AudioGraphNode) => {
-        this.audioGraph = this._audioGraphRepo.update({ ...node, isSelected: !node.isSelected });
+    readonly handleUpdateNodeConnect = (id: string) => {
+        this.pendingConnectionState = this._connectionRepo.updatePendingConnectionState(id);
     };
 
-    // TODO: build ConnectionRepo. Integrate ConnectionRepo w/ AudioGraphRepo
-    readonly handleUpdateNodeConnect = (node: AudioGraphNode | AudioDestinationGraphNode, param?: AudioParam, paramName?: AudioParamName) => {
-        if (this.nodeConnectState.source === undefined) {
-            this.nodeConnectState = {
-                source: node,
-                destination: undefined,
-            };
-        } else if (this.nodeConnectState.source?.id === node.id) {
-            this.nodeConnectState = {
-                source: undefined,
-                destination: undefined,
-            };
-        } else if (this.nodeConnectState.source !== undefined) {
-            if (this.nodeConnectState.source?.connectTo?.(param !== undefined ? param : node)) {
-                if (param && paramName) {
-                    this.CONNECTIONS = [...this.CONNECTIONS, [this.nodeConnectState.source.id, `${node.id}-${paramName}`]];
-                } else {
-                    this.CONNECTIONS = [...this.CONNECTIONS, [this.nodeConnectState.source.id, node.id]];
-                }
-                this.nodeConnectState = {
-                    source: undefined,
-                    destination: undefined,
-                };
-            }
-        }
+    readonly clearAudioGraph = () => {
+        this.audioGraph = this._audioGraphRepo.clear();
+        this.connections = this._connectionRepo.clear();
     };
 
     mergeEventMaps(): Map<string, KeyboardAudioEvent[]> {
@@ -178,34 +141,27 @@ export class AppView extends LitElement {
                 console.log("could not find connection", sourceId, destinationId);
             }
         });
-        this.CONNECTIONS = connections;
         this.creationCounter = this.audioGraph.length + 1;
-    };
-
-    readonly clearAudioGraph = () => {
-        this.audioGraph = this._audioGraphRepo.clear();
-        this.CONNECTIONS = [];
     };
 
     render() {
         return html` <div class="app">
-            <coaching-text-view .audioGraph=${this.audioGraph} .connections=${this.CONNECTIONS}></coaching-text-view>
-            <canvas-overlay .connections=${this.CONNECTIONS}></canvas-overlay>
+            <coaching-text-view .audioGraph=${this.audioGraph} .connections=${this.connections}></coaching-text-view>
+            <canvas-overlay .connections=${this.connections}></canvas-overlay>
             <willys-rack-shack-view
                 .audioGraph=${this.audioGraph}
-                .connections=${this.CONNECTIONS}
+                .connections=${this.connections}
+                .pendingConnectionState=${this.pendingConnectionState}
                 .addNode=${this.handleAddNode}
                 .updateNode=${this.handleUpdateNode}
                 .removeNode=${this.handleRemoveNode}
-                .nodeConnectState=${this.nodeConnectState}
-                .updateNodeConnectState=${this.handleUpdateNodeConnect}
-                .onSelectAudioGraphNode=${this.handleSelectAudioGraphNode}
+                .updatePendingConnectionState=${this.handleUpdateNodeConnect}
             >
             </willys-rack-shack-view>
             <keyboard-controller .keyboardAudioEvents=${this.mergeEventMaps()}></keyboard-controller>
             <local-storage-view
                 .audioGraph=${this.audioGraph}
-                .connections=${this.CONNECTIONS}
+                .connections=${this.connections}
                 .loadAudioGraph=${this.handleLoadAudioGraph}
                 .clearAudioGraph=${this.clearAudioGraph}
             ></local-storage-view>

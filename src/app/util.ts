@@ -15,6 +15,7 @@ type AudioGraphDestinationNode = SafeExtract<AudioNodeType, "audio-destination">
 type AudioSuperNode = SafeExtract<AudioNodeType, "delay-deny-compose">;
 
 export type AudioParamName = "gain" | "frequency" | "detune" | "Q" | "delayTime" | "pan";
+export type IOLabel = "in" | "out" | "mod";
 
 export const AUDIO_PROCESSOR_NODES: AudioProcessorNode[] = ["biquad-filter", "delay", "gain", "stereo-panner"] as const;
 export const AUDIO_SOURCE_NODES: AudioSourceNode[] = ["oscillator"] as const;
@@ -32,11 +33,7 @@ export interface ImmutableRepository<T> {
     update: (item: T) => T[];
     findById(id: string): T | undefined;
     getAll: () => T[];
-}
-
-export interface NodeConnectState {
-    source?: AudioGraphNode;
-    destination?: AudioGraphNode | AudioDestinationNode | AudioParam;
+    clear: () => void;
 }
 
 export interface AudioGraphNode {
