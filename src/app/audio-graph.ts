@@ -17,26 +17,26 @@ export class AudioGraphRepo implements ImmutableRepository<AudioGraphNode> {
         let newNode: AudioGraphNode;
 
         switch (type) {
-            case "biquad-filter":
-                newNode = new BiquadFilterGraphNode(audioContext, position, `${(this.created++).toString()}-biquadFilter`);
+            case "biquadFilter":
+                newNode = new BiquadFilterGraphNode(audioContext, position, `${(this.created++).toString()}-${type}`);
                 break;
             case "gain":
-                newNode = new GainGraphNode(audioContext, position, `${(this.created++).toString()}-gain`);
+                newNode = new GainGraphNode(audioContext, position, `${(this.created++).toString()}-${type}`);
                 break;
             case "oscillator":
-                newNode = new OscillatorGraphNode(audioContext, position, `${(this.created++).toString()}-oscillator`);
+                newNode = new OscillatorGraphNode(audioContext, position, `${(this.created++).toString()}-${type}`);
                 break;
-            case "audio-destination":
-                newNode = new AudioDestinationGraphNode(audioContext, position, `${(this.created++).toString()}-audioDestination`);
+            case "audioDestination":
+                newNode = new AudioDestinationGraphNode(audioContext, position, `${(this.created++).toString()}-${type}`);
                 break;
             case "delay":
-                newNode = new DelayGraphNode(audioContext, position, `${(this.created++).toString()}-delay`);
+                newNode = new DelayGraphNode(audioContext, position, `${(this.created++).toString()}-${type}`);
                 break;
-            case "stereo-panner":
-                newNode = new StereoPannerGraphNode(audioContext, position, `${(this.created++).toString()}-stereoPanner`);
+            case "stereoPanner":
+                newNode = new StereoPannerGraphNode(audioContext, position, `${(this.created++).toString()}-${type}`);
                 break;
-            case "delay-deny-compose":
-                newNode = new DelayDenyComposeGraphNode(audioContext, position, `${(this.created++).toString()}-delayDenyCompose`);
+            case "delayDenyCompose":
+                newNode = new DelayDenyComposeGraphNode(audioContext, position, `${(this.created++).toString()}-${type}`);
                 break;
         }
 
@@ -84,6 +84,17 @@ export class AudioGraphRepo implements ImmutableRepository<AudioGraphNode> {
         this.clean();
         this.nodes = [];
         return this.nodes;
+    }
+
+    connect(connection: [string, string]): void {
+        const [sourceId, destinationId] = connection;
+        const source = this.findById(sourceId);
+        const destination = this.findById(destinationId);
+        if (source && destination) {
+            source.connectTo?.(destination);
+        } else {
+            console.error("could not find connection", sourceId, destinationId);
+        }
     }
 
     disconnectFrom(node: AudioGraphNode): void {

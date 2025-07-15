@@ -1,9 +1,15 @@
 import { ImmutableRepository } from "./util";
 
+export interface ConnectionEvent {
+    type: "connection-ready" | "connection-cleared";
+    connection: [string, string];
+}
+
 export class ConnectionRepo implements ImmutableRepository<[string, string]> {
     private connections: Array<[string, string]> = [];
-    private tempConnectionState: [string, string] = ["", ""];
+    private pendingConnectionState: [string, string] = ["", ""];
     private created: number = 0;
+    private eventListeners: ((event: ConnectionEvent) => void)[] = [];
 
     add(connection: [string, string]): Array<[string, string]> {
         this.connections = [...this.connections, connection];
@@ -36,27 +42,44 @@ export class ConnectionRepo implements ImmutableRepository<[string, string]> {
     }
 
     getPendingConnectionState(): [string, string] {
-        return this.tempConnectionState;
+        return this.pendingConnectionState;
     }
 
     updatePendingConnectionState(id: string): [string, string] {
-        console.log(id);
-
         // select source
-        if (this.tempConnectionState[0] === "") {
-            this.tempConnectionState = [id, ""];
+        if (this.pendingConnectionState[0] === "") {
+            this.pendingConnectionState = [id, ""];
             // deselect source
-        } else if (this.tempConnectionState[0] === id) {
-            this.tempConnectionState = ["", ""];
+        } else if (this.pendingConnectionState[0] === id) {
+            this.pendingConnectionState = ["", ""];
             // select target
-        } else if (this.tempConnectionState[0] !== "") {
-            this.tempConnectionState = [this.tempConnectionState[0], id];
+        } else if (this.pendingConnectionState[0] !== "") {
+            this.pendingConnectionState = [this.pendingConnectionState[0], id];
+            this.emit({
+                type: "connection-ready",
+                connection: this.pendingConnectionState,
+            });
         }
-        return this.tempConnectionState;
+        return this.pendingConnectionState;
     }
 
     clear(): Array<[string, string]> {
         this.connections = [];
         return this.connections;
+    }
+
+    onConnectionEvent(listener: (event: ConnectionEvent) => void): () => void {
+        this.eventListeners.push(listener);
+        // Return unsubscribe function
+        return () => {
+            const index = this.eventListeners.indexOf(listener);
+            if (index > -1) {
+                this.eventListeners.splice(index, 1);
+            }
+        };
+    }
+
+    private emit(event: ConnectionEvent): void {
+        this.eventListeners.forEach((listener) => listener(event));
     }
 }

@@ -55,6 +55,8 @@ export class AppView extends LitElement {
 
     private _audioGraphRepo = new AudioGraphRepo();
     private _connectionRepo = new ConnectionRepo();
+    private _connectionUnsubscribe?: () => void;
+
     @state() audioGraph: AudioGraphNode[] = this._audioGraphRepo.getAll();
     @state() connections: Array<[string, string]> = this._connectionRepo.getAll();
     @state() pendingConnectionState: [string, string] = this._connectionRepo.getPendingConnectionState();
@@ -62,6 +64,17 @@ export class AppView extends LitElement {
 
     connectedCallback(): void {
         super.connectedCallback();
+
+        this._connectionUnsubscribe = this._connectionRepo.onConnectionEvent((event) => {
+            if (event.type === "connection-ready") {
+                this._audioGraphRepo.connect(event.connection);
+            }
+        });
+    }
+
+    disconnectedCallback(): void {
+        super.disconnectedCallback();
+        this._connectionUnsubscribe?.();
     }
 
     readonly handleAddNode = (type: AudioNodeType, position: Position) => {
@@ -111,13 +124,13 @@ export class AppView extends LitElement {
         const audioContext = getAudioContext();
         type AudioGraphNodeSerialized = AudioGraphNode & { type: AudioNodeType };
         const nodeClassMap: Record<AudioNodeType, any> = {
-            oscillator: OscillatorGraphNode,
-            gain: GainGraphNode,
-            "biquad-filter": BiquadFilterGraphNode,
-            "audio-destination": AudioDestinationGraphNode,
+            audioDestination: AudioDestinationGraphNode,
+            biquadFilter: BiquadFilterGraphNode,
             delay: DelayGraphNode,
-            "stereo-panner": StereoPannerGraphNode,
-            "delay-deny-compose": DelayDenyComposeGraphNode,
+            delayDenyCompose: DelayDenyComposeGraphNode,
+            gain: GainGraphNode,
+            oscillator: OscillatorGraphNode,
+            stereoPanner: StereoPannerGraphNode,
         };
 
         this._audioGraphRepo.clean();

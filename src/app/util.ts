@@ -8,19 +8,19 @@ export type AudioNodeProperties = Partial<
         number | [number, number] | OscillatorType
     >
 >;
-export type AudioNodeType = "oscillator" | "gain" | "biquad-filter" | "audio-destination" | "delay" | "stereo-panner" | "delay-deny-compose";
-type AudioProcessorNode = SafeExtract<AudioNodeType, "biquad-filter" | "gain" | "delay" | "stereo-panner">;
+export type AudioNodeType = "oscillator" | "gain" | "biquadFilter" | "audioDestination" | "delay" | "stereoPanner" | "delayDenyCompose";
+type AudioProcessorNode = SafeExtract<AudioNodeType, "biquadFilter" | "gain" | "delay" | "stereoPanner">;
 type AudioSourceNode = SafeExtract<AudioNodeType, "oscillator">;
-type AudioGraphDestinationNode = SafeExtract<AudioNodeType, "audio-destination">;
-type AudioSuperNode = SafeExtract<AudioNodeType, "delay-deny-compose">;
+type AudioGraphDestinationNode = SafeExtract<AudioNodeType, "audioDestination">;
+type AudioSuperNode = SafeExtract<AudioNodeType, "delayDenyCompose">;
 
 export type AudioParamName = "gain" | "frequency" | "detune" | "Q" | "delayTime" | "pan";
 export type IOLabel = "in" | "out" | "mod";
 
-export const AUDIO_PROCESSOR_NODES: AudioProcessorNode[] = ["biquad-filter", "delay", "gain", "stereo-panner"] as const;
+export const AUDIO_PROCESSOR_NODES: AudioProcessorNode[] = ["biquadFilter", "delay", "gain", "stereoPanner"] as const;
 export const AUDIO_SOURCE_NODES: AudioSourceNode[] = ["oscillator"] as const;
-export const AUDIO_DESTINATION_NODES: AudioGraphDestinationNode[] = ["audio-destination"] as const;
-export const AUDIO_SUPER_NODES: AudioSuperNode[] = ["delay-deny-compose"] as const;
+export const AUDIO_DESTINATION_NODES: AudioGraphDestinationNode[] = ["audioDestination"] as const;
+export const AUDIO_SUPER_NODES: AudioSuperNode[] = ["delayDenyCompose"] as const;
 
 export interface KeyboardAudioEvent {
     keydown: () => void;
