@@ -54,42 +54,43 @@ export class OscillatorNodeView extends LitElement {
         const isConnected = this.connections.some((connection) => connection[0] === this.graphNode.id || connection[1] === this.graphNode.id);
         return html`<div class="node">
             <h2 class="node-title"><span>oscillator</span></h2>
-            <range-slider-view
-                .value=${this.graphNode.node.frequency.value.toString()}
-                .min=${0}
-                .max=${5000}
-                .step=${1}
-                .unit=${"Hz"}
-                .handleInput=${(event: Event) => {
-                    this.updateOscillatorParam("frequency", (event.target as HTMLInputElement).valueAsNumber);
-                }}
-            ></range-slider-view>
-
-            <div class="slider-container">
-                <label class="label"><span class="unit">gain:</span> <span class="value">${this.graphNode.gainNode.gain.value.toFixed(3)}</span></label>
-                <input
-                    class="slider"
-                    type="range"
-                    min="0"
-                    max="1"
-                    step="0.001"
-                    .value="${this.graphNode.gainNode.gain.value.toString()}"
-                    @input=${(e: Event) => {
-                        this.updateGain((e.target as HTMLInputElement).valueAsNumber);
+            <div class="sliders">
+                <range-slider-view
+                    .value=${this.graphNode.node.frequency.value.toString()}
+                    .min=${0}
+                    .max=${5000}
+                    .step=${1}
+                    .unit=${"Hz"}
+                    .handleInput=${(event: Event) => {
+                        this.updateOscillatorParam("frequency", (event.target as HTMLInputElement).valueAsNumber);
                     }}
-                />
-            </div>
-            <div class="slider-container">
-                <label class="label"><span class="unit">cycle:</span> <span class="value">${this.graphNode.dutyCycle.toFixed(2)}</span></label>
-                <input
-                    class="slider"
-                    type="range"
-                    min="0"
-                    max="1"
-                    step="0.01"
-                    .value="${this.graphNode.dutyCycle.toString()}"
-                    @input=${(e: Event) => this.setPulseWave((e.target as HTMLInputElement).valueAsNumber)}
-                />
+                ></range-slider-view>
+                <range-slider-view
+                    .value=${this.graphNode.node.detune.value.toString()}
+                    .min=${-1200}
+                    .max=${1200}
+                    .step=${1}
+                    .unit=${"Cents"}
+                    .handleInput=${(event: Event) => {
+                        this.updateOscillatorParam("detune", (event.target as HTMLInputElement).valueAsNumber);
+                    }}
+                ></range-slider-view>
+                <range-slider-view
+                    .value=${this.graphNode.dutyCycle.toString()}
+                    .min=${0}
+                    .max=${1}
+                    .step=${0.01}
+                    .unit=${"Duty Cycle"}
+                    .handleInput=${(event: Event) => this.setPulseWave((event.target as HTMLInputElement).valueAsNumber)}
+                ></range-slider-view>
+                <range-slider-view
+                    .value=${this.graphNode.gainNode.gain.value.toFixed(2).toString()}
+                    .min=${0}
+                    .max=${1}
+                    .step=${0.001}
+                    .unit=${"Gain"}
+                    .handleInput=${(event: Event) => this.updateGain((event.target as HTMLInputElement).valueAsNumber)}
+                ></range-slider-view>
             </div>
             <select
                 class="custom-select"
@@ -103,11 +104,13 @@ export class OscillatorNodeView extends LitElement {
                 })}
                 <option disabled value="custom" ?selected=${this.graphNode.node.type === "custom"}>custom</option>
             </select>
-            <button class=${classMap({ button: true, "button-active": this.graphNode.isSelected })} type="button" @click=${this.updateSelected}>
-                keyboard
-            </button>
-            <button class="button" type="button" @click=${() => this.removeNode(this.graphNode)}>x</button>
-            <div class="io-container">
+            <div class="button-container">
+                <button class=${classMap({ button: true, "button-active": this.graphNode.isSelected })} type="button" @click=${this.updateSelected}>
+                    keyboard
+                </button>
+                <button class="button" type="button" @click=${() => this.removeNode(this.graphNode)}>x</button>
+            </div>
+            <div class="io-jack-container">
                 <input-output-jack-view
                     .graphNode=${this.graphNode}
                     .updatePendingConnectionState=${this.updatePendingConnectionState}

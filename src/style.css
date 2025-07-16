@@ -1,6 +1,6 @@
 :root {
     --elevation-0: #000000;
-    --elevation-1: #111;
+    --elevation-1: #161616;
     --elevation-2: #222;
     --elevation-3: #2d2d2d;
     --elevation-4: #333;
@@ -12,7 +12,7 @@
     --accent-0-dark: #4a653d;
     --accent-1: #fde87b;
     --accent-1-dark: #bfae4e;
-    --accent-2: #00f6ff;
+    --accent-2: #00eded;
     --accent-2-dark: #0099a8;
     --accent-3: #ff9100;
     --accent-3-dark: #b35c00;
@@ -32,8 +32,6 @@ body {
     overflow: hidden;
     font-family: "Inconsolata", monospace;
     margin: 0;
-    font-size: 10px;
-    text-transform: lowercase;
 }
 
 ::-webkit-scrollbar {

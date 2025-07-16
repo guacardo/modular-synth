@@ -8,44 +8,63 @@ export const styles = css`
             width: 100%;
             height: 3px;
             border-radius: 0;
+            margin: 0 0 6px 0;
 
             /* Remove rounded corners from track and set height */
             &::-webkit-slider-runnable-track {
                 border-radius: 0;
+                height: 3px;
                 background: #626262;
             }
             &::-moz-range-track {
                 border-radius: 0;
+                height: 3px;
                 background: #626262;
             }
             &::-ms-track {
                 border-radius: 0;
+                height: 3px;
                 background: #626262;
             }
 
             /* Style the filled portion of the track */
-            &::-webkit-slider-thumb {
-                border-radius: 0;
-                background: #aaaaaa;
-            }
             &::-moz-range-progress {
-                background: #aaaaaa;
+                background: var(--accent-3-dark);
+                height: 3px;
                 border-radius: 0;
             }
             &::-ms-fill-lower {
-                background: #aaaaaa;
+                background: var(--accent-3-dark);
+                height: 3px;
                 border-radius: 0;
             }
 
-            /* Remove rounded corners from thumb */
+            /* Style the thumb as a circle */
             &::-webkit-slider-thumb {
-                border-radius: 0;
+                width: 16px;
+                height: 16px;
+                border-radius: 50%;
+                background: var(--accent-3);
+                border: none;
+                cursor: pointer;
+                -webkit-appearance: none;
+                margin-top: -6.5px; /* Center the thumb on the 3px track */
             }
             &::-moz-range-thumb {
-                border-radius: 0;
+                width: 16px;
+                height: 16px;
+                border-radius: 50%;
+                background: var(--accent-3);
+                border: none;
+                cursor: pointer;
             }
             &::-ms-thumb {
-                border-radius: 0;
+                width: 16px;
+                height: 16px;
+                border-radius: 50%;
+                background: var(--accent-3);
+                border: none;
+                cursor: pointer;
             }
         }
 

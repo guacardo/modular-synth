@@ -6,15 +6,15 @@ export const audioNodeStyles = [
     appStyles,
     css`
         .node {
-            border: 1px solid var(--text-primary);
-            border-radius: 8px;
+            border: 1px solid var(--elevation-4);
             background-color: var(--elevation-1);
-            padding: 8px;
+            padding: 16px;
 
             .node-title {
+                font-size: 16px;
                 text-align: center;
                 text-transform: uppercase;
-                margin-bottom: 8px;
+                margin-bottom: 16px;
                 background: url(${unsafeCSS(oscPng)}) repeat-x center/auto 100%;
 
                 span {
@@ -23,16 +23,25 @@ export const audioNodeStyles = [
                     padding: 0 8px;
                 }
             }
+
+            .sliders {
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+                margin-bottom: 16px;
+            }
         }
 
-        .button-io-container {
+        .button-container {
             display: flex;
-            flex-direction: row;
-            align-items: flex-start;
-            justify-content: center;
-            text-align: center;
-            gap: 16px;
-            margin: 32px 0 16px;
+            justify-content: space-between;
+            margin: 16px 0;
+        }
+
+        .io-jack-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
         }
     `,
 ];
