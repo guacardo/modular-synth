@@ -14,13 +14,13 @@ import { DelayDenyComposeGraphNode } from "../components/audio-nodes/super/delay
 export class WillysRackShackView extends LitElement {
     static styles = [willysRackShackStyles];
 
-    @property({ attribute: false, type: Array }) audioGraph: AudioGraphNode[];
-    @property({ attribute: false, type: Array }) connections: Array<[string, string]>;
-    @property({ attribute: false, type: Array }) pendingConnectionState: [string, string];
-    @property({ attribute: false }) addNode: (type: AudioNodeType, position: Position) => void;
-    @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
-    @property({ attribute: false }) removeNode: (node: AudioGraphNode) => void;
-    @property({ attribute: false }) updatePendingConnectionState: (id: string) => void;
+    @property({ attribute: false, type: Array }) readonly audioGraph: AudioGraphNode[];
+    @property({ attribute: false, type: Array }) readonly connections: Array<[string, string]>;
+    @property({ attribute: false, type: Array }) readonly pendingConnectionState: [string, string];
+    @property({ attribute: false }) readonly addNode: (type: AudioNodeType, position: Position) => void;
+    @property({ attribute: false }) readonly updateNode: (node: AudioGraphNode) => void;
+    @property({ attribute: false }) readonly removeNode: (node: AudioGraphNode) => void;
+    @property({ attribute: false }) readonly updatePendingConnectionState: (id: string) => void;
 
     private renderNodeView(graphNode: AudioGraphNode): TemplateResult {
         if (graphNode instanceof GainGraphNode) {
