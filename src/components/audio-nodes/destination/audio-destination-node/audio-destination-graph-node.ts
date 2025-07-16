@@ -5,7 +5,7 @@ export class AudioDestinationGraphNode implements AudioGraphNode {
     position: Position;
     isSelected = false;
     node: AudioDestinationNode;
-    type: AudioNodeType = "audio-destination";
+    type: AudioNodeType = "audioDestination";
 
     constructor(context: AudioContext, position: Position, id: string) {
         this.node = context.destination;

@@ -6,7 +6,7 @@ export class StereoPannerGraphNode implements AudioGraphNode {
     isSelected: boolean;
     node: StereoPannerNode;
     keyboardEvents: Map<string, KeyboardAudioEvent>;
-    type: AudioNodeType = "stereo-panner";
+    type: AudioNodeType = "stereoPanner";
 
     getKeyboardEvents(updateNode: (node: AudioGraphNode) => void): Map<string, KeyboardAudioEvent> {
         return new Map<string, KeyboardAudioEvent>([
