@@ -13,10 +13,10 @@ export class OscillatorNodeView extends LitElement {
     static styles = [audioNodeStyles];
 
     @property({ attribute: false, type: Object }) readonly graphNode: OscillatorGraphNode;
-    @property({ type: Array }) connections: Array<[string, string]>;
-    @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
-    @property({ attribute: false }) removeNode: (node: AudioGraphNode) => void;
-    @property({ attribute: false }) updatePendingConnectionState: (id: string) => void;
+    @property({ attribute: false, type: Array }) readonly connections: Array<[string, string]>;
+    @property({ attribute: false }) readonly updateNode: (node: AudioGraphNode) => void;
+    @property({ attribute: false }) readonly removeNode: (node: AudioGraphNode) => void;
+    @property({ attribute: false }) readonly updatePendingConnectionState: (id: string) => void;
 
     private updateOscillatorParam<T extends keyof OscillatorNode>(property: T, value: number | OscillatorType) {
         this.updateNode({ ...this.graphNode, node: updateAudioParamValue(this.graphNode.node, { [property]: value }) });

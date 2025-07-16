@@ -1,10 +1,8 @@
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { audioNodeStyles } from "../../audio-node-styles";
-import { classMap } from "lit/directives/class-map.js";
-import { AudioGraphNode, AudioParamName, updateAudioParamValue } from "../../../../app/util";
+import { AudioGraphNode, updateAudioParamValue } from "../../../../app/util";
 import { BiquadFilterGraphNode } from "./biquad-filter-graph-node";
-import { AudioDestinationGraphNode } from "../../destination/audio-destination-node/audio-destination-graph-node";
 
 const settableBiquadFilterTypes: readonly BiquadFilterType[] = [
     "allpass",
