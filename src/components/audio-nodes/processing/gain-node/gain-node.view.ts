@@ -13,7 +13,6 @@ export class GainNodeView extends LitElement {
     @property({ attribute: false, type: Array }) pendingConnectionState: [string, string];
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
     @property({ attribute: false }) removeNode: (node: AudioGraphNode) => void;
-    @property({ attribute: false }) onSelectAudioGraphNode: (node: AudioGraphNode) => void;
     @property({ attribute: false }) updatePendingConnectionState: (id: string) => void;
 
     private updateGain(value: number) {
@@ -30,24 +29,21 @@ export class GainNodeView extends LitElement {
         const isGainModConnected = this.connections.some((connection) => connection[1] === `${this.graphNode.id}-gain`);
 
         return html`<div class="node">
-            <h2>gain</h2>
-            <div class="slider-container">
-                <label for="gain-slider-${this.graphNode.id}">level: ${(this.graphNode.node as GainNode).gain.value.toFixed(3)}</label>
-                <input
-                    id="gain-slider-${this.graphNode.id}"
-                    class="slider"
-                    type="range"
-                    min="0.001"
-                    max="1.0"
-                    step="0.001"
-                    .value="${(this.graphNode.node as GainNode).gain.value.toString()}"
-                    @input="${(e: Event) => {
-                        this.updateGain((e.target as HTMLInputElement).valueAsNumber);
-                    }}"
-                />
+            <h2 class="node-title"><span>gain</span></h2>
+            <div class="sliders">
+                <range-slider-view
+                    .value=${(this.graphNode.node as GainNode).gain.value.toFixed(2).toString()}
+                    .min=${0.001}
+                    .max=${1.0}
+                    .step=${0.001}
+                    .unit=${"Gain"}
+                    .handleInput=${(event: Event) => this.updateGain((event.target as HTMLInputElement).valueAsNumber)}
+                ></range-slider-view>
             </div>
-            <button class="button" type="button" @click=${() => this.removeNode(this.graphNode)}>x</button>
-            <div class="button-io-container">
+            <div class="button-container">
+                <button class="button" type="button" @click=${() => this.removeNode(this.graphNode)}>x</button>
+            </div>
+            <div class="io-jack-container">
                 <!-- IN -->
                 <input-output-jack-view
                     .graphNode=${this.graphNode}
