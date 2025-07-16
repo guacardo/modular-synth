@@ -19,7 +19,7 @@ export const localStorageStyles = [
                 border: 1px solid #aaa;
                 background-color: var(--elevation-0);
                 color: var(--text-primary);
-                font-family: "Courier New", monospace;
+                font-family: "Inconsolata", monospace;
             }
         }
     `,

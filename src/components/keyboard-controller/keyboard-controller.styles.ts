@@ -9,7 +9,7 @@ export const keyboardControllerStyles = css`
     }
 
     .keyboard-button {
-        font-family: "Courier New", Courier, monospace;
+        font-family: "Inconsolata", monospace;
         text-transform: lowercase;
         background-color: var(--elevation-3);
         color: var(--text-primary);

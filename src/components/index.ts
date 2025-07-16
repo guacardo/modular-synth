@@ -6,4 +6,5 @@ export * from "./input-output-jack";
 export * from "./keyboard-controller";
 export * from "./local-storage";
 export * from "./new-node";
+export * from "./range-slider";
 export * from "./side-panel";

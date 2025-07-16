@@ -51,23 +51,20 @@ export class OscillatorNodeView extends LitElement {
     }
 
     render() {
-        const audioNode = this.graphNode.node;
         const isConnected = this.connections.some((connection) => connection[0] === this.graphNode.id || connection[1] === this.graphNode.id);
         return html`<div class="node">
-            <h2>oscillator</h2>
-            <div class="slider-container">
-                <label class="label"><span class="unit">freq:</span> <span class="value">${audioNode.frequency.value.toString()}</span></label>
-                <input
-                    class="slider"
-                    type="range"
-                    min="0"
-                    max="2000"
-                    .value="${this.graphNode.node.frequency.value.toString()}"
-                    @input=${(e: Event) => {
-                        this.updateOscillatorParam("frequency", (e.target as HTMLInputElement).valueAsNumber);
-                    }}
-                />
-            </div>
+            <h2 class="node-title"><span>oscillator</span></h2>
+            <range-slider-view
+                .value=${this.graphNode.node.frequency.value.toString()}
+                .min=${0}
+                .max=${5000}
+                .step=${1}
+                .unit=${"Hz"}
+                .handleInput=${(event: Event) => {
+                    this.updateOscillatorParam("frequency", (event.target as HTMLInputElement).valueAsNumber);
+                }}
+            ></range-slider-view>
+
             <div class="slider-container">
                 <label class="label"><span class="unit">gain:</span> <span class="value">${this.graphNode.gainNode.gain.value.toFixed(3)}</span></label>
                 <input

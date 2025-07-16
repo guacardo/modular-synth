@@ -1,5 +1,6 @@
-import { css } from "lit";
+import { css, unsafeCSS } from "lit";
 import { appStyles } from "../../styles/app-styles";
+import oscPng from "../../assets/osc.png";
 
 export const audioNodeStyles = [
     appStyles,
@@ -9,31 +10,18 @@ export const audioNodeStyles = [
             border-radius: 8px;
             background-color: var(--elevation-1);
             padding: 8px;
-        }
 
-        .slider-container {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            gap: 16px;
+            .node-title {
+                text-align: center;
+                text-transform: uppercase;
+                margin-bottom: 8px;
+                background: url(${unsafeCSS(oscPng)}) repeat-x center/auto 100%;
 
-            .label {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                width: 20%;
-
-                .unit {
+                span {
                     color: var(--text-primary);
+                    background-color: var(--elevation-1);
+                    padding: 0 8px;
                 }
-
-                .value {
-                    color: var(--text-primary);
-                }
-            }
-
-            .slider {
-                flex: 1;
             }
         }
 

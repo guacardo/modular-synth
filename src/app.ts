@@ -4,6 +4,7 @@ import { customElement, state } from "lit/decorators.js";
 import { AudioGraphNode, AudioNodeType, KeyboardAudioEvent, Position } from "./app/util";
 import { getAudioContext } from "./app/audio-context";
 import { AudioGraphRepo } from "./app/audio-graph";
+import { ConnectionRepo } from "./app/connections";
 import { appStyles } from "./styles/app-styles";
 
 // Component imports
@@ -24,6 +25,7 @@ import {
     NewNodeView,
     OscillatorGraphNode,
     OscillatorNodeView,
+    RangeSliderView,
     SidePanelView,
     StereoPannerGraphNode,
     StereoPannerView,
@@ -45,9 +47,9 @@ import "./components/input-output-jack";
 import "./components/keyboard-controller";
 import "./components/local-storage";
 import "./components/new-node";
+import "./components/range-slider";
 import "./components/side-panel";
 import "./views";
-import { ConnectionRepo } from "./app/connections";
 
 @customElement("app-view")
 export class AppView extends LitElement {
@@ -195,6 +197,7 @@ declare global {
         "local-storage-view": LocalStorageView;
         "new-node-view": NewNodeView;
         "oscillator-node-view": OscillatorNodeView;
+        "range-slider-view": RangeSliderView;
         "side-panel-view": SidePanelView;
         "stereo-panner-view": StereoPannerView;
         "keyboard-controller": KeyboardController;

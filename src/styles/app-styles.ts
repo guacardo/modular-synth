@@ -20,7 +20,7 @@ export const appStyles = css`
     }
 
     .button {
-        font-family: "Courier New", Courier, monospace;
+        font-family: "Inconsolata", monospace;
         text-transform: lowercase;
         background-color: var(--elevation-3);
         color: var(--text-primary);
@@ -51,7 +51,7 @@ export const appStyles = css`
         color: var(--text-primary);
         border: 1px solid #444;
         padding: 6px 32px 6px 12px;
-        font-family: "Courier New", monospace;
+        font-family: "Inconsolata", monospace;
         font-size: 12px;
         appearance: none;
         outline: none;

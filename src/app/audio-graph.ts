@@ -87,13 +87,13 @@ export class AudioGraphRepo implements ImmutableRepository<AudioGraphNode> {
     }
 
     connect(connection: [string, string]): void {
-        const [sourceId, destinationId] = connection;
+        const [sourceId, targetId] = connection;
         const source = this.findById(sourceId);
-        const destination = this.findById(destinationId);
+        const destination = this.findById(targetId);
         if (source && destination) {
             source.connectTo?.(destination);
         } else {
-            console.error("could not find connection", sourceId, destinationId);
+            console.error("could not find connection", sourceId, targetId);
         }
     }
 

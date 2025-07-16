@@ -6,6 +6,7 @@
     --elevation-4: #333;
 
     --text-primary: #ccc;
+    --text-secondary: #555;
 
     --accent-0: #79a267;
     --accent-0-dark: #4a653d;
@@ -29,7 +30,7 @@ body {
     width: 100vw;
     height: 100vw;
     overflow: hidden;
-    font-family: "Courier New", Courier, monospace;
+    font-family: "Inconsolata", monospace;
     margin: 0;
     font-size: 10px;
     text-transform: lowercase;
