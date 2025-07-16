@@ -4,10 +4,10 @@ export class DelayDenyComposeGraphNode implements AudioGraphNode {
     id: string;
     position: Position;
     isSelected: boolean;
-    node: AudioNode;
+    node: DelayNode;
     keyboardEvents: Map<string, KeyboardAudioEvent>;
     dutyCycle: number = 0.5;
-    type: AudioNodeType = "delay-deny-compose";
+    type: AudioNodeType = "delayDenyCompose";
     oscillator: OscillatorNode;
     gainNode: GainNode;
     delayNode: DelayNode;

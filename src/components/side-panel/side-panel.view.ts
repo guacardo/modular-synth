@@ -2,7 +2,7 @@ import { LitElement, TemplateResult, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { sidePanelStyles } from "./side-panel.styles";
 import { classMap } from "lit/directives/class-map.js";
-import { AUDIO_DESTINATION_NODES, AUDIO_PROCESSOR_NODES, AUDIO_SOURCE_NODES, AudioGraphNode, AudioNodeType, NodeConnectState } from "../../app/util";
+import { AUDIO_DESTINATION_NODES, AUDIO_PROCESSOR_NODES, AUDIO_SOURCE_NODES, AudioGraphNode, AudioNodeType, Position } from "../../app/util";
 import { OscillatorGraphNode } from "../audio-nodes/source/oscillator-node/oscillator-graph-node";
 import { AudioDestinationGraphNode } from "../audio-nodes/destination/audio-destination-node/audio-destination-graph-node";
 import { BiquadFilterGraphNode } from "../audio-nodes/processing/biquad-filter/biquad-filter-graph-node";
@@ -14,13 +14,14 @@ type Orientation = "left" | "right";
 export class SidePanelView extends LitElement {
     static styles = [sidePanelStyles];
 
-    @property({ type: Array }) audioGraph: AudioGraphNode[];
+    @property({ attribute: false, type: Array }) readonly audioGraph: AudioGraphNode[];
+    @property({ attribute: false, type: Array }) readonly connections: Array<[string, string]>;
+    @property({ attribute: false, type: Array }) readonly pendingConnectionState: [string, string];
+    @property({ attribute: false }) readonly addNode: (type: AudioNodeType, position: Position) => void;
+    @property({ attribute: false }) readonly updateNode: (node: AudioGraphNode) => void;
+    @property({ attribute: false }) readonly removeNode: (node: AudioGraphNode) => void;
+    @property({ attribute: false }) readonly updatePendingConnectionState: (id: string) => void;
     @property({ type: String, attribute: true }) orientation: Orientation;
-    @property({ attribute: false }) addNode: (type: AudioNodeType) => void;
-    @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
-    @property({ attribute: false, type: Object }) nodeConnectState: NodeConnectState;
-    @property({ attribute: false }) updateNodeConnectState: (node: AudioGraphNode | AudioDestinationNode) => void;
-    @property({ attribute: false }) onSelectAudioGraphNode: (node: AudioGraphNode) => void;
 
     connectedCallback(): void {
         super.connectedCallback();
@@ -30,26 +31,38 @@ export class SidePanelView extends LitElement {
         if (graphNode instanceof GainGraphNode) {
             return html`<gain-node-view
                 .graphNode=${graphNode}
+                .connections=${this.connections}
+                .pendingConnectionState=${this.pendingConnectionState}
                 .updateNode=${this.updateNode}
-                .nodeConnectState=${this.nodeConnectState}
-                .updateNodeConnectState=${this.updateNodeConnectState}
-                .onSelectAudioGraphNode=${this.onSelectAudioGraphNode}
+                .removeNode=${this.removeNode}
+                .updatePendingConnectionState=${this.updatePendingConnectionState}
             ></gain-node-view>`;
         } else if (graphNode instanceof OscillatorGraphNode) {
             return html`<oscillator-node-view
                 .graphNode=${graphNode}
+                .connections=${this.connections}
+                .pendingConnectionState=${this.pendingConnectionState}
                 .updateNode=${this.updateNode}
-                .nodeConnectState=${this.nodeConnectState}
-                .updateNodeConnectState=${this.updateNodeConnectState}
-                .onSelectAudioGraphNode=${this.onSelectAudioGraphNode}
+                .removeNode=${this.removeNode}
+                .updatePendingConnectionState=${this.updatePendingConnectionState}
             ></oscillator-node-view>`;
         } else if (graphNode instanceof BiquadFilterGraphNode) {
-            return html`<biquad-filter-node-view .graphNode=${graphNode} .updateNode=${this.updateNode}></biquad-filter-node-view>`;
+            return html`<biquad-filter-node-view
+                .graphNode=${graphNode}
+                .connections=${this.connections}
+                .pendingConnectionState=${this.pendingConnectionState}
+                .updateNode=${this.updateNode}
+                .removeNode=${this.removeNode}
+                .updatePendingConnectionState=${this.updatePendingConnectionState}
+            ></biquad-filter-node-view>`;
         } else if (graphNode instanceof AudioDestinationGraphNode) {
             return html`<audio-destination-node-view
                 .graphNode=${graphNode}
-                .nodeConnectState=${this.nodeConnectState}
-                .updateNodeConnectState=${this.updateNodeConnectState}
+                .connections=${this.connections}
+                .pendingConnectionState=${this.pendingConnectionState}
+                .updateNode=${this.updateNode}
+                .removeNode=${this.removeNode}
+                .updatePendingConnectionState=${this.updatePendingConnectionState}
             ></audio-destination-node-view>`;
         } else {
             return html`<p>ERroR: nOT a n Audio Noooode</p>`;

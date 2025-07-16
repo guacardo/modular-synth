@@ -5,7 +5,7 @@ export class BiquadFilterGraphNode implements AudioGraphNode {
     position: Position;
     isSelected = false;
     node: BiquadFilterNode;
-    type: AudioNodeType = "biquad-filter";
+    type: AudioNodeType = "biquadFilter";
 
     connectTo(target: AudioGraphNode | AudioParam): boolean {
         if ("node" in target && target.node instanceof AudioNode && target.node.numberOfInputs > 0) {
