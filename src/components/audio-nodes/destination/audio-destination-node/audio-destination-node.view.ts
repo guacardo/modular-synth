@@ -19,7 +19,7 @@ export class AudioDestinationNodeView extends LitElement {
         const isConnected = this.connections.some((connection) => connection[0] === this.graphNode.id || connection[1] === this.graphNode.id);
         return html`
             <div class="node">
-                <h2 class="node-title">audio destination</h2>
+                <h2 class="node-title"><span>audio destination</span></h2>
                 <p>channels: ${this.graphNode.node.channelCount}</p>
                 <p>channel interpretation: ${this.graphNode.node.channelInterpretation}</p>
                 <p>base latency: ${audioContext.baseLatency}</p>
