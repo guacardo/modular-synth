@@ -28,10 +28,10 @@ export class StereoPannerView extends LitElement {
                         .max=${1}
                         .step=${0.01}
                         .unit=${"pan"}
-                        .updateValue=${(value: number) => {
+                        .handleInput=${(event: Event) => {
                             this.updateNode({
                                 ...this.graphNode,
-                                node: updateAudioParamValue(this.graphNode.node, { pan: value }),
+                                node: updateAudioParamValue(this.graphNode.node, { pan: (event.target as HTMLInputElement).valueAsNumber }),
                             });
                         }}
                     ></range-slider-view>
@@ -43,13 +43,13 @@ export class StereoPannerView extends LitElement {
                 <div class="io-jack-container">
                     <input-output-jack-view
                         .graphNode=${this.graphNode}
-                        .updateNodeConnectState=${this.updatePendingConnectionState}
+                        .updatePendingConnectionState=${this.updatePendingConnectionState}
                         .label=${"in"}
                         .isConnected=${isConnectedIn}
                     ></input-output-jack-view>
                     <input-output-jack-view
                         .graphNode=${this.graphNode}
-                        .updateNodeConnectState=${this.updatePendingConnectionState}
+                        .updatePendingConnectionState=${this.updatePendingConnectionState}
                         .label=${"out"}
                         .isConnected=${isConnectedOut}
                     ></input-output-jack-view>

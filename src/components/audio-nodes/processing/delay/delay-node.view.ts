@@ -56,21 +56,21 @@ export class DelayNodeView extends LitElement {
                 <!-- IN -->
                 <input-output-jack-view
                     .graphNode=${this.graphNode}
-                    .updateNodeConnectState=${this.updatePendingConnectionState}
+                    .updatePendingConnectionState=${this.updatePendingConnectionState}
                     .label=${"in"}
                     .isConnected=${isConnectedIn}
                 ></input-output-jack-view>
                 <!-- DELAY MODULATION -->
                 <input-output-jack-view
                     .graphNode=${this.graphNode}
-                    .updateNodeConnectState=${this.updatePendingConnectionState}
+                    .updatePendingConnectionState=${this.updatePendingConnectionState}
                     .label=${"mod"}
                     .isConnected=${this.connections.some((connection) => connection[1] === `${this.graphNode.id}-gain`)}
                 ></input-output-jack-view>
                 <!-- OUT -->
                 <input-output-jack-view
                     .graphNode=${this.graphNode}
-                    .updateNodeConnectState=${this.updatePendingConnectionState}
+                    .updatePendingConnectionState=${this.updatePendingConnectionState}
                     .label=${"out"}
                     .isConnected=${isConnectedOut}
                 ></input-output-jack-view>

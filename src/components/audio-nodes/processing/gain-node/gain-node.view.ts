@@ -18,7 +18,7 @@ export class GainNodeView extends LitElement {
     private updateGain(value: number) {
         this.updateNode({
             ...this.graphNode,
-            node: updateAudioParamValue(this.graphNode.node as GainNode, { gain: value } as Partial<Record<keyof GainNode, number>>),
+            node: updateAudioParamValue(this.graphNode.node, { gain: value } as Partial<Record<keyof GainNode, number>>),
         });
     }
 

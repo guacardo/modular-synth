@@ -15,7 +15,7 @@ export const audioNodeStyles = [
                 text-align: center;
                 text-transform: uppercase;
                 margin-bottom: 16px;
-                background: url(${unsafeCSS(oscPng)}) repeat-x center/auto 100%;
+                /* background: url(${unsafeCSS(oscPng)}) repeat-x center/auto 100%; */
 
                 span {
                     color: var(--text-primary);

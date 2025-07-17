@@ -63,6 +63,11 @@ export class ConnectionRepo implements ImmutableRepository<[string, string]> {
         return this.pendingConnectionState;
     }
 
+    resetPendingConnectionState(): [string, string] {
+        this.pendingConnectionState = ["", ""];
+        return this.pendingConnectionState;
+    }
+
     clear(): Array<[string, string]> {
         this.connections = [];
         return this.connections;

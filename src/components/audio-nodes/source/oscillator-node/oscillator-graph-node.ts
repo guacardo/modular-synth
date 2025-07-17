@@ -44,11 +44,9 @@ export class OscillatorGraphNode implements AudioGraphNode {
 
     connectTo(target: AudioGraphNode | AudioParam): boolean {
         if ("node" in target && target.node instanceof AudioNode && target.node.numberOfInputs > 0) {
-            // Connect the gain node (output) instead of the oscillator directly
             this.gainNode.connect(target.node);
             return true;
         } else if (target instanceof AudioParam) {
-            // Connect the gain node to the AudioParam
             this.gainNode.connect(target);
             return true;
         }
