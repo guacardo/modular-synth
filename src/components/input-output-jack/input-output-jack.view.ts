@@ -19,8 +19,9 @@ export class InputOutputJackView extends LitElement {
 
     render() {
         return html`
-            <div class="io-container" id=${`${this.graphNode.id}-${this.paramName !== undefined ? this.paramName : this.label}`}>
+            <div class="io-container">
                 <button
+                    id=${`${this.graphNode.id}-${this.paramName !== undefined ? this.paramName : this.label}`}
                     type="button"
                     class=${classMap({
                         "io-button": true,
@@ -28,7 +29,7 @@ export class InputOutputJackView extends LitElement {
                         "connection-source": this.isConnectionSource,
                         connected: this.isConnected,
                     })}
-                    @click=${() => this.updatePendingConnectionState(this.graphNode.id)}
+                    @click=${() => this.updatePendingConnectionState(`${this.graphNode.id}-${this.label}`)}
                 ></button>
                 <label class="io-label">${this.label}</label>
             </div>

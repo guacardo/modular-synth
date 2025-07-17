@@ -71,3 +71,49 @@ export function updateAudioParamValue<T extends AudioNode>(node: T, properties: 
 
     return node;
 }
+
+export function findDOMCoordinates(id: string): Position {
+    // First try regular document search
+    let element = document.getElementById(id);
+
+    // If not found, search through Shadow DOM
+    if (!element) {
+        element = findElementInShadowDOM(document.body, id) as HTMLElement;
+    }
+
+    if (!element) {
+        console.warn(`Element with id ${id} not found`);
+        return [0, 0];
+    }
+
+    const rect = element.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2 + window.scrollX;
+    const centerY = rect.top + rect.height / 2 + window.scrollY;
+    return [centerX, centerY];
+}
+
+function findElementInShadowDOM(root: Element, id: string): Element | null {
+    // Check if current element has the id
+    if (root.id === id) {
+        return root;
+    }
+
+    // Check children
+    for (const child of Array.from(root.children)) {
+        if (child.id === id) {
+            return child;
+        }
+
+        // If child has shadow root, search inside it
+        if (child.shadowRoot) {
+            const found = findElementInShadowDOM(child.shadowRoot as any, id);
+            if (found) return found;
+        }
+
+        // Recursively search child's children
+        const found = findElementInShadowDOM(child, id);
+        if (found) return found;
+    }
+
+    return null;
+}

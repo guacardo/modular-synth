@@ -1,6 +1,7 @@
 import { html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { styles } from "./canvas-overlay.styles";
+import { findDOMCoordinates } from "../../app/util";
 
 @customElement("canvas-overlay")
 export class CanvasOverlay extends LitElement {
@@ -42,14 +43,23 @@ export class CanvasOverlay extends LitElement {
 
     drawConnections() {
         const canvas = this.renderRoot.querySelector("#canvas") as HTMLCanvasElement;
-        if (!canvas) return;
         const ctx = canvas.getContext("2d");
-        if (!ctx) return;
+        if (!canvas || !ctx) return;
+
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        for (const _ of this.connections) {
+        ctx.beginPath();
+        ctx.moveTo(50, 50);
+        ctx.lineTo(100, 100);
+        ctx.strokeStyle = "#ff9800";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        for (const [sourceId, targetId] of this.connections) {
+            const [sourceX, sourceY] = findDOMCoordinates(sourceId);
+            const [targetX, targetY] = findDOMCoordinates(targetId);
             ctx.beginPath();
-            ctx.moveTo(50, 50);
-            ctx.lineTo(100, 100);
+            ctx.moveTo(sourceX, sourceY);
+            ctx.lineTo(targetX, targetY);
             ctx.strokeStyle = "#ff9800";
             ctx.lineWidth = 2;
             ctx.stroke();
@@ -57,7 +67,6 @@ export class CanvasOverlay extends LitElement {
     }
 
     render() {
-        console.log(this.connections);
         return html`
             <div class="canvas-overlay">
                 <canvas id="canvas"></canvas>

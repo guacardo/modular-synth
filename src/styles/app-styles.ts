@@ -7,6 +7,7 @@ export const appStyles = css`
         flex-direction: column;
         align-items: center;
         height: 100%;
+        position: relative;
     }
 
     h1,

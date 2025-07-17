@@ -70,7 +70,7 @@ export class AppView extends LitElement {
         this._connectionUnsubscribe = this._connectionRepo.onConnectionEvent((event) => {
             if (event.type === "connection-ready") {
                 this._audioGraphRepo.connect(event.connection);
-                this.pendingConnectionState = this._connectionRepo.resetPendingConnectionState();
+                this.connections = this._connectionRepo.add(event.connection);
             }
         });
     }
@@ -175,6 +175,9 @@ export class AppView extends LitElement {
             >
             </willys-rack-shack-view>
             <p>${this.pendingConnectionState}</p>
+            ${this.connections.map((connection) => {
+                return html`<p>Connection: ${connection[0]} -> ${connection[1]}</p>`;
+            })}
             <keyboard-controller .keyboardAudioEvents=${this.mergeEventMaps()}></keyboard-controller>
             <local-storage-view
                 .audioGraph=${this.audioGraph}
