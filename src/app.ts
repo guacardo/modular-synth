@@ -148,7 +148,7 @@ export class AppView extends LitElement {
             const newNode = new NodeClass(audioContext, node.position, node.id);
             return newNode;
         });
-        this.audioGraph = newGraph;
+        this.audioGraph = this._audioGraphRepo.setAll(newGraph);
         connections.forEach((connection) => {
             this.createConnections(connection);
         });

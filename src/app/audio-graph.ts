@@ -80,6 +80,11 @@ export class AudioGraphRepo implements ImmutableRepository<AudioGraphNode> {
         return [...this.nodes];
     }
 
+    setAll(nodes: AudioGraphNode[]): AudioGraphNode[] {
+        this.nodes = nodes;
+        return this.nodes;
+    }
+
     clean(): void {
         this.nodes.forEach((node) => {
             node.node.disconnect();
@@ -100,6 +105,7 @@ export class AudioGraphRepo implements ImmutableRepository<AudioGraphNode> {
     connect(connection: [ConnectionComponents, ConnectionComponents]): void {
         const [sourceIndex, sourceType, sourceParam]: ConnectionComponents = connection[0];
         const [targetIndex, targetType, targetParam]: ConnectionComponents = connection[1];
+        console.log(this.nodes);
         const source = this.findById([sourceIndex, sourceType]);
         const target = this.findById([targetIndex, targetType]);
         if (source && target) {
