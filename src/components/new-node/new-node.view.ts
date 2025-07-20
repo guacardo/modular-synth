@@ -36,22 +36,22 @@ export class NewNodeView extends LitElement {
         html`<div class="panel">
             <select @change=${this.handleNodeChange} class="custom-select">
                 <option value="" disabled selected>select node type</option>
-                <optgroup label="sources">
+                <optgroup label="SOURCES">
                     ${AUDIO_SOURCE_NODES.map((option) => {
                         return html`<option value=${option} ?selected=${this.selectedNodeType === option}>${option}</option>`;
                     })}
                 </optgroup>
-                <optgroup label="processors">
+                <optgroup label="PROCESSORS">
                     ${AUDIO_PROCESSOR_NODES.map((option) => {
                         return html`<option value=${option} ?selected=${this.selectedNodeType === option}>${option}</option>`;
                     })}
                 </optgroup>
-                <optgroup label="destinations">
+                <optgroup label="DESTINATIONS">
                     ${AUDIO_DESTINATION_NODES.map((option) => {
                         return html`<option value=${option} ?selected=${this.selectedNodeType === option}>${option}</option>`;
                     })}
                 </optgroup>
-                <optgroup label="super">
+                <optgroup label="SUPER">
                     ${AUDIO_SUPER_NODES.map((option) => {
                         return html`<option value=${option} ?selected=${this.selectedNodeType === option}>${option}</option>`;
                     })}

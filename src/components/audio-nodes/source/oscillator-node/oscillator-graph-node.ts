@@ -1,7 +1,7 @@
-import { AudioGraphNode, Position, KeyboardAudioEvent, updateAudioParamValue, AudioNodeType } from "../../../../app/util";
+import { AudioGraphNode, Position, KeyboardAudioEvent, updateAudioParamValue, AudioNodeType, AudioGraphId } from "../../../../app/util";
 
 export class OscillatorGraphNode implements AudioGraphNode {
-    id: string;
+    id: AudioGraphId;
     position: Position;
     isSelected: boolean;
     node: OscillatorNode;
@@ -57,7 +57,7 @@ export class OscillatorGraphNode implements AudioGraphNode {
         this.gainNode.gain.setValueAtTime(value, this.gainNode.context.currentTime);
     }
 
-    constructor(context: AudioContext, position: Position, id: string) {
+    constructor(context: AudioContext, position: Position, id: AudioGraphId) {
         this.node = context.createOscillator();
         this.gainNode = context.createGain();
         this.gainNode.gain.setValueAtTime(1.0, context.currentTime);

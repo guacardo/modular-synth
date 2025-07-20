@@ -1,7 +1,7 @@
-import { AudioGraphNode, AudioNodeType, KeyboardAudioEvent, Position, updateAudioParamValue } from "../../../../app/util";
+import { AudioGraphId, AudioGraphNode, AudioNodeType, KeyboardAudioEvent, Position, updateAudioParamValue } from "../../../../app/util";
 
 export class StereoPannerGraphNode implements AudioGraphNode {
-    id: string;
+    id: AudioGraphId;
     position: Position;
     isSelected: boolean;
     node: StereoPannerNode;
@@ -28,7 +28,7 @@ export class StereoPannerGraphNode implements AudioGraphNode {
         return false;
     }
 
-    constructor(context: AudioContext, position: Position, id: string) {
+    constructor(context: AudioContext, position: Position, id: AudioGraphId) {
         this.node = context.createStereoPanner();
         this.position = position;
         this.id = id;

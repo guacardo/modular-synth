@@ -55,9 +55,10 @@ export class CanvasOverlay extends LitElement {
         ctx.stroke();
 
         for (const [sourceId, targetId] of this.connections) {
+            console.log("drawing connection", sourceId, targetId);
             const [sourceX, sourceY] = findDOMCoordinates(sourceId);
             const [targetX, targetY] = findDOMCoordinates(targetId);
-            
+
             // Calculate the control point for the bezier curve to simulate cable sag
             const midX = (sourceX + targetX) / 2;
             const distance = Math.abs(targetX - sourceX);
@@ -65,7 +66,7 @@ export class CanvasOverlay extends LitElement {
             // Quarter-inch cable sag - approximately 18 pixels for a 6-foot cable span
             const sag = Math.min(distance * 0.15, 50); // Max sag of 50px
             const controlY = Math.max(sourceY, targetY) + sag;
-            
+
             ctx.beginPath();
             ctx.moveTo(sourceX, sourceY);
             ctx.quadraticCurveTo(midX, controlY, targetX, targetY);

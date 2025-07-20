@@ -1,7 +1,7 @@
-import { AudioGraphNode, Position, KeyboardAudioEvent, updateAudioParamValue, AudioNodeType } from "../../../../app/util";
+import { AudioGraphNode, Position, KeyboardAudioEvent, updateAudioParamValue, AudioNodeType, AudioGraphId } from "../../../../app/util";
 
 export class DelayDenyComposeGraphNode implements AudioGraphNode {
-    id: string;
+    id: AudioGraphId;
     position: Position;
     isSelected: boolean;
     node: DelayNode;
@@ -27,7 +27,7 @@ export class DelayDenyComposeGraphNode implements AudioGraphNode {
         return false;
     }
 
-    constructor(context: AudioContext, position: Position, id: string) {
+    constructor(context: AudioContext, position: Position, id: AudioGraphId) {
         this.node = context.createDelay();
         this.position = position;
         this.id = id;

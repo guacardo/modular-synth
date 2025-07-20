@@ -6,7 +6,7 @@ import { StereoPannerGraphNode } from "../components/audio-nodes/processing/ster
 import { OscillatorGraphNode } from "../components/audio-nodes/source/oscillator-node/oscillator-graph-node";
 import { DelayDenyComposeGraphNode } from "../components/audio-nodes/super/delay-deny-compose/delay-deny-compose-node";
 import { getAudioContext } from "./audio-context";
-import { AudioGraphNode, AudioNodeType, Position, ImmutableRepository } from "./util";
+import { AudioGraphNode, AudioNodeType, Position, ImmutableRepository, ConnectionComponents, AudioGraphId } from "./util";
 
 export class AudioGraphRepo implements ImmutableRepository<AudioGraphNode> {
     private nodes: AudioGraphNode[] = [];
@@ -18,25 +18,25 @@ export class AudioGraphRepo implements ImmutableRepository<AudioGraphNode> {
 
         switch (type) {
             case "biquadFilter":
-                newNode = new BiquadFilterGraphNode(audioContext, position, `${(this.created++).toString()}-${type}`);
+                newNode = new BiquadFilterGraphNode(audioContext, position, [this.created++, type]);
                 break;
             case "gain":
-                newNode = new GainGraphNode(audioContext, position, `${(this.created++).toString()}-${type}`);
+                newNode = new GainGraphNode(audioContext, position, [this.created++, type]);
                 break;
             case "oscillator":
-                newNode = new OscillatorGraphNode(audioContext, position, `${(this.created++).toString()}-${type}`);
+                newNode = new OscillatorGraphNode(audioContext, position, [this.created++, type]);
                 break;
             case "audioDestination":
-                newNode = new AudioDestinationGraphNode(audioContext, position, `${(this.created++).toString()}-${type}`);
+                newNode = new AudioDestinationGraphNode(audioContext, position, [this.created++, type]);
                 break;
             case "delay":
-                newNode = new DelayGraphNode(audioContext, position, `${(this.created++).toString()}-${type}`);
+                newNode = new DelayGraphNode(audioContext, position, [this.created++, type]);
                 break;
             case "stereoPanner":
-                newNode = new StereoPannerGraphNode(audioContext, position, `${(this.created++).toString()}-${type}`);
+                newNode = new StereoPannerGraphNode(audioContext, position, [this.created++, type]);
                 break;
             case "delayDenyCompose":
-                newNode = new DelayDenyComposeGraphNode(audioContext, position, `${(this.created++).toString()}-${type}`);
+                newNode = new DelayDenyComposeGraphNode(audioContext, position, [this.created++, type]);
                 break;
         }
 
@@ -63,8 +63,16 @@ export class AudioGraphRepo implements ImmutableRepository<AudioGraphNode> {
         return this.nodes.map((n) => (n.id === node.id ? Object.assign(Object.create(Object.getPrototypeOf(n)), n, node) : n));
     }
 
-    findById(id: string): AudioGraphNode | undefined {
+    findById(id: AudioGraphId): AudioGraphNode | undefined {
         return this.nodes.find((n) => n.id === id);
+    }
+
+    findParamInNode(node: AudioGraphNode, paramName: string): AudioParam | undefined {
+        if (node.node instanceof AudioNode) {
+            return (node.node as any)[paramName] as AudioParam | undefined;
+        } else {
+            return undefined;
+        }
     }
 
     getAll(): AudioGraphNode[] {
@@ -74,6 +82,8 @@ export class AudioGraphRepo implements ImmutableRepository<AudioGraphNode> {
     clean(): void {
         this.nodes.forEach((node) => {
             node.node.disconnect();
+            // this should live in oscillator-graph-node, but for now we stop all oscillators
+            // all graph nodes should implement a stop method
             if (node.node instanceof OscillatorNode) {
                 node.node.stop();
             }
@@ -86,14 +96,16 @@ export class AudioGraphRepo implements ImmutableRepository<AudioGraphNode> {
         return this.nodes;
     }
 
-    connect(connection: [string, string]): void {
-        const [sourceId, targetId] = connection;
-        const source = this.findById(sourceId);
-        const destination = this.findById(targetId);
-        if (source && destination) {
-            source.connectTo?.(destination);
+    connect(connection: [ConnectionComponents, ConnectionComponents]): void {
+        const [sourceIndex, sourceType, sourceParam]: ConnectionComponents = connection[0];
+        const [targetIndex, targetType, targetParam]: ConnectionComponents = connection[1];
+        console.log("connection parts", sourceIndex, sourceType, sourceParam, targetIndex, targetType, targetParam);
+        const source = this.findById([sourceIndex, sourceType]);
+        const target = this.findById([targetIndex, targetType]);
+        if (source) {
+            source.connectTo?.(target.requestConnect?.(targetParam));
         } else {
-            console.error("could not find connection", sourceId, targetId);
+            console.error("could not find connection", [sourceIndex, sourceType, sourceParam], [targetIndex, targetType, targetParam]);
         }
     }
 

@@ -16,6 +16,8 @@ type AudioSuperNode = SafeExtract<AudioNodeType, "delayDenyCompose">;
 
 export type AudioParamName = "gain" | "frequency" | "detune" | "Q" | "delayTime" | "pan";
 export type IOLabel = "in" | "out" | "mod";
+export type AudioGraphId = [number, AudioNodeType];
+export type ConnectionComponents = [...AudioGraphId, IOLabel];
 
 export const AUDIO_PROCESSOR_NODES: AudioProcessorNode[] = ["biquadFilter", "delay", "gain", "stereoPanner"] as const;
 export const AUDIO_SOURCE_NODES: AudioSourceNode[] = ["oscillator"] as const;
@@ -31,18 +33,46 @@ export interface ImmutableRepository<T> {
     add: (...args: any[]) => T[];
     remove: (item: T) => T[];
     update: (item: T) => T[];
-    findById(id: string): T | undefined;
+    findById(id: any): T | undefined;
     getAll: () => T[];
     clear: () => void;
 }
 
 export interface AudioGraphNode {
-    id: string;
+    id: AudioGraphId;
     position: Position;
     isSelected: boolean;
     node: AudioNode;
+    type: AudioNodeType;
     getKeyboardEvents?: (updateNode: (node: AudioGraphNode) => void) => Map<string, KeyboardAudioEvent>;
-    connectTo?: (target: AudioGraphNode | AudioParam, paramName?: AudioParamName) => boolean;
+    connectTo: (target: AudioNode | AudioParam | undefined) => boolean;
+    requestConnect: (target: IOLabel) => AudioNode | AudioParam | undefined;
+}
+
+export abstract class AudioGraphNodeBase implements AudioGraphNode {
+    abstract id: AudioGraphId;
+    abstract position: Position;
+    abstract isSelected: boolean;
+    abstract node: AudioNode;
+    abstract type: AudioNodeType;
+    getKeyboardEvents?: (updateNode: (node: AudioGraphNode) => void) => Map<string, KeyboardAudioEvent>;
+    abstract requestConnect(target: IOLabel): AudioNode | AudioParam | undefined;
+    connectTo(target: AudioNode | AudioParam | undefined): boolean {
+        if (!target) return false;
+        try {
+            if (target instanceof AudioNode) {
+                this.node.connect(target);
+            } else if (target instanceof AudioParam) {
+                (this.node as any).connect(target);
+            } else {
+                return false;
+            }
+            return true;
+        } catch (e) {
+            console.error("Failed to connect:", e);
+            return false;
+        }
+    }
 }
 
 export function updateAudioParamValue<T extends AudioNode>(node: T, properties: AudioNodeProperties): AudioNode {

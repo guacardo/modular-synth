@@ -1,7 +1,7 @@
 import { LitElement, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 
-import { AudioGraphNode, AudioNodeType, KeyboardAudioEvent, Position } from "./app/util";
+import { AudioGraphNode, AudioNodeType, ConnectionComponents, KeyboardAudioEvent, Position } from "./app/util";
 import { getAudioContext } from "./app/audio-context";
 import { AudioGraphRepo } from "./app/audio-graph";
 import { ConnectionRepo } from "./app/connections";
@@ -69,7 +69,10 @@ export class AppView extends LitElement {
 
         this._connectionUnsubscribe = this._connectionRepo.onConnectionEvent((event) => {
             if (event.type === "connection-ready") {
-                this._audioGraphRepo.connect(event.connection);
+                this._audioGraphRepo.connect([
+                    event.connection[0].split("-", 3) as ConnectionComponents,
+                    event.connection[1].split("-", 3) as ConnectionComponents,
+                ]);
                 this.connections = this._connectionRepo.add(event.connection);
             }
         });

@@ -23,9 +23,6 @@ export class GainNodeView extends LitElement {
     }
 
     render() {
-        // TODO: DRY
-        const isConnectedOut = this.connections.some((connection) => connection[0] === this.graphNode.id);
-        const isConnectedIn = this.connections.some((connection) => connection[1] === this.graphNode.id);
         const isGainModConnected = this.connections.some((connection) => connection[1] === `${this.graphNode.id}-gain`);
 
         return html`<div class="node">
