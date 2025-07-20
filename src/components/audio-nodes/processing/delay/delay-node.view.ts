@@ -17,7 +17,7 @@ export class DelayNodeView extends LitElement {
     private updateDelayTime(value: number) {
         this.updateNode({
             ...this.graphNode,
-            node: updateAudioParamValue(this.graphNode.node as DelayNode, { delayTime: value } as Partial<Record<keyof DelayNode, number>>),
+            node: updateAudioParamValue(this.graphNode.node, { delayTime: value } as Partial<Record<keyof DelayNode, number>>),
         });
     }
 
@@ -36,7 +36,7 @@ export class DelayNodeView extends LitElement {
                     .max=${10}
                     .step=${0.01}
                     .unit=${"delay"}
-                    .updateValue=${(value: number) => this.updateDelayTime(value)}
+                    .handleInput=${(event: Event) => this.updateDelayTime((event.target as HTMLInputElement).valueAsNumber)}
                 ></range-slider-view>
                 <range-slider-view
                     .value=${this.graphNode.gainNode.gain.value.toFixed(2).toString()}
@@ -44,7 +44,7 @@ export class DelayNodeView extends LitElement {
                     .max=${1}
                     .step=${0.001}
                     .unit=${"gain"}
-                    .updateValue=${(value: number) => this.updateGain(value)}
+                    .handleInput=${(event: Event) => this.updateGain((event.target as HTMLInputElement).valueAsNumber)}
                 ></range-slider-view>
             </div>
             <div class="button-container">

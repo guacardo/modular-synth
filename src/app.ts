@@ -69,8 +69,7 @@ export class AppView extends LitElement {
 
         this._connectionUnsubscribe = this._connectionRepo.onConnectionEvent((event) => {
             if (event.type === "connection-ready") {
-                this._audioGraphRepo.connect(event.connection);
-                this.connections = this._connectionRepo.add(event.connection);
+                this.createConnections(event.connection);
             }
         });
     }
@@ -78,6 +77,11 @@ export class AppView extends LitElement {
     disconnectedCallback(): void {
         super.disconnectedCallback();
         this._connectionUnsubscribe?.();
+    }
+
+    private createConnections(connection: [ConnectionComponents, ConnectionComponents]) {
+        this._audioGraphRepo.connect(connection);
+        this.connections = this._connectionRepo.add(connection);
     }
 
     readonly handleAddNode = (type: AudioNodeType, position: Position) => {
@@ -142,28 +146,19 @@ export class AppView extends LitElement {
             const NodeClass = nodeClassMap[node.type];
             if (!NodeClass) throw new Error(`Unknown node type: ${node.type}`);
             const newNode = new NodeClass(audioContext, node.position, node.id);
-            newNode.isSelected = node.isSelected;
             return newNode;
         });
         this.audioGraph = newGraph;
-        // Reconnect audio nodes in the Web Audio graph
-        connections.forEach(([sourceId, destinationId]) => {
-            const source = newGraph.find((node) => node.id === sourceId);
-            const destination = newGraph.find((node) => node.id === destinationId);
-            if (source && destination) {
-                source.connectTo?.(destination);
-            } else {
-                // todo: connect to AudioParam, not just AudioNode
-                console.log("could not find connection", sourceId, destinationId);
-            }
+        connections.forEach((connection) => {
+            this.createConnections(connection);
         });
         this.creationCounter = this.audioGraph.length + 1;
+        console.log("Audio graph loaded", this.audioGraph, this.connections);
     };
 
     render() {
         return html` <div class="app">
             <coaching-text-view .audioGraph=${this.audioGraph} .connections=${this.connections}></coaching-text-view>
-            <canvas-overlay .connections=${this.connections}></canvas-overlay>
             <willys-rack-shack-view
                 .audioGraph=${this.audioGraph}
                 .connections=${this.connections}
@@ -185,6 +180,7 @@ export class AppView extends LitElement {
                 .loadAudioGraph=${this.handleLoadAudioGraph}
                 .clearAudioGraph=${this.clearAudioGraph}
             ></local-storage-view>
+            <canvas-overlay .connections=${this.connections}></canvas-overlay>
         </div>`;
     }
 }

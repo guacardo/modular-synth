@@ -1,4 +1,4 @@
-import { AudioGraphNode, Position, KeyboardAudioEvent, updateAudioParamValue, AudioNodeType, AudioGraphId } from "../../../../app/util";
+import { AudioGraphNode, Position, KeyboardAudioEvent, updateAudioParamValue, AudioNodeType, AudioGraphId, IOLabel } from "../../../../app/util";
 
 export class DelayGraphNode implements AudioGraphNode {
     id: AudioGraphId;
@@ -43,19 +43,28 @@ export class DelayGraphNode implements AudioGraphNode {
     }
 
     connectTo(target: AudioNode | AudioParam | undefined): boolean {
-        if (!target) return false;
-        try {
-            if (target instanceof AudioNode) {
-                this.node.connect(target);
-            } else if (target instanceof AudioParam) {
-                (this.node as any).connect(target);
-            } else {
-                return false;
-            }
-            return true;
-        } catch (e) {
-            console.error("Failed to connect:", e);
+        if (target instanceof AudioNode) {
+            this.node.connect(target);
+        } else if (target instanceof AudioParam) {
+            this.node.connect(target);
+        } else {
             return false;
+        }
+        return true;
+    }
+
+    requestConnect(target: IOLabel): AudioNode | AudioParam | undefined {
+        switch (target) {
+            case "in":
+                return this.node;
+            case "out":
+                console.warn("Can not connect to delay node output");
+                return undefined;
+            case "mod":
+                return this.gainNode.gain;
+            default:
+                console.warn(`Unknown target label: ${target}`);
+                return undefined;
         }
     }
 
