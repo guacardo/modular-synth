@@ -1,6 +1,6 @@
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { AudioGraphNode, updateAudioParamValue } from "../../../../app/util";
+import { AudioGraphNode, ConnectionComponents, updateAudioParamValue } from "../../../../app/util";
 import { StereoPannerGraphNode } from "./stereo-panner-graph-node";
 import { audioNodeStyles } from "../../audio-node-styles";
 
@@ -12,12 +12,9 @@ export class StereoPannerView extends LitElement {
     @property({ attribute: false, type: Array }) readonly connections: Array<[string, string]>;
     @property({ attribute: false }) readonly updateNode: (node: AudioGraphNode) => void;
     @property({ attribute: false }) readonly removeNode: (node: AudioGraphNode) => void;
-    @property({ attribute: false }) readonly updatePendingConnectionState: (id: string) => void;
+    @property({ attribute: false }) readonly updatePendingConnectionState: (connection: ConnectionComponents) => void;
 
     render() {
-        // TODO: DRY
-        const isConnectedOut = this.connections.some((connection) => connection[0] === this.graphNode.id);
-        const isConnectedIn = this.connections.some((connection) => connection[1] === this.graphNode.id);
         return html`
             <div class="node">
                 <h2 class="node-title"><span>stereo panner</span></h2>
@@ -45,13 +42,13 @@ export class StereoPannerView extends LitElement {
                         .graphNode=${this.graphNode}
                         .updatePendingConnectionState=${this.updatePendingConnectionState}
                         .label=${"in"}
-                        .isConnected=${isConnectedIn}
+                        .isConnected=${false}
                     ></input-output-jack-view>
                     <input-output-jack-view
                         .graphNode=${this.graphNode}
                         .updatePendingConnectionState=${this.updatePendingConnectionState}
                         .label=${"out"}
-                        .isConnected=${isConnectedOut}
+                        .isConnected=${false}
                     ></input-output-jack-view>
                 </div>
             </div>

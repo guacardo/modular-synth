@@ -1,6 +1,6 @@
-import { AudioGraphId, AudioGraphNodeBase, AudioNodeType, IOLabel, Position } from "../../../../app/util";
+import { AudioGraphId, AudioGraphNode, AudioNodeType, IOLabel, Position } from "../../../../app/util";
 
-export class BiquadFilterGraphNode extends AudioGraphNodeBase {
+export class BiquadFilterGraphNode implements AudioGraphNode {
     id: AudioGraphId;
     position: Position;
     isSelected = false;
@@ -21,7 +21,6 @@ export class BiquadFilterGraphNode extends AudioGraphNodeBase {
     }
 
     constructor(context: AudioContext, position: Position, id: AudioGraphId) {
-        super();
         this.node = context.createBiquadFilter();
         this.position = position;
         this.id = id;

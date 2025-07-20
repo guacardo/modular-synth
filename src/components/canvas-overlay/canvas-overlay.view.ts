@@ -1,13 +1,13 @@
 import { html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { styles } from "./canvas-overlay.styles";
-import { findDOMCoordinates } from "../../app/util";
+import { ConnectionComponents, findDOMCoordinates } from "../../app/util";
 
 @customElement("canvas-overlay")
 export class CanvasOverlay extends LitElement {
     static styles = [styles];
 
-    @property({ type: Array }) connections: Array<[string, string]>;
+    @property({ type: Array }) connections: Array<[ConnectionComponents, ConnectionComponents]>;
 
     resizeObserver?: ResizeObserver;
 
@@ -55,9 +55,8 @@ export class CanvasOverlay extends LitElement {
         ctx.stroke();
 
         for (const [sourceId, targetId] of this.connections) {
-            console.log("drawing connection", sourceId, targetId);
-            const [sourceX, sourceY] = findDOMCoordinates(sourceId);
-            const [targetX, targetY] = findDOMCoordinates(targetId);
+            const [sourceX, sourceY] = findDOMCoordinates(sourceId.join("-"));
+            const [targetX, targetY] = findDOMCoordinates(targetId.join("-"));
 
             // Calculate the control point for the bezier curve to simulate cable sag
             const midX = (sourceX + targetX) / 2;

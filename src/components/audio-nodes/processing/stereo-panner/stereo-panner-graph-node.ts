@@ -18,14 +18,21 @@ export class StereoPannerGraphNode implements AudioGraphNode {
         ]);
     }
 
-    connectTo(target: AudioGraphNode | AudioParam): boolean {
-        if ("node" in target && target.node instanceof AudioNode && target.node.numberOfInputs > 0) {
-            this.node.connect(target.node);
+    connectTo(target: AudioNode | AudioParam | undefined): boolean {
+        if (!target) return false;
+        try {
+            if (target instanceof AudioNode) {
+                this.node.connect(target);
+            } else if (target instanceof AudioParam) {
+                (this.node as any).connect(target);
+            } else {
+                return false;
+            }
             return true;
-        } else if (target instanceof AudioParam) {
-            this.node.connect(target);
+        } catch (e) {
+            console.error("Failed to connect:", e);
+            return false;
         }
-        return false;
     }
 
     constructor(context: AudioContext, position: Position, id: AudioGraphId) {

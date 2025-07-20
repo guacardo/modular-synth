@@ -1,7 +1,7 @@
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { audioNodeStyles } from "../../audio-node-styles";
-import { AudioGraphNode, updateAudioParamValue } from "../../../../app/util";
+import { AudioGraphNode, ConnectionComponents, updateAudioParamValue } from "../../../../app/util";
 import { classMap } from "lit/directives/class-map.js";
 import { OscillatorGraphNode } from "./oscillator-graph-node";
 
@@ -16,7 +16,7 @@ export class OscillatorNodeView extends LitElement {
     @property({ attribute: false, type: Array }) readonly connections: Array<[string, string]>;
     @property({ attribute: false }) readonly updateNode: (node: AudioGraphNode) => void;
     @property({ attribute: false }) readonly removeNode: (node: AudioGraphNode) => void;
-    @property({ attribute: false }) readonly updatePendingConnectionState: (id: string) => void;
+    @property({ attribute: false }) updatePendingConnectionState: (connection: ConnectionComponents) => void;
 
     private updateOscillatorParam<T extends keyof OscillatorNode>(property: T, value: number | OscillatorType) {
         this.updateNode({ ...this.graphNode, node: updateAudioParamValue(this.graphNode.node, { [property]: value }) });
@@ -51,7 +51,6 @@ export class OscillatorNodeView extends LitElement {
     }
 
     render() {
-        const isConnected = this.connections.some((connection) => connection[0] === this.graphNode.id || connection[1] === this.graphNode.id);
         return html`<div class="node">
             <h2 class="node-title"><span>oscillator</span></h2>
             <div class="sliders">
@@ -115,7 +114,7 @@ export class OscillatorNodeView extends LitElement {
                     .graphNode=${this.graphNode}
                     .updatePendingConnectionState=${this.updatePendingConnectionState}
                     .label=${"out"}
-                    .isConnected=${isConnected}
+                    .isConnected=${false}
                 ></input-output-jack-view>
             </div>
         </div>`;

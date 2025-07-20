@@ -45,34 +45,8 @@ export interface AudioGraphNode {
     node: AudioNode;
     type: AudioNodeType;
     getKeyboardEvents?: (updateNode: (node: AudioGraphNode) => void) => Map<string, KeyboardAudioEvent>;
-    connectTo: (target: AudioNode | AudioParam | undefined) => boolean;
-    requestConnect: (target: IOLabel) => AudioNode | AudioParam | undefined;
-}
-
-export abstract class AudioGraphNodeBase implements AudioGraphNode {
-    abstract id: AudioGraphId;
-    abstract position: Position;
-    abstract isSelected: boolean;
-    abstract node: AudioNode;
-    abstract type: AudioNodeType;
-    getKeyboardEvents?: (updateNode: (node: AudioGraphNode) => void) => Map<string, KeyboardAudioEvent>;
-    abstract requestConnect(target: IOLabel): AudioNode | AudioParam | undefined;
-    connectTo(target: AudioNode | AudioParam | undefined): boolean {
-        if (!target) return false;
-        try {
-            if (target instanceof AudioNode) {
-                this.node.connect(target);
-            } else if (target instanceof AudioParam) {
-                (this.node as any).connect(target);
-            } else {
-                return false;
-            }
-            return true;
-        } catch (e) {
-            console.error("Failed to connect:", e);
-            return false;
-        }
-    }
+    connectTo?: (target: AudioNode | AudioParam | undefined) => boolean;
+    requestConnect?: (target: IOLabel) => AudioNode | AudioParam | undefined;
 }
 
 export function updateAudioParamValue<T extends AudioNode>(node: T, properties: AudioNodeProperties): AudioNode {

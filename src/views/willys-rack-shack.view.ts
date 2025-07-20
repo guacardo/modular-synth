@@ -1,6 +1,6 @@
 import { html, LitElement, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { AudioGraphNode, AudioNodeType, Position } from "../app/util";
+import { AudioGraphNode, AudioNodeType, ConnectionComponents, Position } from "../app/util";
 import { OscillatorGraphNode } from "../components/audio-nodes/source/oscillator-node/oscillator-graph-node";
 import { willysRackShackStyles } from "./willys-rack-shack.styles";
 import { DelayGraphNode } from "../components/audio-nodes/processing/delay/delay-graph-node";
@@ -20,7 +20,7 @@ export class WillysRackShackView extends LitElement {
     @property({ attribute: false }) readonly addNode: (type: AudioNodeType, position: Position) => void;
     @property({ attribute: false }) readonly updateNode: (node: AudioGraphNode) => void;
     @property({ attribute: false }) readonly removeNode: (node: AudioGraphNode) => void;
-    @property({ attribute: false }) readonly updatePendingConnectionState: (id: string) => void;
+    @property({ attribute: false }) readonly updatePendingConnectionState: (connection: ConnectionComponents) => void;
 
     private renderNodeView(graphNode: AudioGraphNode): TemplateResult {
         if (graphNode instanceof GainGraphNode) {

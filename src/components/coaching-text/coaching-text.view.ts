@@ -1,6 +1,6 @@
 import { html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { AudioGraphNode } from "../../app/util";
+import { AudioGraphNode, ConnectionComponents } from "../../app/util";
 import { OscillatorGraphNode } from "../audio-nodes/source/oscillator-node/oscillator-graph-node";
 import { coachingTextStyles } from "./coaching-text.styles";
 import { appStyles } from "../../styles/app-styles";
@@ -12,7 +12,7 @@ export class CoachingTextView extends LitElement {
     static styles = [coachingTextStyles, appStyles];
 
     @property({ type: Array }) audioGraph: AudioGraphNode[];
-    @property({ type: Array }) connections: Array<[string, string]>;
+    @property({ type: Array }) connections: Array<[ConnectionComponents, ConnectionComponents]>;
 
     headerText = () => {
         let text = "Welcome to Willy's Rack Shack";

@@ -42,15 +42,21 @@ export class DelayGraphNode implements AudioGraphNode {
         ]);
     }
 
-    connectTo(target: AudioGraphNode | AudioParam): boolean {
-        if ("node" in target && target.node instanceof AudioNode && target.node.numberOfInputs > 0) {
-            this.gainNode.connect(target.node);
+    connectTo(target: AudioNode | AudioParam | undefined): boolean {
+        if (!target) return false;
+        try {
+            if (target instanceof AudioNode) {
+                this.node.connect(target);
+            } else if (target instanceof AudioParam) {
+                (this.node as any).connect(target);
+            } else {
+                return false;
+            }
             return true;
-        } else if (target instanceof AudioParam) {
-            this.gainNode.connect(target);
-            return true;
+        } catch (e) {
+            console.error("Failed to connect:", e);
+            return false;
         }
-        return false;
     }
 
     updateGain(value: number): void {

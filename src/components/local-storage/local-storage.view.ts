@@ -1,7 +1,7 @@
 import { html, LitElement } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { localStorageStyles } from "./local-storage.styles";
-import { AudioGraphNode } from "../../app/util";
+import { AudioGraphNode, ConnectionComponents } from "../../app/util";
 
 @customElement("local-storage-view")
 export class LocalStorageView extends LitElement {
@@ -9,8 +9,8 @@ export class LocalStorageView extends LitElement {
 
     @state() keyName: string = "";
     @property({ type: Array }) audioGraph: AudioGraphNode[] = [];
-    @property({ type: Array }) connections: Array<[string, string]> = [];
-    @property({ attribute: false }) loadAudioGraph: (audioGraph: AudioGraphNode[], connections: Array<[string, string]>) => void;
+    @property({ type: Array }) connections: Array<[ConnectionComponents, ConnectionComponents]> = [];
+    @property({ attribute: false }) loadAudioGraph: (audioGraph: AudioGraphNode[], connections: Array<[ConnectionComponents, ConnectionComponents]>) => void;
     @property({ attribute: false }) clearAudioGraph: () => void;
 
     save = () => {
@@ -22,7 +22,7 @@ export class LocalStorageView extends LitElement {
     load = (key: string) => {
         interface StorageData {
             graph: AudioGraphNode[];
-            connections: Array<[string, string]>;
+            connections: Array<[ConnectionComponents, ConnectionComponents]>;
         }
         const raw = localStorage.getItem(key);
         let data: StorageData = { graph: [], connections: [] };

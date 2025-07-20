@@ -1,6 +1,6 @@
-import { AudioGraphId, AudioGraphNodeBase, AudioNodeType, IOLabel, Position } from "../../../../app/util";
+import { AudioGraphId, AudioGraphNode, AudioNodeType, IOLabel, Position } from "../../../../app/util";
 
-export class GainGraphNode extends AudioGraphNodeBase {
+export class GainGraphNode implements AudioGraphNode {
     id: AudioGraphId;
     position: Position;
     isSelected = false;
@@ -22,8 +22,24 @@ export class GainGraphNode extends AudioGraphNodeBase {
         }
     }
 
+    connectTo(target: AudioNode | AudioParam | undefined): boolean {
+        if (!target) return false;
+        try {
+            if (target instanceof AudioNode) {
+                this.node.connect(target);
+            } else if (target instanceof AudioParam) {
+                this.node.connect(target);
+            } else {
+                return false;
+            }
+            return true;
+        } catch (e) {
+            console.error("Failed to connect:", e);
+            return false;
+        }
+    }
+
     constructor(context: AudioContext, position: Position, id: AudioGraphId) {
-        super();
         this.node = context.createGain();
         this.position = position;
         this.id = id;

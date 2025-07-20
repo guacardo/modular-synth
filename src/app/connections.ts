@@ -1,69 +1,70 @@
-import { ImmutableRepository } from "./util";
+import { AudioGraphId, ConnectionComponents, ImmutableRepository } from "./util";
 
 export interface ConnectionEvent {
     type: "connection-ready" | "connection-cleared";
-    connection: [string, string];
+    connection: [ConnectionComponents, ConnectionComponents];
 }
 
-export class ConnectionRepo implements ImmutableRepository<[string, string]> {
-    private connections: Array<[string, string]> = [];
-    private pendingConnectionState: [string, string] = ["", ""];
+export class ConnectionRepo implements ImmutableRepository<[ConnectionComponents, ConnectionComponents]> {
+    private connections: Array<[ConnectionComponents, ConnectionComponents]> = [];
+    private pendingConnectionState: [ConnectionComponents?, ConnectionComponents?] = [undefined, undefined];
     private created: number = 0;
     private eventListeners: ((event: ConnectionEvent) => void)[] = [];
 
-    add(connection: [string, string]): Array<[string, string]> {
+    add(connection: [ConnectionComponents, ConnectionComponents]): Array<[ConnectionComponents, ConnectionComponents]> {
         this.connections = [...this.connections, connection];
         this.created++;
         return this.connections;
     }
 
-    getAll(): Array<[string, string]> {
+    getAll(): Array<[ConnectionComponents, ConnectionComponents]> {
         return this.connections;
     }
 
-    update(item: [string, string]): Array<[string, string]> {
+    update(item: [ConnectionComponents, ConnectionComponents]): Array<[ConnectionComponents, ConnectionComponents]> {
         console.log(item);
         return this.connections;
     }
 
-    findById(id: string): [string, string] | undefined {
+    findById(id: string): [ConnectionComponents, ConnectionComponents] | undefined {
         console.log(id);
         return undefined;
     }
 
-    remove(connection: [string, string]): [string, string][] {
+    remove(connection: [ConnectionComponents, ConnectionComponents]): [ConnectionComponents, ConnectionComponents][] {
         this.connections = this.connections.filter((c) => c !== connection);
         return this.connections;
     }
 
-    removeAllById(id: string): [string, string][] {
-        this.connections = this.connections.filter((c) => c[0] !== id && c[1] !== id);
+    removeAllById(id: AudioGraphId): [ConnectionComponents, ConnectionComponents][] {
+        this.connections = this.connections.filter((c) => !(c[0][0] === id[0] && c[0][1] === id[1]) && !(c[1][0] === id[0] && c[1][1] === id[1]));
         return this.connections;
     }
 
-    getPendingConnectionState(): [string, string] {
+    getPendingConnectionState(): [ConnectionComponents?, ConnectionComponents?] {
         return this.pendingConnectionState;
     }
 
-    updatePendingConnectionState(id: string): [string, string] {
+    updatePendingConnectionState(components: ConnectionComponents): [ConnectionComponents?, ConnectionComponents?] {
+        console.log(components);
         // select source
-        if (this.pendingConnectionState[0] === "") {
-            this.pendingConnectionState = [id, ""];
+        if (this.pendingConnectionState[0] === undefined) {
+            this.pendingConnectionState = [components, undefined];
             // deselect source
-        } else if (this.pendingConnectionState[0] === id) {
-            this.pendingConnectionState = ["", ""];
+        } else if (this.connectionComponentsEqual(this.pendingConnectionState[0], components)) {
+            this.pendingConnectionState = [undefined, undefined];
             // select target
-        } else if (this.pendingConnectionState[0] !== "") {
+        } else if (this.pendingConnectionState[0] !== undefined) {
             this.emit({
                 type: "connection-ready",
-                connection: [this.pendingConnectionState[0], id],
+                connection: [this.pendingConnectionState[0], components],
             });
-            this.pendingConnectionState = ["", ""];
+            this.pendingConnectionState = [undefined, undefined];
         }
         return this.pendingConnectionState;
     }
 
-    clear(): Array<[string, string]> {
+    clear(): Array<[ConnectionComponents, ConnectionComponents]> {
         this.connections = [];
         return this.connections;
     }
@@ -81,5 +82,10 @@ export class ConnectionRepo implements ImmutableRepository<[string, string]> {
 
     private emit(event: ConnectionEvent): void {
         this.eventListeners.forEach((listener) => listener(event));
+    }
+
+    private connectionComponentsEqual(a?: ConnectionComponents, b?: ConnectionComponents): boolean {
+        if (!a || !b) return false;
+        return a[0] === b[0] && a[1] === b[1] && a[2] === b[2];
     }
 }

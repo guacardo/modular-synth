@@ -1,7 +1,7 @@
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { DelayDenyComposeGraphNode } from "./delay-deny-compose-node";
-import { AudioGraphNode, updateAudioParamValue } from "../../../../app/util";
+import { AudioGraphNode, ConnectionComponents, updateAudioParamValue } from "../../../../app/util";
 import { settableOscillatorTypes } from "../../source/oscillator-node/oscillator-node.view";
 import { audioNodeStyles } from "../../audio-node-styles";
 import { classMap } from "lit/directives/class-map.js";
@@ -14,7 +14,7 @@ export class DelayDenyComposeView extends LitElement {
     @property({ attribute: false, type: Array }) readonly connections: Array<[string, string]>;
     @property({ attribute: false }) readonly updateNode: (node: AudioGraphNode) => void;
     @property({ attribute: false }) readonly removeNode: (node: AudioGraphNode) => void;
-    @property({ attribute: false }) readonly updatePendingConnectionState: (id: string) => void;
+    @property({ attribute: false }) updatePendingConnectionState: (connection: ConnectionComponents) => void;
 
     private updateAudioParam<T extends keyof DelayDenyComposeGraphNode, K extends keyof DelayDenyComposeGraphNode[T]>(
         nodeType: T,
@@ -53,9 +53,6 @@ export class DelayDenyComposeView extends LitElement {
     }
 
     render() {
-        // TODO: DRY
-        const isConnectedOut = this.connections.some((connection) => connection[0] === this.graphNode.id);
-        const isConnectedIn = this.connections.some((connection) => connection[1] === this.graphNode.id);
         const isGainModConnected = this.connections.some((connection) => connection[1] === `${this.graphNode.id}-gain`);
         return html`<div class="node">
             <h2 class="node-title"><span>delay-deny-compose</span></h2>
@@ -133,7 +130,7 @@ export class DelayDenyComposeView extends LitElement {
                         .graphNode=${this.graphNode}
                         .updatePendingConnectionState=${this.updatePendingConnectionState}
                         .label=${"in"}
-                        .isConnected=${isConnectedIn}
+                        .isConnected=${false}
                     ></input-output-jack-view>
                     <!-- GAIN MODULATION -->
                     <input-output-jack-view
@@ -149,7 +146,7 @@ export class DelayDenyComposeView extends LitElement {
                         .graphNode=${this.graphNode}
                         .updatePendingConnectionState=${this.updatePendingConnectionState}
                         .label=${"out"}
-                        .isConnected=${isConnectedOut}
+                        .isConnected=${false}
                     ></input-output-jack-view>
                 </div> </div
         ></div>`;

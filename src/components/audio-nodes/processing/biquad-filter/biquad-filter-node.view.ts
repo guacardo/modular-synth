@@ -1,7 +1,7 @@
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { audioNodeStyles } from "../../audio-node-styles";
-import { AudioGraphNode, updateAudioParamValue } from "../../../../app/util";
+import { AudioGraphNode, ConnectionComponents, updateAudioParamValue } from "../../../../app/util";
 import { BiquadFilterGraphNode } from "./biquad-filter-graph-node";
 
 const settableBiquadFilterTypes: readonly BiquadFilterType[] = [
@@ -23,7 +23,7 @@ export class BiquadFilterNodeView extends LitElement {
     @property({ type: Array }) connections: Array<[string, string]>;
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
     @property({ attribute: false }) removeNode: (node: AudioGraphNode) => void;
-    @property({ attribute: false }) updatePendingConnectionState: (id: string) => void;
+    @property({ attribute: false }) updatePendingConnectionState: (connection: ConnectionComponents) => void;
 
     private updateBiquadFilterParam<T extends keyof BiquadFilterNode>(param: T, value: BiquadFilterType | number) {
         const node = updateAudioParamValue(this.graphNode.node, {

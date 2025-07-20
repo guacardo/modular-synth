@@ -1,6 +1,6 @@
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { AudioGraphNode } from "../../../../app/util";
+import { AudioGraphNode, ConnectionComponents } from "../../../../app/util";
 import { audioNodeStyles } from "../../audio-node-styles";
 import { AudioDestinationGraphNode } from "./audio-destination-graph-node";
 import { getAudioContext } from "../../../../app/audio-context";
@@ -11,12 +11,11 @@ export class AudioDestinationNodeView extends LitElement {
 
     @property({ type: Object, attribute: false }) graphNode: AudioDestinationGraphNode;
     @property({ type: Array }) connections: Array<[string, string]>;
-    @property({ attribute: false }) updatePendingConnectionState: (id: string) => void;
     @property({ attribute: false }) removeNode: (node: AudioGraphNode) => void;
+    @property({ attribute: false }) updatePendingConnectionState: (connection: ConnectionComponents) => void;
 
     render() {
         const audioContext = getAudioContext();
-        const isConnected = this.connections.some((connection) => connection[0] === this.graphNode.id || connection[1] === this.graphNode.id);
         return html`
             <div class="node">
                 <h2 class="node-title"><span>audio destination</span></h2>
@@ -32,7 +31,7 @@ export class AudioDestinationNodeView extends LitElement {
                         .graphNode=${this.graphNode}
                         .updatePendingConnectionState=${this.updatePendingConnectionState}
                         .label=${"in"}
-                        .isConnected=${isConnected}
+                        .isConnected=${false}
                     ></input-output-jack-view>
                 </div>
             </div>

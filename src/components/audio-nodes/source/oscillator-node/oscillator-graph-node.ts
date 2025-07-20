@@ -1,4 +1,4 @@
-import { AudioGraphNode, Position, KeyboardAudioEvent, updateAudioParamValue, AudioNodeType, AudioGraphId } from "../../../../app/util";
+import { AudioGraphNode, Position, KeyboardAudioEvent, updateAudioParamValue, AudioNodeType, AudioGraphId, IOLabel } from "../../../../app/util";
 
 export class OscillatorGraphNode implements AudioGraphNode {
     id: AudioGraphId;
@@ -42,15 +42,22 @@ export class OscillatorGraphNode implements AudioGraphNode {
         ]);
     }
 
-    connectTo(target: AudioGraphNode | AudioParam): boolean {
-        if ("node" in target && target.node instanceof AudioNode && target.node.numberOfInputs > 0) {
-            this.gainNode.connect(target.node);
-            return true;
+    connectTo(target: AudioNode | AudioParam | undefined): boolean {
+        console.log("OscillatorGraphNode connectTo", target);
+        if (target instanceof AudioNode) {
+            this.node.connect(target);
         } else if (target instanceof AudioParam) {
-            this.gainNode.connect(target);
-            return true;
+            this.node.connect(target);
+        } else {
+            console.error("Failed to connect");
+            return false;
         }
-        return false;
+        return true;
+    }
+
+    requestConnect(target: IOLabel): AudioNode | AudioParam | undefined {
+        console.warn("Oscillator nodes do not support input connections.", target);
+        return undefined; // Oscillator nodes do not have input connections, so this is not applicable.
     }
 
     updateGain(value: number): void {

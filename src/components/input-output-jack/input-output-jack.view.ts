@@ -2,7 +2,7 @@ import { html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { styles } from "./input-output-jack.styles";
 import { classMap } from "lit/directives/class-map.js";
-import { AudioGraphNode, AudioParamName, IOLabel } from "../../app/util";
+import { AudioGraphNode, AudioParamName, ConnectionComponents, IOLabel } from "../../app/util";
 
 @customElement("input-output-jack-view")
 export class InputOutputJackView extends LitElement {
@@ -15,13 +15,13 @@ export class InputOutputJackView extends LitElement {
     @property({ attribute: false, type: Object }) graphNode: AudioGraphNode;
     @property({ attribute: false, type: Object }) param?: AudioParam;
     @property({ attribute: false, type: String }) paramName?: AudioParamName;
-    @property({ attribute: false }) updatePendingConnectionState: (id: string) => void;
+    @property({ attribute: false }) updatePendingConnectionState: (components: ConnectionComponents) => void;
 
     render() {
         return html`
             <div class="io-container">
                 <button
-                    id=${`${this.graphNode.id}-${this.paramName !== undefined ? this.paramName : this.label}`}
+                    id=${`${this.graphNode.id.join("-")}-${this.paramName !== undefined ? this.paramName : this.label}`}
                     type="button"
                     class=${classMap({
                         "io-button": true,
@@ -29,7 +29,7 @@ export class InputOutputJackView extends LitElement {
                         "connection-source": this.isConnectionSource,
                         connected: this.isConnected,
                     })}
-                    @click=${() => this.updatePendingConnectionState(`${this.graphNode.id}-${this.label}`)}
+                    @click=${() => this.updatePendingConnectionState([...this.graphNode.id, this.label])}
                 ></button>
                 <label class="io-label">${this.label}</label>
             </div>

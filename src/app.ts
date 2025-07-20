@@ -60,8 +60,8 @@ export class AppView extends LitElement {
     private _connectionUnsubscribe?: () => void;
 
     @state() audioGraph: AudioGraphNode[] = this._audioGraphRepo.getAll();
-    @state() connections: Array<[string, string]> = this._connectionRepo.getAll();
-    @state() pendingConnectionState: [string, string] = this._connectionRepo.getPendingConnectionState();
+    @state() connections: Array<[ConnectionComponents, ConnectionComponents]> = this._connectionRepo.getAll();
+    @state() pendingConnectionState = this._connectionRepo.getPendingConnectionState();
     @state() creationCounter: number = 0;
 
     connectedCallback(): void {
@@ -69,10 +69,7 @@ export class AppView extends LitElement {
 
         this._connectionUnsubscribe = this._connectionRepo.onConnectionEvent((event) => {
             if (event.type === "connection-ready") {
-                this._audioGraphRepo.connect([
-                    event.connection[0].split("-", 3) as ConnectionComponents,
-                    event.connection[1].split("-", 3) as ConnectionComponents,
-                ]);
+                this._audioGraphRepo.connect(event.connection);
                 this.connections = this._connectionRepo.add(event.connection);
             }
         });
@@ -96,8 +93,8 @@ export class AppView extends LitElement {
         this.audioGraph = this._audioGraphRepo.update(node);
     };
 
-    readonly handleUpdateNodeConnect = (id: string) => {
-        this.pendingConnectionState = this._connectionRepo.updatePendingConnectionState(id);
+    readonly handleUpdateNodeConnect = (connection: ConnectionComponents) => {
+        this.pendingConnectionState = this._connectionRepo.updatePendingConnectionState(connection);
     };
 
     readonly clearAudioGraph = () => {
@@ -126,7 +123,7 @@ export class AppView extends LitElement {
     }
 
     // TODO: clean up/split apart..multiple responsibilities here.
-    readonly handleLoadAudioGraph = (audioGraph: AudioGraphNode[], connections: Array<[string, string]>) => {
+    readonly handleLoadAudioGraph = (audioGraph: AudioGraphNode[], connections: Array<[ConnectionComponents, ConnectionComponents]>) => {
         const audioContext = getAudioContext();
         type AudioGraphNodeSerialized = AudioGraphNode & { type: AudioNodeType };
         const nodeClassMap: Record<AudioNodeType, any> = {

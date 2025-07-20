@@ -64,7 +64,8 @@ export class AudioGraphRepo implements ImmutableRepository<AudioGraphNode> {
     }
 
     findById(id: AudioGraphId): AudioGraphNode | undefined {
-        return this.nodes.find((n) => n.id === id);
+        console.log("findById", id, this.nodes);
+        return this.nodes.find((n) => n.id[0] === id[0] && n.id[1] === id[1]);
     }
 
     findParamInNode(node: AudioGraphNode, paramName: string): AudioParam | undefined {
@@ -99,11 +100,12 @@ export class AudioGraphRepo implements ImmutableRepository<AudioGraphNode> {
     connect(connection: [ConnectionComponents, ConnectionComponents]): void {
         const [sourceIndex, sourceType, sourceParam]: ConnectionComponents = connection[0];
         const [targetIndex, targetType, targetParam]: ConnectionComponents = connection[1];
-        console.log("connection parts", sourceIndex, sourceType, sourceParam, targetIndex, targetType, targetParam);
         const source = this.findById([sourceIndex, sourceType]);
         const target = this.findById([targetIndex, targetType]);
-        if (source) {
-            source.connectTo?.(target.requestConnect?.(targetParam));
+        if (source && target) {
+            console.log("connection parts", sourceIndex, sourceType, sourceParam, targetIndex, targetType, targetParam);
+            const success = source.connectTo?.(target.requestConnect?.(targetParam));
+            console.log("connect", connection, success);
         } else {
             console.error("could not find connection", [sourceIndex, sourceType, sourceParam], [targetIndex, targetType, targetParam]);
         }

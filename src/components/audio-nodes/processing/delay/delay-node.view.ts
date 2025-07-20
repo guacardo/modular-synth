@@ -1,7 +1,7 @@
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { DelayGraphNode } from "./delay-graph-node";
-import { AudioGraphNode, updateAudioParamValue } from "../../../../app/util";
+import { AudioGraphNode, ConnectionComponents, updateAudioParamValue } from "../../../../app/util";
 import { audioNodeStyles } from "../../audio-node-styles";
 
 @customElement("delay-node-view")
@@ -12,7 +12,7 @@ export class DelayNodeView extends LitElement {
     @property({ attribute: false, type: Array }) connections: Array<[string, string]>;
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
     @property({ attribute: false }) removeNode: (node: AudioGraphNode) => void;
-    @property({ attribute: false }) readonly updatePendingConnectionState: (id: string) => void;
+    @property({ attribute: false }) updatePendingConnectionState: (connection: ConnectionComponents) => void;
 
     private updateDelayTime(value: number) {
         this.updateNode({
@@ -27,8 +27,6 @@ export class DelayNodeView extends LitElement {
     }
 
     render() {
-        const isConnectedOut = this.connections.some((connection) => connection[0] === this.graphNode.id);
-        const isConnectedIn = this.connections.some((connection) => connection[1] === this.graphNode.id);
         return html`<div class="node">
             <h2 class="node-title"><span>delay</span></h2>
             <div class="sliders">
@@ -58,7 +56,7 @@ export class DelayNodeView extends LitElement {
                     .graphNode=${this.graphNode}
                     .updatePendingConnectionState=${this.updatePendingConnectionState}
                     .label=${"in"}
-                    .isConnected=${isConnectedIn}
+                    .isConnected=${false}
                 ></input-output-jack-view>
                 <!-- DELAY MODULATION -->
                 <input-output-jack-view
@@ -72,7 +70,7 @@ export class DelayNodeView extends LitElement {
                     .graphNode=${this.graphNode}
                     .updatePendingConnectionState=${this.updatePendingConnectionState}
                     .label=${"out"}
-                    .isConnected=${isConnectedOut}
+                    .isConnected=${false}
                 ></input-output-jack-view>
             </div>
         </div>`;

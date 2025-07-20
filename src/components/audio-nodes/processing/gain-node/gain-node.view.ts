@@ -1,7 +1,7 @@
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { audioNodeStyles } from "../../audio-node-styles";
-import { AudioGraphNode, updateAudioParamValue } from "../../../../app/util";
+import { AudioGraphNode, ConnectionComponents, updateAudioParamValue } from "../../../../app/util";
 import { GainGraphNode } from "./gain-graph-node";
 
 @customElement("gain-node-view")
@@ -13,7 +13,7 @@ export class GainNodeView extends LitElement {
     @property({ attribute: false, type: Array }) pendingConnectionState: [string, string];
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
     @property({ attribute: false }) removeNode: (node: AudioGraphNode) => void;
-    @property({ attribute: false }) updatePendingConnectionState: (id: string) => void;
+    @property({ attribute: false }) updatePendingConnectionState: (connection: ConnectionComponents) => void;
 
     private updateGain(value: number) {
         this.updateNode({
@@ -46,7 +46,7 @@ export class GainNodeView extends LitElement {
                     .graphNode=${this.graphNode}
                     .updatePendingConnectionState=${this.updatePendingConnectionState}
                     .label=${"in"}
-                    .isConnected=${isConnectedIn}
+                    .isConnected=${false}
                 ></input-output-jack-view>
                 <!-- GAIN MODULATION -->
                 <input-output-jack-view
@@ -63,7 +63,7 @@ export class GainNodeView extends LitElement {
                     .graphNode=${this.graphNode}
                     .updatePendingConnectionState=${this.updatePendingConnectionState}
                     .label=${"out"}
-                    .isConnected=${isConnectedOut}
+                    .isConnected=${false}
                 ></input-output-jack-view>
             </div>
         </div>`;
