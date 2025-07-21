@@ -7,18 +7,22 @@ import { ConnectionComponents, findDOMCoordinates } from "../../app/util";
 export class CanvasOverlay extends LitElement {
     static styles = [styles];
 
+    private canvas: HTMLCanvasElement;
+    private ctx: CanvasRenderingContext2D | null = null;
+
     @property({ type: Array }) connections: Array<[ConnectionComponents, ConnectionComponents]>;
 
     resizeObserver?: ResizeObserver;
 
     firstUpdated() {
+        this.canvas = this.renderRoot.querySelector("#canvas") as HTMLCanvasElement;
+        this.ctx = this.canvas.getContext("2d");
         this.resizeCanvas();
-        this.drawConnections();
         this.resizeObserver = new ResizeObserver(() => {
             this.resizeCanvas();
-            this.drawConnections();
         });
         this.resizeObserver.observe(this.renderRoot.querySelector(".canvas-overlay")!);
+        requestAnimationFrame(this.draw.bind(this));
     }
 
     disconnectedCallback() {
@@ -42,17 +46,14 @@ export class CanvasOverlay extends LitElement {
     }
 
     drawConnections() {
-        const canvas = this.renderRoot.querySelector("#canvas") as HTMLCanvasElement;
-        const ctx = canvas.getContext("2d");
-        if (!canvas || !ctx) return;
+        if (!this.canvas || !this.ctx) return;
 
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.beginPath();
-        ctx.moveTo(50, 50);
-        ctx.lineTo(100, 100);
-        ctx.strokeStyle = "#ff9800";
-        ctx.lineWidth = 2;
-        ctx.stroke();
+        this.ctx.beginPath();
+        this.ctx.moveTo(50, 50);
+        this.ctx.lineTo(100, 100);
+        this.ctx.strokeStyle = "#ff9800";
+        this.ctx.lineWidth = 2;
+        this.ctx.stroke();
 
         for (const [sourceId, targetId] of this.connections) {
             const [sourceX, sourceY] = findDOMCoordinates(sourceId.join("-"));
@@ -66,13 +67,20 @@ export class CanvasOverlay extends LitElement {
             const sag = Math.min(distance * 0.35, 100); // Max sag of 50px
             const controlY = Math.max(sourceY, targetY) + sag;
 
-            ctx.beginPath();
-            ctx.moveTo(sourceX, sourceY);
-            ctx.quadraticCurveTo(midX, controlY, targetX, targetY);
-            ctx.strokeStyle = "#ff9800";
-            ctx.lineWidth = 2;
-            ctx.stroke();
+            this.ctx.beginPath();
+            this.ctx.moveTo(sourceX, sourceY);
+            this.ctx.quadraticCurveTo(midX, controlY, targetX, targetY);
+            this.ctx.strokeStyle = "#ff9800";
+            this.ctx.lineWidth = 2;
+            this.ctx.stroke();
         }
+    }
+
+    draw() {
+        console.log("drawing");
+        this.ctx?.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.drawConnections();
+        requestAnimationFrame(this.draw.bind(this));
     }
 
     render() {

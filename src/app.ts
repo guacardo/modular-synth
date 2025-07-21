@@ -149,10 +149,11 @@ export class AppView extends LitElement {
             return newNode;
         });
         this.audioGraph = this._audioGraphRepo.setAll(newGraph);
+        this.creationCounter = this.audioGraph.length + 1;
         connections.forEach((connection) => {
             this.createConnections(connection);
         });
-        this.creationCounter = this.audioGraph.length + 1;
+
         console.log("Audio graph loaded", this.audioGraph, this.connections);
     };
 

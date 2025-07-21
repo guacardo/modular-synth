@@ -54,8 +54,6 @@ export class GainNodeView extends LitElement {
                     .updatePendingConnectionState=${this.updatePendingConnectionState}
                     .label=${"mod"}
                     .isConnected=${isGainModConnected}
-                    .param=${this.graphNode.node.gain}
-                    .paramName=${"gain"}
                 >
                 </input-output-jack-view>
                 <!-- OUT -->
