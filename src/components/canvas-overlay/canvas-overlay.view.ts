@@ -48,24 +48,23 @@ export class CanvasOverlay extends LitElement {
     drawConnections() {
         if (!this.canvas || !this.ctx) return;
 
-        this.ctx.beginPath();
-        this.ctx.moveTo(50, 50);
-        this.ctx.lineTo(100, 100);
-        this.ctx.strokeStyle = "#ff9800";
-        this.ctx.lineWidth = 2;
-        this.ctx.stroke();
+        const time = performance.now() * 0.003; // Animation time base
 
-        for (const [sourceId, targetId] of this.connections) {
+        for (const [i, [sourceId, targetId]] of this.connections.entries()) {
             const [sourceX, sourceY] = findDOMCoordinates(sourceId.join("-"));
             const [targetX, targetY] = findDOMCoordinates(targetId.join("-"));
 
             // Calculate the control point for the bezier curve to simulate cable sag
             const midX = (sourceX + targetX) / 2;
             const distance = Math.abs(targetX - sourceX);
-            // Create a sag that's proportional to the horizontal distance
-            // Quarter-inch cable sag - approximately 18 pixels for a 6-foot cable span
-            const sag = Math.min(distance * 0.35, 100); // Max sag of 50px
-            const controlY = Math.max(sourceY, targetY) + sag;
+            const sag = Math.min(distance * 0.35, 100);
+
+            // Jiggle effect: sine wave based on time and wire index
+            const jiggleAmplitude = Math.max(16, Math.min(distance * 0.16, 48));
+            const jiggle = Math.sin(time * 2 + i * 2.4) * jiggleAmplitude;
+
+            // Apply jiggle to controlY
+            const controlY = Math.max(sourceY, targetY) + sag + jiggle;
 
             this.ctx.beginPath();
             this.ctx.moveTo(sourceX, sourceY);
@@ -77,7 +76,6 @@ export class CanvasOverlay extends LitElement {
     }
 
     draw() {
-        console.log("drawing");
         this.ctx?.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.drawConnections();
         requestAnimationFrame(this.draw.bind(this));
