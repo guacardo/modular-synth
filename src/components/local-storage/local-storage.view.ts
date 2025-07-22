@@ -50,7 +50,7 @@ export class LocalStorageView extends LitElement {
         const value = (e.target as HTMLSelectElement).value;
         if (value.startsWith("preset:")) {
             const file = value.replace("preset:", "");
-            const res = await fetch(`/presets/${file}`);
+            const res = await fetch(`/modular-synth/presets/${file}`);
             if (res.ok) {
                 const data = await res.json();
                 this.loadAudioGraph(data.graph, data.connections);
