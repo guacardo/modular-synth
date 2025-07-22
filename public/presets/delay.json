@@ -1,0 +1,16 @@
+{
+  "graph": [
+    {"dutyCycle":0.51,"type":"oscillator","node":{},"gainNode":{},"position":[0,1],"id":[0,"oscillator"]},
+    {"isSelected":false,"type":"gain","node":{},"position":[1,1],"id":[1,"gain"]},
+    {"type":"delay","node":{},"gainNode":{},"position":[2,1],"id":[2,"delay"],"isSelected":false},
+    {"isSelected":false,"type":"gain","node":{},"position":[1,3],"id":[3,"gain"]},
+    {"isSelected":false,"type":"audioDestination","node":{},"position":[3,1],"id":[4,"audioDestination"]}
+  ],
+  "connections": [
+    [[0,"oscillator","out"],[1,"gain","in"]],
+    [[1,"gain","out"],[2,"delay","in"]],
+    [[2,"delay","out"],[3,"gain","in"]],
+    [[3,"gain","out"],[1,"gain","in"]],
+    [[1,"gain","out"],[4,"audioDestination","in"]]
+  ]
+}
