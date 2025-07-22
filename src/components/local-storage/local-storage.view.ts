@@ -1,4 +1,3 @@
-
 import { html, LitElement } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { localStorageStyles } from "./local-storage.styles";
@@ -54,10 +53,7 @@ export class LocalStorageView extends LitElement {
             const res = await fetch(`/presets/${file}`);
             if (res.ok) {
                 const data = await res.json();
-                this.loadAudioGraph(
-                    data.graph,
-                    data.connections
-                );
+                this.loadAudioGraph(data.graph, data.connections);
             }
         } else {
             this.load(value);
@@ -79,9 +75,7 @@ export class LocalStorageView extends LitElement {
                 <button type="button" class="button" @click=${this.clearAudioGraph}>Clear</button>
                 <select class="custom-select" @change=${(e: Event) => this.handleDropdownChange(e)}>
                     <option disabled selected value="">-- Select a synth or preset --</option>
-                    ${this.presetOptions.map(
-                        (preset) => html`<option value="preset:${preset.file}">[Preset] ${preset.name}</option>`
-                    )}
+                    ${this.presetOptions.map((preset) => html`<option value="preset:${preset.file}">[Preset] ${preset.name}</option>`)}
                     ${keys.map((key) => html`<option value="${key}" ?selected=${this.keyName === key}>${key}</option>`)}
                 </select>
             </div>
