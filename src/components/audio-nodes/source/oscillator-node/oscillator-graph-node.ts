@@ -1,14 +1,34 @@
-import { AudioGraphNode, Position, KeyboardAudioEvent, updateAudioParamValue, AudioNodeType, AudioGraphId, IOLabel } from "../../../../app/util";
+import {
+    AudioGraphId,
+    AudioGraphNode,
+    AudioGraphNodeState,
+    AudioNodeType,
+    IOLabel,
+    KeyboardAudioEvent,
+    Position,
+    updateAudioParamValue,
+} from "../../../../app/util";
+
+interface OscillatorGraphNodeState extends AudioGraphNodeState {
+    frequency: number;
+    type: OscillatorType;
+    gain: number;
+    dutyCycle: number;
+}
 
 export class OscillatorGraphNode implements AudioGraphNode {
     id: AudioGraphId;
-    position: Position;
-    isSelected: boolean;
     node: OscillatorNode;
     gainNode: GainNode;
-    keyboardEvents: Map<string, KeyboardAudioEvent>;
-    dutyCycle: number = 0.5;
     type: AudioNodeType = "oscillator";
+    state: OscillatorGraphNodeState = {
+        position: [0, 0],
+        isSelected: false,
+        frequency: 440,
+        type: "sine",
+        gain: 1,
+        dutyCycle: 0.5,
+    };
     getKeyboardEvents(updateNode: (node: AudioGraphNode) => void): Map<string, KeyboardAudioEvent> {
         return new Map<string, KeyboardAudioEvent>([
             ["a", { keydown: () => updateNode({ ...this, node: updateAudioParamValue(this.node, { frequency: 200 }) }) }],
@@ -61,7 +81,26 @@ export class OscillatorGraphNode implements AudioGraphNode {
     }
 
     updateGain(value: number): void {
-        this.gainNode.gain.setValueAtTime(value, this.gainNode.context.currentTime);
+        updateAudioParamValue(this.gainNode, { gain: value });
+        this.state = { ...this.state, gain: value };
+    }
+
+    setPulseWave(dutyCycle: number): void {
+        const audioCtx = this.node.context;
+        const n = 4096; // Number of samples for the wave
+        const real = new Float32Array(n);
+        const imag = new Float32Array(n);
+
+        for (let i = 1; i < n; i++) {
+            // Fourier series for pulse wave
+            real[i] = (2 / (i * Math.PI)) * Math.sin(i * Math.PI * dutyCycle);
+            imag[i] = 0;
+        }
+
+        this.graphNode.node.setPeriodicWave(audioCtx.createPeriodicWave(real, imag));
+        this.graphNode.dutyCycle = dutyCycle;
+        const newAudioGraphNode = { ...this.graphNode, node: this.graphNode.node, dutyCycle };
+        this.updateNode(newAudioGraphNode);
     }
 
     constructor(context: AudioContext, position: Position, id: AudioGraphId) {
@@ -70,7 +109,7 @@ export class OscillatorGraphNode implements AudioGraphNode {
         this.gainNode.gain.setValueAtTime(1.0, context.currentTime);
         this.node.connect(this.gainNode);
         this.node.start();
-        this.position = position;
+        this.state.position = position;
         this.id = id;
     }
 }

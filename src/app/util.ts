@@ -38,11 +38,15 @@ export interface ImmutableRepository<T> {
     clear: () => void;
 }
 
-export interface AudioGraphNode {
-    id: AudioGraphId;
+export interface AudioGraphNodeState {
     position: Position;
     isSelected: boolean;
+}
+
+export interface AudioGraphNode {
+    id: AudioGraphId;
     node: AudioNode;
+    state: AudioGraphNodeState;
     type: AudioNodeType;
     getKeyboardEvents?: (updateNode: (node: AudioGraphNode) => void) => Map<string, KeyboardAudioEvent>;
     connectTo?: (target: AudioNode | AudioParam | undefined) => boolean;
