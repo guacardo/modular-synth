@@ -81,27 +81,7 @@ export class OscillatorGraphNode implements AudioGraphNode {
         return undefined; // Oscillator nodes do not have input connections, so this is not applicable.
     }
 
-    setPulseWave(dutyCycle: number): void {
-        const audioCtx = this.node.context;
-        const n = 4096; // Number of samples for the wave
-        const real = new Float32Array(n);
-        const imag = new Float32Array(n);
-
-        for (let i = 1; i < n; i++) {
-            // Fourier series for pulse wave
-            real[i] = (2 / (i * Math.PI)) * Math.sin(i * Math.PI * dutyCycle);
-            imag[i] = 0;
-        }
-
-        this.node.setPeriodicWave(audioCtx.createPeriodicWave(real, imag));
-        this.state = { ...this.state, dutyCycle };
-    }
-
-    updateState(
-        key: keyof OscillatorGraphNodeState,
-        value: OscillatorGraphNodeState[keyof OscillatorGraphNodeState],
-        callback?: (node: AudioGraphNode) => void
-    ): void {
+    updateState(key: keyof OscillatorGraphNodeState, value: OscillatorGraphNodeState[keyof OscillatorGraphNodeState]): OscillatorGraphNode {
         switch (key) {
             case "frequency":
                 if (typeof value === "number") {
@@ -141,7 +121,23 @@ export class OscillatorGraphNode implements AudioGraphNode {
                 console.warn(`Unknown or invalid state key/value: ${key} = ${value}`);
                 assertNever(key);
         }
-        callback?.(this);
+        return this;
+    }
+
+    private setPulseWave(dutyCycle: number): void {
+        const audioCtx = this.node.context;
+        const n = 4096; // Number of samples for the wave
+        const real = new Float32Array(n);
+        const imag = new Float32Array(n);
+
+        for (let i = 1; i < n; i++) {
+            // Fourier series for pulse wave
+            real[i] = (2 / (i * Math.PI)) * Math.sin(i * Math.PI * dutyCycle);
+            imag[i] = 0;
+        }
+
+        this.node.setPeriodicWave(audioCtx.createPeriodicWave(real, imag));
+        this.state = { ...this.state, dutyCycle };
     }
 
     constructor(context: AudioContext, position: Position, id: AudioGraphId) {

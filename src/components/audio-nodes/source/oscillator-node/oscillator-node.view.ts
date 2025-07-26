@@ -29,7 +29,7 @@ export class OscillatorNodeView extends LitElement {
                     .step=${1}
                     .unit=${"Hz"}
                     .handleInput=${(event: Event) => {
-                        this.graphNode.updateState("frequency", (event.target as HTMLInputElement).valueAsNumber);
+                        this.updateNode(this.graphNode.updateState("frequency", (event.target as HTMLInputElement).valueAsNumber));
                     }}
                 ></range-slider-view>
                 <range-slider-view
@@ -39,7 +39,7 @@ export class OscillatorNodeView extends LitElement {
                     .step=${1}
                     .unit=${"Cents"}
                     .handleInput=${(event: Event) => {
-                        this.graphNode.updateState("detune", (event.target as HTMLInputElement).valueAsNumber);
+                        this.updateNode(this.graphNode.updateState("detune", (event.target as HTMLInputElement).valueAsNumber));
                     }}
                 ></range-slider-view>
                 <range-slider-view
@@ -48,7 +48,9 @@ export class OscillatorNodeView extends LitElement {
                     .max=${1}
                     .step=${0.01}
                     .unit=${"Duty Cycle"}
-                    .handleInput=${(event: Event) => this.graphNode.setPulseWave((event.target as HTMLInputElement).valueAsNumber)}
+                    .handleInput=${(event: Event) => {
+                        this.updateNode(this.graphNode.updateState("dutyCycle", (event.target as HTMLInputElement).valueAsNumber));
+                    }}
                 ></range-slider-view>
                 <range-slider-view
                     .value=${this.graphNode.gainNode.gain.value.toFixed(2).toString()}
@@ -56,14 +58,16 @@ export class OscillatorNodeView extends LitElement {
                     .max=${1}
                     .step=${0.001}
                     .unit=${"Gain"}
-                    .handleInput=${(event: Event) => this.graphNode.updateState("gain", (event.target as HTMLInputElement).valueAsNumber)}
+                    .handleInput=${(event: Event) => {
+                        this.updateNode(this.graphNode.updateState("gain", (event.target as HTMLInputElement).valueAsNumber));
+                    }}
                 ></range-slider-view>
             </div>
             <select
                 class="custom-select"
                 .value=${this.graphNode.node.type}
                 @change=${(e: Event) => {
-                    this.graphNode.updateState("type", (e.target as HTMLSelectElement).value as OscillatorType);
+                    this.updateNode(this.graphNode.updateState("type", (e.target as HTMLSelectElement).value as OscillatorType));
                 }}
             >
                 ${settableOscillatorTypes.map((type) => {
@@ -75,7 +79,7 @@ export class OscillatorNodeView extends LitElement {
                 <button
                     class=${classMap({ button: true, "button-active": this.graphNode.state.isSelected })}
                     type="button"
-                    @click=${() => this.graphNode.updateState("isSelected", !this.graphNode.state.isSelected)}
+                    @click=${() => this.updateNode(this.graphNode.updateState("isSelected", !this.graphNode.state.isSelected))}
                 >
                     keyboard
                 </button>
