@@ -60,7 +60,8 @@ export class AudioGraphRepo implements ImmutableRepository<AudioGraphNode> {
     }
 
     update(node: AudioGraphNode): AudioGraphNode[] {
-        return this.nodes.map((n) => (n.id === node.id ? Object.assign(Object.create(Object.getPrototypeOf(n)), n, node) : n));
+        this.nodes = this.nodes.map((n) => (n.id[0] === node.id[0] && n.id[1] === node.id[1] ? node : n));
+        return this.nodes;
     }
 
     findById(id: AudioGraphId): AudioGraphNode | undefined {

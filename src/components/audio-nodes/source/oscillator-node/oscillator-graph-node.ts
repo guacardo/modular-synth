@@ -1,4 +1,5 @@
 import {
+    assertNever,
     AudioGraphId,
     AudioGraphNode,
     AudioGraphNodeState,
@@ -9,8 +10,9 @@ import {
     updateAudioParamValue,
 } from "../../../../app/util";
 
-interface OscillatorGraphNodeState extends AudioGraphNodeState {
+export interface OscillatorGraphNodeState extends AudioGraphNodeState {
     frequency: number;
+    detune: number;
     type: OscillatorType;
     gain: number;
     dutyCycle: number;
@@ -25,6 +27,7 @@ export class OscillatorGraphNode implements AudioGraphNode {
         position: [0, 0],
         isSelected: false,
         frequency: 440,
+        detune: 0,
         type: "sine",
         gain: 1,
         dutyCycle: 0.5,
@@ -45,8 +48,7 @@ export class OscillatorGraphNode implements AudioGraphNode {
                 "ArrowLeft",
                 {
                     keydown: () => {
-                        this.updateGain(Math.max(0, this.gainNode.gain.value - 0.05));
-                        updateNode({ ...this });
+                        this.updateState("gain", Math.max(0, this.gainNode.gain.value - 0.05), updateNode);
                     },
                 },
             ],
@@ -54,8 +56,7 @@ export class OscillatorGraphNode implements AudioGraphNode {
                 "ArrowRight",
                 {
                     keydown: () => {
-                        this.updateGain(Math.min(1, this.gainNode.gain.value + 0.05));
-                        updateNode({ ...this });
+                        this.updateState("gain", Math.min(1, this.gainNode.gain.value + 0.05), updateNode);
                     },
                 },
             ],
@@ -80,11 +81,6 @@ export class OscillatorGraphNode implements AudioGraphNode {
         return undefined; // Oscillator nodes do not have input connections, so this is not applicable.
     }
 
-    updateGain(value: number): void {
-        updateAudioParamValue(this.gainNode, { gain: value });
-        this.state = { ...this.state, gain: value };
-    }
-
     setPulseWave(dutyCycle: number): void {
         const audioCtx = this.node.context;
         const n = 4096; // Number of samples for the wave
@@ -97,10 +93,55 @@ export class OscillatorGraphNode implements AudioGraphNode {
             imag[i] = 0;
         }
 
-        this.graphNode.node.setPeriodicWave(audioCtx.createPeriodicWave(real, imag));
-        this.graphNode.dutyCycle = dutyCycle;
-        const newAudioGraphNode = { ...this.graphNode, node: this.graphNode.node, dutyCycle };
-        this.updateNode(newAudioGraphNode);
+        this.node.setPeriodicWave(audioCtx.createPeriodicWave(real, imag));
+        this.state = { ...this.state, dutyCycle };
+    }
+
+    updateState(
+        key: keyof OscillatorGraphNodeState,
+        value: OscillatorGraphNodeState[keyof OscillatorGraphNodeState],
+        callback?: (node: AudioGraphNode) => void
+    ): void {
+        switch (key) {
+            case "frequency":
+                if (typeof value === "number") {
+                    this.node = updateAudioParamValue(this.node, { frequency: value });
+                    this.state = { ...this.state, frequency: value };
+                }
+                break;
+            case "type":
+                if (typeof value === "string") {
+                    this.node = updateAudioParamValue(this.node, { type: value as OscillatorType });
+                    this.state = { ...this.state, type: value as OscillatorType };
+                }
+                break;
+            case "gain":
+                if (typeof value === "number") {
+                    this.gainNode = updateAudioParamValue(this.gainNode, { gain: value });
+                    this.state = { ...this.state, gain: value };
+                }
+                break;
+            case "dutyCycle":
+                if (typeof value === "number") {
+                    this.setPulseWave(value);
+                    this.state = { ...this.state, dutyCycle: value };
+                }
+                break;
+            case "detune":
+                if (typeof value === "number") {
+                    this.node = updateAudioParamValue(this.node, { detune: value });
+                    this.state = { ...this.state, detune: value };
+                }
+                break;
+            case "position":
+            case "isSelected":
+                this.state = { ...this.state, [key]: value };
+                break;
+            default:
+                console.warn(`Unknown or invalid state key/value: ${key} = ${value}`);
+                assertNever(key);
+        }
+        callback?.(this);
     }
 
     constructor(context: AudioContext, position: Position, id: AudioGraphId) {

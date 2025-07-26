@@ -48,12 +48,17 @@ export interface AudioGraphNode {
     node: AudioNode;
     state: AudioGraphNodeState;
     type: AudioNodeType;
+    connectTo: (target: AudioNode | AudioParam | undefined) => boolean;
+    requestConnect: (target: IOLabel) => AudioNode | AudioParam | undefined;
     getKeyboardEvents?: (updateNode: (node: AudioGraphNode) => void) => Map<string, KeyboardAudioEvent>;
-    connectTo?: (target: AudioNode | AudioParam | undefined) => boolean;
-    requestConnect?: (target: IOLabel) => AudioNode | AudioParam | undefined;
 }
 
-export function updateAudioParamValue<T extends AudioNode>(node: T, properties: AudioNodeProperties): AudioNode {
+export function updateAudioParamValue<T extends AudioNode>(
+    node: T,
+    properties: Partial<{
+        [K in keyof T]: T[K] extends AudioParam ? number | [number, number] : T[K];
+    }>
+): T {
     const audioContext = getAudioContext();
 
     for (const [property, value] of Object.entries(properties)) {
@@ -78,6 +83,10 @@ export function updateAudioParamValue<T extends AudioNode>(node: T, properties: 
     }
 
     return node;
+}
+
+export function assertNever(x: never): never {
+    throw new Error("Unexpected value: " + x);
 }
 
 export function findDOMCoordinates(id: string): Position {

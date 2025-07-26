@@ -95,7 +95,7 @@ export class WillysRackShackView extends LitElement {
         const grid: Array<AudioGraphNode[]> = [[], [], [], [], []];
 
         for (const node of this.audioGraph) {
-            const [row, col] = node.position;
+            const [row, col] = node.state.position;
             grid[row][col] = node;
         }
 
