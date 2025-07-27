@@ -65,6 +65,7 @@ export class BiquadFilterGraphNode implements AudioGraphNode {
             case "type":
                 if (settableBiquadFilterTypes.includes(value as BiquadFilterType)) {
                     this.node = updateAudioParamValue(this.node, { type: value as BiquadFilterType });
+                    this.state = { ...this.state, type: value as BiquadFilterType };
                 }
                 break;
             case "frequency":
