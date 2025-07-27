@@ -1,4 +1,4 @@
-import { AudioGraphId, AudioGraphNode, AudioGraphNodeState, AudioNodeType, IOLabel, Position, updateAudioParamValue } from "../../../../app/util";
+import { assertNever, AudioGraphId, AudioGraphNode, AudioGraphNodeState, AudioNodeType, IOLabel, Position, updateAudioParamValue } from "../../../../app/util";
 
 export interface GainNodeState extends AudioGraphNodeState {
     gain: number;
@@ -64,7 +64,7 @@ export class GainGraphNode implements AudioGraphNode {
                 }
                 break;
             default:
-                console.warn(`Unknown or invalid state key/value: ${key} = ${value}`);
+                assertNever(key);
         }
         const copy = Object.assign(Object.create(Object.getPrototypeOf(this)), this);
         copy.state = { ...this.state };
