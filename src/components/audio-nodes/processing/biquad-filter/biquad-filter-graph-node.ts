@@ -21,8 +21,6 @@ export interface BiquadFilterNodeState extends AudioGraphNodeState {
 
 export class BiquadFilterGraphNode implements AudioGraphNode {
     id: AudioGraphId;
-    position: Position;
-    isSelected = false;
     node: BiquadFilterNode;
     gainNode: GainNode;
     type: AudioNodeType = "biquadFilter";
@@ -62,7 +60,7 @@ export class BiquadFilterGraphNode implements AudioGraphNode {
         }
     }
 
-    updateState(key: keyof BiquadFilterNodeState, value: BiquadFilterType | number): BiquadFilterGraphNode {
+    updateState(key: keyof BiquadFilterNodeState, value: BiquadFilterType | boolean | number | Position): BiquadFilterGraphNode {
         switch (key) {
             case "type":
                 if (settableBiquadFilterTypes.includes(value as BiquadFilterType)) {
@@ -97,8 +95,14 @@ export class BiquadFilterGraphNode implements AudioGraphNode {
                 }
                 break;
             case "position":
+                if (Array.isArray(value) && value.length === 2) {
+                    this.state = { ...this.state, position: value as Position };
+                }
+                break;
             case "isSelected":
-                this.state = { ...this.state, [key]: value };
+                if (typeof value === "boolean") {
+                    this.state = { ...this.state, isSelected: value };
+                }
                 break;
             default:
                 console.warn(`Unknown BiquadFilter parameter: ${key}`);
@@ -114,7 +118,7 @@ export class BiquadFilterGraphNode implements AudioGraphNode {
         this.gainNode = context.createGain();
         this.gainNode.gain.setValueAtTime(1.0, context.currentTime);
         this.node.connect(this.gainNode);
-        this.position = position;
+        this.state.position = position;
         this.id = id;
     }
 }

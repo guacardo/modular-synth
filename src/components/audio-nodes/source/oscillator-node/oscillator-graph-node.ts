@@ -113,8 +113,14 @@ export class OscillatorGraphNode implements AudioGraphNode {
                 }
                 break;
             case "position":
+                if (Array.isArray(value) && value.length === 2) {
+                    this.state = { ...this.state, position: value };
+                }
+                break;
             case "isSelected":
-                this.state = { ...this.state, [key]: value };
+                if (typeof value === "boolean") {
+                    this.state = { ...this.state, isSelected: value };
+                }
                 break;
             default:
                 console.warn(`Unknown or invalid state key/value: ${key} = ${value}`);
