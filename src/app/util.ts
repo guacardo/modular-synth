@@ -48,8 +48,8 @@ export interface AudioGraphNode {
     node: AudioNode;
     state: AudioGraphNodeState;
     type: AudioNodeType;
-    connectTo: (target: AudioNode | AudioParam | undefined) => boolean;
-    requestConnect: (target: IOLabel) => AudioNode | AudioParam | undefined;
+    connectOut: (target: AudioNode | AudioParam | undefined) => boolean;
+    connectIn: (target: IOLabel) => AudioNode | AudioParam | undefined;
     getKeyboardEvents?: (updateNode: (node: AudioGraphNode) => void) => Map<string, KeyboardAudioEvent>;
 }
 

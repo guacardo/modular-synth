@@ -63,7 +63,7 @@ export class OscillatorGraphNode implements AudioGraphNode {
         ]);
     }
 
-    connectTo(target: AudioNode | AudioParam | undefined): boolean {
+    connectOut(target: AudioNode | AudioParam | undefined): boolean {
         if (target instanceof AudioNode) {
             this.gainNode.connect(target);
         } else if (target instanceof AudioParam) {
@@ -75,7 +75,7 @@ export class OscillatorGraphNode implements AudioGraphNode {
         return true;
     }
 
-    requestConnect(target: IOLabel): AudioNode | AudioParam | undefined {
+    connectIn(target: IOLabel): AudioNode | AudioParam | undefined {
         console.warn("Oscillator nodes do not support input connections.", target);
         return undefined; // Oscillator nodes do not have input connections, so this is not applicable.
     }

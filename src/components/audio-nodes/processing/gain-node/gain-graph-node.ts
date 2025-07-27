@@ -1,4 +1,8 @@
-import { AudioGraphId, AudioGraphNode, AudioNodeType, IOLabel, Position } from "../../../../app/util";
+import { AudioGraphId, AudioGraphNode, AudioGraphNodeState, AudioNodeType, IOLabel, Position } from "../../../../app/util";
+
+export interface GainNodeState extends AudioGraphNodeState {
+    gain: number;
+}
 
 export class GainGraphNode implements AudioGraphNode {
     id: AudioGraphId;
@@ -6,8 +10,26 @@ export class GainGraphNode implements AudioGraphNode {
     isSelected = false;
     node: GainNode;
     type: AudioNodeType = "gain";
+    state: GainNodeState = {
+        position: [0, 0],
+        isSelected: false,
+        gain: 1,
+    };
 
-    requestConnect(target: IOLabel): AudioNode | AudioParam | undefined {
+    connectOut(target: AudioNode | AudioParam | undefined): boolean {
+        if (target instanceof AudioNode) {
+            this.node.connect(target);
+            return true;
+        } else if (target instanceof AudioParam) {
+            this.node.connect(target);
+            return true;
+        } else {
+            console.error("Failed to connect", target);
+            return false;
+        }
+    }
+
+    connectIn(target: IOLabel): AudioNode | AudioParam | undefined {
         switch (target) {
             case "in":
                 return this.node;
@@ -19,23 +41,6 @@ export class GainGraphNode implements AudioGraphNode {
             default:
                 console.warn(`Unknown target label: ${target}`);
                 return undefined;
-        }
-    }
-
-    connectTo(target: AudioNode | AudioParam | undefined): boolean {
-        if (!target) return false;
-        try {
-            if (target instanceof AudioNode) {
-                this.node.connect(target);
-            } else if (target instanceof AudioParam) {
-                this.node.connect(target);
-            } else {
-                return false;
-            }
-            return true;
-        } catch (e) {
-            console.error("Failed to connect:", e);
-            return false;
         }
     }
 

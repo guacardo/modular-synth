@@ -1,37 +1,18 @@
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { audioNodeStyles } from "../../audio-node-styles";
-import { AudioGraphNode, ConnectionComponents, updateAudioParamValue } from "../../../../app/util";
-import { BiquadFilterGraphNode } from "./biquad-filter-graph-node";
-
-const settableBiquadFilterTypes: readonly BiquadFilterType[] = [
-    "allpass",
-    "bandpass",
-    "highpass",
-    "highshelf",
-    "lowpass",
-    "lowshelf",
-    "notch",
-    "peaking",
-] as const;
+import { AudioGraphNode, ConnectionComponents } from "../../../../app/util";
+import { BiquadFilterGraphNode, settableBiquadFilterTypes } from "./biquad-filter-graph-node";
 
 @customElement("biquad-filter-node-view")
 export class BiquadFilterNodeView extends LitElement {
     static styles = [audioNodeStyles];
 
-    @property({ attribute: false }) readonly graphNode: BiquadFilterGraphNode;
-    @property({ type: Array }) connections: Array<[string, string]>;
+    @property({ attribute: false, type: Object }) readonly graphNode: BiquadFilterGraphNode;
+    @property({ attribute: false, type: Array }) connections: Array<[string, string]>;
     @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
     @property({ attribute: false }) removeNode: (node: AudioGraphNode) => void;
     @property({ attribute: false }) updatePendingConnectionState: (connection: ConnectionComponents) => void;
-
-    private updateBiquadFilterParam<T extends keyof BiquadFilterNode>(param: T, value: BiquadFilterType | number) {
-        const node = updateAudioParamValue(this.graphNode.node, {
-            [param]: value,
-        });
-        const newAudioGraphNode = { ...this.graphNode, node };
-        this.updateNode(newAudioGraphNode);
-    }
 
     render() {
         return html`<div class="node">
@@ -40,7 +21,7 @@ export class BiquadFilterNodeView extends LitElement {
                 class="custom-select"
                 .value=${(this.graphNode.node as BiquadFilterNode).type}
                 @change=${(e: Event) => {
-                    this.updateBiquadFilterParam("type", (e.target as HTMLSelectElement).value as BiquadFilterType);
+                    this.updateNode(this.graphNode.updateState("type", (e.target as HTMLSelectElement).value as BiquadFilterType));
                 }}
             >
                 ${settableBiquadFilterTypes.map((type) => {
@@ -55,7 +36,7 @@ export class BiquadFilterNodeView extends LitElement {
                     .step=${1}
                     .unit=${"Hz"}
                     .handleInput=${(event: Event) => {
-                        this.updateBiquadFilterParam("frequency", (event.target as HTMLInputElement).valueAsNumber);
+                        this.updateNode(this.graphNode.updateState("frequency", (event.target as HTMLInputElement).valueAsNumber));
                     }}
                 ></range-slider-view>
                 <range-slider-view
@@ -65,7 +46,7 @@ export class BiquadFilterNodeView extends LitElement {
                     .step=${1}
                     .unit=${"Cents"}
                     .handleInput=${(event: Event) => {
-                        this.updateBiquadFilterParam("detune", (event.target as HTMLInputElement).valueAsNumber);
+                        this.updateNode(this.graphNode.updateState("detune", (event.target as HTMLInputElement).valueAsNumber));
                     }}
                 ></range-slider-view>
                 <range-slider-view
@@ -75,7 +56,7 @@ export class BiquadFilterNodeView extends LitElement {
                     .step=${1}
                     .unit=${"Q"}
                     .handleInput=${(event: Event) => {
-                        this.updateBiquadFilterParam("Q", (event.target as HTMLInputElement).valueAsNumber);
+                        this.updateNode(this.graphNode.updateState("Q", (event.target as HTMLInputElement).valueAsNumber));
                     }}
                 ></range-slider-view>
                 <range-slider-view
@@ -85,7 +66,7 @@ export class BiquadFilterNodeView extends LitElement {
                     .step=${0.01}
                     .unit=${"Gain"}
                     .handleInput=${(event: Event) => {
-                        this.updateBiquadFilterParam("gain", (event.target as HTMLInputElement).valueAsNumber);
+                        this.updateNode(this.graphNode.updateState("gain", (event.target as HTMLInputElement).valueAsNumber));
                     }}
                 ></range-slider-view>
             </div>
