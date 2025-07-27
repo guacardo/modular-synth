@@ -25,7 +25,7 @@ export class DelayNodeView extends LitElement {
                     .step=${0.01}
                     .unit=${"delay"}
                     .handleInput=${(event: Event) => {
-                        this.graphNode.updateState("delayTime", (event.target as HTMLInputElement).valueAsNumber);
+                        this.updateNode(this.graphNode.updateState("delayTime", (event.target as HTMLInputElement).valueAsNumber));
                     }}
                 ></range-slider-view>
                 <range-slider-view
