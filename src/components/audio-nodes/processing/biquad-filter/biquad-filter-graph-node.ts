@@ -71,25 +71,25 @@ export class BiquadFilterGraphNode implements AudioGraphNode {
             case "frequency":
                 if (typeof value === "number") {
                     this.node = updateAudioParamValue(this.node, { frequency: value });
-                    this.state = { ...this.state, frequency: value as number };
+                    this.state = { ...this.state, frequency: value };
                 }
                 break;
             case "detune":
                 if (typeof value === "number") {
                     this.node = updateAudioParamValue(this.node, { detune: value });
-                    this.state = { ...this.state, detune: value as number };
+                    this.state = { ...this.state, detune: value };
                 }
                 break;
             case "Q":
                 if (typeof value === "number") {
                     this.node = updateAudioParamValue(this.node, { Q: value });
-                    this.state = { ...this.state, Q: value as number };
+                    this.state = { ...this.state, Q: value };
                 }
                 break;
             case "gain":
                 if (typeof value === "number") {
                     this.gainNode = updateAudioParamValue(this.gainNode, { gain: value });
-                    this.state = { ...this.state, gain: value as number };
+                    this.state = { ...this.state, gain: value };
                 }
                 break;
             case "position":
