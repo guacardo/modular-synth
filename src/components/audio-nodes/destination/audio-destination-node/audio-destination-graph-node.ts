@@ -1,4 +1,4 @@
-import { AudioGraphId, AudioGraphNode, AudioGraphNodeState, AudioNodeType, IOLabel, KeyboardAudioEvent, Position } from "../../../../app/util";
+import { assertNever, AudioGraphId, AudioGraphNode, AudioGraphNodeState, AudioNodeType, IOLabel, KeyboardAudioEvent, Position } from "../../../../app/util";
 
 export interface AudioDestinationNodeState extends AudioGraphNodeState {}
 
@@ -21,7 +21,7 @@ export class AudioDestinationGraphNode implements AudioGraphNode {
                 return undefined;
         }
     }
-    updateState(key: keyof AudioDestinationNodeState, value: Position | boolean): AudioDestinationGraphNode {
+    updateState(key: keyof AudioDestinationNodeState, value: AudioDestinationNodeState[keyof AudioDestinationNodeState]): AudioDestinationGraphNode {
         switch (key) {
             case "position":
                 if (Array.isArray(value) && value.length === 2) {
@@ -34,7 +34,7 @@ export class AudioDestinationGraphNode implements AudioGraphNode {
                 }
                 break;
             default:
-                console.warn(`Unknown AudioDestination parameter: ${key}`);
+                assertNever(key);
         }
         const copy = Object.assign(Object.create(Object.getPrototypeOf(this)), this);
         copy.state = { ...this.state };

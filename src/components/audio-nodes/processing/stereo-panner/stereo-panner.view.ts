@@ -1,6 +1,6 @@
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { AudioGraphNode, ConnectionComponents, updateAudioParamValue } from "../../../../app/util";
+import { AudioGraphNode, ConnectionComponents } from "../../../../app/util";
 import { StereoPannerGraphNode } from "./stereo-panner-graph-node";
 import { audioNodeStyles } from "../../audio-node-styles";
 
@@ -26,10 +26,7 @@ export class StereoPannerView extends LitElement {
                         .step=${0.01}
                         .unit=${"pan"}
                         .handleInput=${(event: Event) => {
-                            this.updateNode({
-                                ...this.graphNode,
-                                node: updateAudioParamValue(this.graphNode.node, { pan: (event.target as HTMLInputElement).valueAsNumber }),
-                            });
+                            this.graphNode.updateState("pan", parseFloat((event.target as HTMLInputElement).value));
                         }}
                     ></range-slider-view>
                 </div>

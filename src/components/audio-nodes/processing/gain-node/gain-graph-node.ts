@@ -1,4 +1,4 @@
-import { AudioGraphId, AudioGraphNode, AudioGraphNodeState, AudioNodeType, IOLabel, Position } from "../../../../app/util";
+import { AudioGraphId, AudioGraphNode, AudioGraphNodeState, AudioNodeType, IOLabel, Position, updateAudioParamValue } from "../../../../app/util";
 
 export interface GainNodeState extends AudioGraphNodeState {
     gain: number;
@@ -42,6 +42,33 @@ export class GainGraphNode implements AudioGraphNode {
                 console.warn(`Unknown target label: ${target}`);
                 return undefined;
         }
+    }
+
+    updateState(key: keyof GainNodeState, value: GainNodeState[keyof GainNodeState]): GainGraphNode {
+        switch (key) {
+            case "gain":
+                if (typeof value === "number") {
+                    this.node = updateAudioParamValue(this.node, { gain: value });
+                    this.state = { ...this.state, gain: value };
+                }
+                break;
+            case "position":
+                if (Array.isArray(value) && value.length === 2) {
+                    this.state = { ...this.state, position: value };
+                }
+                break;
+            case "isSelected":
+                if (typeof value === "boolean") {
+                    this.isSelected = value;
+                    this.state = { ...this.state, isSelected: value };
+                }
+                break;
+            default:
+                console.warn(`Unknown or invalid state key/value: ${key} = ${value}`);
+        }
+        const copy = Object.assign(Object.create(Object.getPrototypeOf(this)), this);
+        copy.state = { ...this.state };
+        return copy;
     }
 
     constructor(context: AudioContext, position: Position, id: AudioGraphId) {

@@ -16,7 +16,7 @@ export class OscillatorNodeView extends LitElement {
     @property({ attribute: false, type: Array }) readonly connections: Array<[string, string]>;
     @property({ attribute: false }) readonly updateNode: (node: AudioGraphNode) => void;
     @property({ attribute: false }) readonly removeNode: (node: AudioGraphNode) => void;
-    @property({ attribute: false }) updatePendingConnectionState: (connection: ConnectionComponents) => void;
+    @property({ attribute: false }) readonly updatePendingConnectionState: (connection: ConnectionComponents) => void;
 
     render() {
         return html`<div class="node">

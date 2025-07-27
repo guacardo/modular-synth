@@ -1,12 +1,31 @@
-import { AudioGraphNode, Position, KeyboardAudioEvent, updateAudioParamValue, AudioNodeType, AudioGraphId, IOLabel } from "../../../../app/util";
+import {
+    AudioGraphNode,
+    Position,
+    KeyboardAudioEvent,
+    updateAudioParamValue,
+    AudioNodeType,
+    AudioGraphId,
+    IOLabel,
+    AudioGraphNodeState,
+    assertNever,
+} from "../../../../app/util";
+
+export interface DelayNodeState extends AudioGraphNodeState {
+    delayTime: number;
+    gain: number;
+}
 
 export class DelayGraphNode implements AudioGraphNode {
     id: AudioGraphId;
-    position: Position;
-    isSelected: boolean;
     node: DelayNode;
     gainNode: GainNode;
     type: AudioNodeType = "delay";
+    state: DelayNodeState = {
+        position: [0, 0],
+        isSelected: false,
+        delayTime: 0.5,
+        gain: 0.99,
+    };
     getKeyboardEvents(updateNode: (node: AudioGraphNode) => void): Map<string, KeyboardAudioEvent> {
         return new Map<string, KeyboardAudioEvent>([
             [
@@ -42,7 +61,7 @@ export class DelayGraphNode implements AudioGraphNode {
         ]);
     }
 
-    connectTo(target: AudioNode | AudioParam | undefined): boolean {
+    connectOut(target: AudioNode | AudioParam | undefined): boolean {
         if (target instanceof AudioNode) {
             this.node.connect(target);
         } else if (target instanceof AudioParam) {
@@ -53,7 +72,7 @@ export class DelayGraphNode implements AudioGraphNode {
         return true;
     }
 
-    requestConnect(target: IOLabel): AudioNode | AudioParam | undefined {
+    connectIn(target: IOLabel): AudioNode | AudioParam | undefined {
         switch (target) {
             case "in":
                 return this.node;
@@ -68,8 +87,36 @@ export class DelayGraphNode implements AudioGraphNode {
         }
     }
 
-    updateGain(value: number): void {
-        this.gainNode.gain.setValueAtTime(value, this.gainNode.context.currentTime);
+    updateState(key: keyof DelayNodeState, value: DelayNodeState[keyof DelayNodeState]): DelayGraphNode {
+        switch (key) {
+            case "delayTime":
+                if (typeof value === "number") {
+                    this.node = updateAudioParamValue(this.node, { delayTime: value });
+                    this.state = { ...this.state, delayTime: value };
+                }
+                break;
+            case "gain":
+                if (typeof value === "number") {
+                    this.gainNode = updateAudioParamValue(this.gainNode, { gain: value });
+                    this.state = { ...this.state, gain: value };
+                }
+                break;
+            case "position":
+                if (Array.isArray(value) && value.length === 2) {
+                    this.state = { ...this.state, position: value };
+                }
+                break;
+            case "isSelected":
+                if (typeof value === "boolean") {
+                    this.state = { ...this.state, isSelected: value };
+                }
+                break;
+            default:
+                assertNever(key);
+        }
+        const copy = Object.assign(Object.create(Object.getPrototypeOf(this)), this);
+        copy.state = { ...this.state };
+        return copy;
     }
 
     constructor(context: AudioContext, position: Position, id: AudioGraphId) {
@@ -78,8 +125,8 @@ export class DelayGraphNode implements AudioGraphNode {
         this.gainNode.gain.setValueAtTime(0.5, context.currentTime);
         this.node.delayTime.value = 0.5;
         this.node.connect(this.gainNode);
-        this.position = position;
+        this.state.position = position;
         this.id = id;
-        this.isSelected = false;
+        this.state.isSelected = false;
     }
 }

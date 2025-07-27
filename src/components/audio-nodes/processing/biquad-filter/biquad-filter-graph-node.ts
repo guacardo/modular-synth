@@ -1,4 +1,4 @@
-import { assertNever, AudioGraphId, AudioGraphNode, AudioGraphNodeState, AudioNodeType, IOLabel, Position } from "../../../../app/util";
+import { assertNever, AudioGraphId, AudioGraphNode, AudioGraphNodeState, AudioNodeType, IOLabel, Position, updateAudioParamValue } from "../../../../app/util";
 
 export const settableBiquadFilterTypes: readonly BiquadFilterType[] = [
     "allpass",
@@ -60,37 +60,34 @@ export class BiquadFilterGraphNode implements AudioGraphNode {
         }
     }
 
-    updateState(key: keyof BiquadFilterNodeState, value: BiquadFilterType | boolean | number | Position): BiquadFilterGraphNode {
+    updateState(key: keyof BiquadFilterNodeState, value: BiquadFilterNodeState[keyof BiquadFilterNodeState]): BiquadFilterGraphNode {
         switch (key) {
             case "type":
                 if (settableBiquadFilterTypes.includes(value as BiquadFilterType)) {
-                    this.node.type = value as BiquadFilterType;
-                    this.state = { ...this.state, type: value as BiquadFilterType };
-                } else {
-                    console.warn(`Invalid BiquadFilter type: ${value}`);
+                    this.node = updateAudioParamValue(this.node, { type: value as BiquadFilterType });
                 }
                 break;
             case "frequency":
                 if (typeof value === "number") {
-                    this.node.frequency.value = value as number;
+                    this.node = updateAudioParamValue(this.node, { frequency: value });
                     this.state = { ...this.state, frequency: value as number };
                 }
                 break;
             case "detune":
                 if (typeof value === "number") {
-                    this.node.detune.value = value as number;
+                    this.node = updateAudioParamValue(this.node, { detune: value });
                     this.state = { ...this.state, detune: value as number };
                 }
                 break;
             case "Q":
                 if (typeof value === "number") {
-                    this.node.Q.value = value as number;
+                    this.node = updateAudioParamValue(this.node, { Q: value });
                     this.state = { ...this.state, Q: value as number };
                 }
                 break;
             case "gain":
                 if (typeof value === "number") {
-                    this.gainNode.gain.value = value as number;
+                    this.gainNode = updateAudioParamValue(this.gainNode, { gain: value });
                     this.state = { ...this.state, gain: value as number };
                 }
                 break;
@@ -105,7 +102,6 @@ export class BiquadFilterGraphNode implements AudioGraphNode {
                 }
                 break;
             default:
-                console.warn(`Unknown BiquadFilter parameter: ${key}`);
                 assertNever(key);
         }
         const copy = Object.assign(Object.create(Object.getPrototypeOf(this)), this);
