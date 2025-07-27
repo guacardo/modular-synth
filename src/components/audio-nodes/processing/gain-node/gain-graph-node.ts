@@ -59,7 +59,6 @@ export class GainGraphNode implements AudioGraphNode {
                 break;
             case "isSelected":
                 if (typeof value === "boolean") {
-                    this.isSelected = value;
                     this.state = { ...this.state, isSelected: value };
                 }
                 break;
