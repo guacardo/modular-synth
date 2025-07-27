@@ -94,7 +94,7 @@ export class BiquadFilterGraphNode implements AudioGraphNode {
                 break;
             case "position":
                 if (Array.isArray(value) && value.length === 2) {
-                    this.state = { ...this.state, position: value as Position };
+                    this.state = { ...this.state, position: value };
                 }
                 break;
             case "isSelected":
