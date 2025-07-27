@@ -22,12 +22,10 @@ export class ConnectionRepo implements ImmutableRepository<[ConnectionComponents
     }
 
     update(item: [ConnectionComponents, ConnectionComponents]): Array<[ConnectionComponents, ConnectionComponents]> {
-        console.log(item);
         return this.connections;
     }
 
     findById(id: string): [ConnectionComponents, ConnectionComponents] | undefined {
-        console.log(id);
         return undefined;
     }
 
@@ -46,7 +44,6 @@ export class ConnectionRepo implements ImmutableRepository<[ConnectionComponents
     }
 
     updatePendingConnectionState(components: ConnectionComponents): [ConnectionComponents?, ConnectionComponents?] {
-        console.log(components);
         // select source
         if (this.pendingConnectionState[0] === undefined) {
             this.pendingConnectionState = [components, undefined];

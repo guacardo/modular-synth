@@ -1,30 +1,18 @@
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { DelayGraphNode } from "./delay-graph-node";
-import { AudioGraphNode, ConnectionComponents, updateAudioParamValue } from "../../../../app/util";
+import { AudioGraphNode, ConnectionComponents } from "../../../../app/util";
 import { audioNodeStyles } from "../../audio-node-styles";
 
 @customElement("delay-node-view")
 export class DelayNodeView extends LitElement {
     static styles = [audioNodeStyles];
 
-    @property({ attribute: false, type: Object }) graphNode: DelayGraphNode;
-    @property({ attribute: false, type: Array }) connections: Array<[string, string]>;
-    @property({ attribute: false }) updateNode: (node: AudioGraphNode) => void;
-    @property({ attribute: false }) removeNode: (node: AudioGraphNode) => void;
-    @property({ attribute: false }) updatePendingConnectionState: (connection: ConnectionComponents) => void;
-
-    private updateDelayTime(value: number) {
-        this.updateNode({
-            ...this.graphNode,
-            node: updateAudioParamValue(this.graphNode.node, { delayTime: value } as Partial<Record<keyof DelayNode, number>>),
-        });
-    }
-
-    private updateGain(value: number) {
-        this.graphNode.updateGain(value);
-        this.updateNode({ ...this.graphNode });
-    }
+    @property({ attribute: false, type: Object }) readonly graphNode: DelayGraphNode;
+    @property({ attribute: false, type: Array }) readonly connections: Array<[string, string]>;
+    @property({ attribute: false }) readonly updateNode: (node: AudioGraphNode) => void;
+    @property({ attribute: false }) readonly removeNode: (node: AudioGraphNode) => void;
+    @property({ attribute: false }) readonly updatePendingConnectionState: (connection: ConnectionComponents) => void;
 
     render() {
         return html`<div class="node">
@@ -36,7 +24,9 @@ export class DelayNodeView extends LitElement {
                     .max=${10}
                     .step=${0.01}
                     .unit=${"delay"}
-                    .handleInput=${(event: Event) => this.updateDelayTime((event.target as HTMLInputElement).valueAsNumber)}
+                    .handleInput=${(event: Event) => {
+                        this.updateNode(this.graphNode.updateState("delayTime", (event.target as HTMLInputElement).valueAsNumber));
+                    }}
                 ></range-slider-view>
                 <range-slider-view
                     .value=${this.graphNode.gainNode.gain.value.toFixed(2).toString()}
@@ -44,7 +34,9 @@ export class DelayNodeView extends LitElement {
                     .max=${1}
                     .step=${0.001}
                     .unit=${"gain"}
-                    .handleInput=${(event: Event) => this.updateGain((event.target as HTMLInputElement).valueAsNumber)}
+                    .handleInput=${(event: Event) => {
+                        this.updateNode(this.graphNode.updateState("gain", (event.target as HTMLInputElement).valueAsNumber));
+                    }}
                 ></range-slider-view>
             </div>
             <div class="button-container">

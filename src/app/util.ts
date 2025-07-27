@@ -38,18 +38,28 @@ export interface ImmutableRepository<T> {
     clear: () => void;
 }
 
-export interface AudioGraphNode {
-    id: AudioGraphId;
+export interface AudioGraphNodeState {
     position: Position;
     isSelected: boolean;
-    node: AudioNode;
-    type: AudioNodeType;
-    getKeyboardEvents?: (updateNode: (node: AudioGraphNode) => void) => Map<string, KeyboardAudioEvent>;
-    connectTo?: (target: AudioNode | AudioParam | undefined) => boolean;
-    requestConnect?: (target: IOLabel) => AudioNode | AudioParam | undefined;
 }
 
-export function updateAudioParamValue<T extends AudioNode>(node: T, properties: AudioNodeProperties): AudioNode {
+export interface AudioGraphNode {
+    id: AudioGraphId;
+    node: AudioNode;
+    state: AudioGraphNodeState;
+    type: AudioNodeType;
+    connectOut: (target: AudioNode | AudioParam | undefined) => boolean;
+    connectIn: (target: IOLabel) => AudioNode | AudioParam | undefined;
+    updateState: (key: keyof AudioGraphNodeState, value: any) => AudioGraphNode;
+    getKeyboardEvents?: (updateNode: (node: AudioGraphNode) => void) => Map<string, KeyboardAudioEvent>;
+}
+
+export function updateAudioParamValue<T extends AudioNode>(
+    node: T,
+    properties: Partial<{
+        [K in keyof T]: T[K] extends AudioParam ? number | [number, number] : T[K];
+    }>
+): T {
     const audioContext = getAudioContext();
 
     for (const [property, value] of Object.entries(properties)) {
@@ -74,6 +84,10 @@ export function updateAudioParamValue<T extends AudioNode>(node: T, properties: 
     }
 
     return node;
+}
+
+export function assertNever(x: never): never {
+    throw new Error("Unexpected value: " + x);
 }
 
 export function findDOMCoordinates(id: string): Position {

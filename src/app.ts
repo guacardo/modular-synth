@@ -109,7 +109,7 @@ export class AppView extends LitElement {
     mergeEventMaps(): Map<string, KeyboardAudioEvent[]> {
         const result = new Map<string, KeyboardAudioEvent[]>();
         for (const node of this.audioGraph) {
-            if (node.isSelected) {
+            if (node.state.isSelected) {
                 const events = node.getKeyboardEvents?.(this.handleUpdateNode);
                 if (events !== undefined) {
                     for (const [key, eventList] of events.entries()) {
@@ -145,7 +145,7 @@ export class AppView extends LitElement {
         const newGraph: AudioGraphNode[] = (audioGraph as AudioGraphNodeSerialized[]).map((node) => {
             const NodeClass = nodeClassMap[node.type];
             if (!NodeClass) throw new Error(`Unknown node type: ${node.type}`);
-            const newNode = new NodeClass(audioContext, node.position, node.id);
+            const newNode = new NodeClass(audioContext, node.state.position, node.id);
             return newNode;
         });
         this.audioGraph = this._audioGraphRepo.setAll(newGraph);
@@ -153,8 +153,6 @@ export class AppView extends LitElement {
         connections.forEach((connection) => {
             this.createConnections(connection);
         });
-
-        console.log("Audio graph loaded", this.audioGraph, this.connections);
     };
 
     render() {
