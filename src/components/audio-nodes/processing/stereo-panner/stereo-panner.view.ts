@@ -26,7 +26,7 @@ export class StereoPannerView extends LitElement {
                         .step=${0.01}
                         .unit=${"pan"}
                         .handleInput=${(event: Event) => {
-                            this.graphNode.updateState("pan", parseFloat((event.target as HTMLInputElement).value));
+                            this.updateNode(this.graphNode.updateState("pan", parseFloat((event.target as HTMLInputElement).value)));
                         }}
                     ></range-slider-view>
                 </div>
