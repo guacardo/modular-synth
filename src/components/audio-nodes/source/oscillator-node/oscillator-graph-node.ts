@@ -123,7 +123,6 @@ export class OscillatorGraphNode implements AudioGraphNode {
                 }
                 break;
             default:
-                console.warn(`Unknown or invalid state key/value: ${key} = ${value}`);
                 assertNever(key);
         }
         const copy = Object.assign(Object.create(Object.getPrototypeOf(this)), this);
