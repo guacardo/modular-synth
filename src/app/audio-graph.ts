@@ -60,12 +60,13 @@ export class AudioGraphRepo implements ImmutableRepository<AudioGraphNode> {
     }
 
     update(node: AudioGraphNode): AudioGraphNode[] {
-        this.nodes = this.nodes.map((n) => (n.id[0] === node.id[0] && n.id[1] === node.id[1] ? node : n));
+        const copy = this.nodes.map((n) => (n.id[0] === node.id[0] && n.id[1] === node.id[1] ? node : n));
+        this.nodes = copy;
+
         return this.nodes;
     }
 
     findById(id: AudioGraphId): AudioGraphNode | undefined {
-        console.log("findById", id, this.nodes);
         return this.nodes.find((n) => n.id[0] === id[0] && n.id[1] === id[1]);
     }
 
@@ -106,13 +107,11 @@ export class AudioGraphRepo implements ImmutableRepository<AudioGraphNode> {
     connect(connection: [ConnectionComponents, ConnectionComponents]): void {
         const [sourceIndex, sourceType, sourceParam]: ConnectionComponents = connection[0];
         const [targetIndex, targetType, targetParam]: ConnectionComponents = connection[1];
-        console.log(this.nodes);
+
         const source = this.findById([sourceIndex, sourceType]);
         const target = this.findById([targetIndex, targetType]);
         if (source && target) {
-            console.log("connection parts", sourceIndex, sourceType, sourceParam, targetIndex, targetType, targetParam);
-            const success = source.connectTo?.(target.requestConnect?.(targetParam));
-            console.log("connect", connection, success);
+            source.connectTo?.(target.requestConnect?.(targetParam));
         } else {
             console.error("could not find connection", [sourceIndex, sourceType, sourceParam], [targetIndex, targetType, targetParam]);
         }

@@ -153,8 +153,6 @@ export class AppView extends LitElement {
         connections.forEach((connection) => {
             this.createConnections(connection);
         });
-
-        console.log("Audio graph loaded", this.audioGraph, this.connections);
     };
 
     render() {

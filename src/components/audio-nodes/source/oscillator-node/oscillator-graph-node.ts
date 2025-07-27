@@ -48,7 +48,7 @@ export class OscillatorGraphNode implements AudioGraphNode {
                 "ArrowLeft",
                 {
                     keydown: () => {
-                        this.updateState("gain", Math.max(0, this.gainNode.gain.value - 0.05), updateNode);
+                        this.updateState("gain", Math.max(0, this.gainNode.gain.value - 0.05));
                     },
                 },
             ],
@@ -56,7 +56,7 @@ export class OscillatorGraphNode implements AudioGraphNode {
                 "ArrowRight",
                 {
                     keydown: () => {
-                        this.updateState("gain", Math.min(1, this.gainNode.gain.value + 0.05), updateNode);
+                        this.updateState("gain", Math.min(1, this.gainNode.gain.value + 0.05));
                     },
                 },
             ],
@@ -64,7 +64,6 @@ export class OscillatorGraphNode implements AudioGraphNode {
     }
 
     connectTo(target: AudioNode | AudioParam | undefined): boolean {
-        console.log("OscillatorGraphNode connectTo", target);
         if (target instanceof AudioNode) {
             this.gainNode.connect(target);
         } else if (target instanceof AudioParam) {
@@ -121,7 +120,9 @@ export class OscillatorGraphNode implements AudioGraphNode {
                 console.warn(`Unknown or invalid state key/value: ${key} = ${value}`);
                 assertNever(key);
         }
-        return this;
+        const copy = Object.assign(Object.create(Object.getPrototypeOf(this)), this);
+        copy.state = { ...this.state };
+        return copy;
     }
 
     private setPulseWave(dutyCycle: number): void {
