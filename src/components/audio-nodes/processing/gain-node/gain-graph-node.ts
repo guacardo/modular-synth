@@ -6,7 +6,6 @@ export interface GainNodeState extends AudioGraphNodeState {
 
 export class GainGraphNode implements AudioGraphNode {
     id: AudioGraphId;
-    position: Position;
     isSelected = false;
     node: GainNode;
     type: AudioNodeType = "gain";
@@ -72,7 +71,7 @@ export class GainGraphNode implements AudioGraphNode {
 
     constructor(context: AudioContext, position: Position, id: AudioGraphId) {
         this.node = context.createGain();
-        this.position = position;
+        this.state.position = position;
         this.id = id;
     }
 }

@@ -1,7 +1,7 @@
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { audioNodeStyles } from "../../audio-node-styles";
-import { AudioGraphNode, ConnectionComponents, updateAudioParamValue } from "../../../../app/util";
+import { AudioGraphNode, ConnectionComponents } from "../../../../app/util";
 import { GainGraphNode } from "./gain-graph-node";
 
 @customElement("gain-node-view")
@@ -15,13 +15,6 @@ export class GainNodeView extends LitElement {
     @property({ attribute: false }) removeNode: (node: AudioGraphNode) => void;
     @property({ attribute: false }) updatePendingConnectionState: (connection: ConnectionComponents) => void;
 
-    private updateGain(value: number) {
-        this.updateNode({
-            ...this.graphNode,
-            node: updateAudioParamValue(this.graphNode.node, { gain: value } as Partial<Record<keyof GainNode, number>>),
-        });
-    }
-
     render() {
         const isGainModConnected = this.connections.some((connection) => connection[1] === `${this.graphNode.id}-gain`);
 
@@ -34,7 +27,9 @@ export class GainNodeView extends LitElement {
                     .max=${1.0}
                     .step=${0.001}
                     .unit=${"Gain"}
-                    .handleInput=${(event: Event) => this.updateGain((event.target as HTMLInputElement).valueAsNumber)}
+                    .handleInput=${(event: Event) => {
+                        this.updateNode(this.graphNode.updateState("gain", (event.target as HTMLInputElement).valueAsNumber));
+                    }}
                 ></range-slider-view>
             </div>
             <div class="button-container">
