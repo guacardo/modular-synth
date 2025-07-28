@@ -8,9 +8,9 @@ export type AudioNodeProperties = Partial<
         number | [number, number] | OscillatorType
     >
 >;
-export type AudioNodeType = "oscillator" | "gain" | "biquadFilter" | "audioDestination" | "delay" | "stereoPanner" | "delayDenyCompose";
+export type AudioNodeType = "oscillator" | "microphone" | "gain" | "biquadFilter" | "audioDestination" | "delay" | "stereoPanner" | "delayDenyCompose";
 type AudioProcessorNode = SafeExtract<AudioNodeType, "biquadFilter" | "gain" | "delay" | "stereoPanner">;
-type AudioSourceNode = SafeExtract<AudioNodeType, "oscillator">;
+type AudioSourceNode = SafeExtract<AudioNodeType, "oscillator" | "microphone">;
 type AudioGraphDestinationNode = SafeExtract<AudioNodeType, "audioDestination">;
 type AudioSuperNode = SafeExtract<AudioNodeType, "delayDenyCompose">;
 
@@ -20,7 +20,7 @@ export type AudioGraphId = [number, AudioNodeType];
 export type ConnectionComponents = [...AudioGraphId, IOLabel];
 
 export const AUDIO_PROCESSOR_NODES: AudioProcessorNode[] = ["biquadFilter", "delay", "gain", "stereoPanner"] as const;
-export const AUDIO_SOURCE_NODES: AudioSourceNode[] = ["oscillator"] as const;
+export const AUDIO_SOURCE_NODES: AudioSourceNode[] = ["oscillator", "microphone"] as const;
 export const AUDIO_DESTINATION_NODES: AudioGraphDestinationNode[] = ["audioDestination"] as const;
 export const AUDIO_SUPER_NODES: AudioSuperNode[] = ["delayDenyCompose"] as const;
 

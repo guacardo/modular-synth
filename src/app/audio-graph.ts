@@ -3,10 +3,11 @@ import { BiquadFilterGraphNode } from "../components/audio-nodes/processing/biqu
 import { DelayGraphNode } from "../components/audio-nodes/processing/delay/delay-graph-node";
 import { GainGraphNode } from "../components/audio-nodes/processing/gain-node/gain-graph-node";
 import { StereoPannerGraphNode } from "../components/audio-nodes/processing/stereo-panner/stereo-panner-graph-node";
+import { MicrophoneGraphNode } from "../components/audio-nodes/source/microphone-node/microphone-graph-node";
 import { OscillatorGraphNode } from "../components/audio-nodes/source/oscillator-node/oscillator-graph-node";
 import { DelayDenyComposeGraphNode } from "../components/audio-nodes/super/delay-deny-compose/delay-deny-compose-node";
 import { getAudioContext } from "./audio-context";
-import { AudioGraphNode, AudioNodeType, Position, ImmutableRepository, ConnectionComponents, AudioGraphId } from "./util";
+import { AudioGraphNode, AudioNodeType, Position, ImmutableRepository, ConnectionComponents, AudioGraphId, assertNever } from "./util";
 
 export class AudioGraphRepo implements ImmutableRepository<AudioGraphNode> {
     private nodes: AudioGraphNode[] = [];
@@ -23,6 +24,9 @@ export class AudioGraphRepo implements ImmutableRepository<AudioGraphNode> {
             case "gain":
                 newNode = new GainGraphNode(audioContext, position, [this.created++, type]);
                 break;
+            case "microphone":
+                newNode = new MicrophoneGraphNode(audioContext, position, [this.created++, type]);
+                break;
             case "oscillator":
                 newNode = new OscillatorGraphNode(audioContext, position, [this.created++, type]);
                 break;
@@ -38,6 +42,8 @@ export class AudioGraphRepo implements ImmutableRepository<AudioGraphNode> {
             case "delayDenyCompose":
                 newNode = new DelayDenyComposeGraphNode(audioContext, position, [this.created++, type]);
                 break;
+            default:
+                assertNever(type);
         }
 
         this.nodes = [...this.nodes, newNode];

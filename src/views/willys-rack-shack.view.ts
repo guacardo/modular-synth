@@ -9,6 +9,7 @@ import { AudioDestinationGraphNode } from "../components/audio-nodes/destination
 import { BiquadFilterGraphNode } from "../components/audio-nodes/processing/biquad-filter/biquad-filter-graph-node";
 import { GainGraphNode } from "../components/audio-nodes/processing/gain-node/gain-graph-node";
 import { DelayDenyComposeGraphNode } from "../components/audio-nodes/super/delay-deny-compose/delay-deny-compose-node";
+import { MicrophoneGraphNode } from "../components";
 
 @customElement("willys-rack-shack-view")
 export class WillysRackShackView extends LitElement {
@@ -41,6 +42,15 @@ export class WillysRackShackView extends LitElement {
                 .removeNode=${this.removeNode}
                 .updatePendingConnectionState=${this.updatePendingConnectionState}
             ></oscillator-node-view>`;
+        } else if (graphNode instanceof MicrophoneGraphNode) {
+            return html`<microphone-node-view
+                .graphNode=${graphNode}
+                .connections=${this.connections}
+                .pendingConnectionState=${this.pendingConnectionState}
+                .updateNode=${this.updateNode}
+                .removeNode=${this.removeNode}
+                .updatePendingConnectionState=${this.updatePendingConnectionState}
+            ></microphone-node-view>`;
         } else if (graphNode instanceof BiquadFilterGraphNode) {
             return html`<biquad-filter-node-view
                 .graphNode=${graphNode}

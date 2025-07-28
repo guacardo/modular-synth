@@ -22,6 +22,8 @@ import {
     InputOutputJackView,
     KeyboardController,
     LocalStorageView,
+    MicrophoneGraphNode,
+    MicrophoneNodeView,
     NewNodeView,
     OscillatorGraphNode,
     OscillatorNodeView,
@@ -39,6 +41,7 @@ import "./components/audio-nodes/processing/biquad-filter";
 import "./components/audio-nodes/processing/delay";
 import "./components/audio-nodes/processing/gain-node";
 import "./components/audio-nodes/processing/stereo-panner";
+import "./components/audio-nodes/source/microphone-node";
 import "./components/audio-nodes/source/oscillator-node";
 import "./components/audio-nodes/super/delay-deny-compose";
 import "./components/canvas-overlay";
@@ -136,6 +139,7 @@ export class AppView extends LitElement {
             delay: DelayGraphNode,
             delayDenyCompose: DelayDenyComposeGraphNode,
             gain: GainGraphNode,
+            microphone: MicrophoneGraphNode,
             oscillator: OscillatorGraphNode,
             stereoPanner: StereoPannerGraphNode,
         };
@@ -195,6 +199,7 @@ declare global {
         "gain-node-view": GainNodeView;
         "input-output-jack-view": InputOutputJackView;
         "local-storage-view": LocalStorageView;
+        "microphone-node-view": MicrophoneNodeView;
         "new-node-view": NewNodeView;
         "oscillator-node-view": OscillatorNodeView;
         "range-slider-view": RangeSliderView;

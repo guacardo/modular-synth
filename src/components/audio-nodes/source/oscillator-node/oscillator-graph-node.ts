@@ -75,10 +75,7 @@ export class OscillatorGraphNode implements AudioGraphNode {
         return true;
     }
 
-    connectIn(target: IOLabel): AudioNode | AudioParam | undefined {
-        console.warn("Oscillator nodes do not support input connections.", target);
-        return undefined; // Oscillator nodes do not have input connections, so this is not applicable.
-    }
+    connectIn: (target: IOLabel) => AudioNode | AudioParam | undefined;
 
     updateState(key: keyof OscillatorGraphNodeState, value: OscillatorGraphNodeState[keyof OscillatorGraphNodeState]): OscillatorGraphNode {
         switch (key) {
