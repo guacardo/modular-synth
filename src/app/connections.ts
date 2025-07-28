@@ -21,13 +21,8 @@ export class ConnectionRepo implements ImmutableRepository<[ConnectionComponents
         return this.connections;
     }
 
-    update(item: [ConnectionComponents, ConnectionComponents]): Array<[ConnectionComponents, ConnectionComponents]> {
-        return this.connections;
-    }
-
-    findById(id: string): [ConnectionComponents, ConnectionComponents] | undefined {
-        return undefined;
-    }
+    update: (item: [ConnectionComponents, ConnectionComponents]) => [ConnectionComponents, ConnectionComponents][];
+    findById: (id: string) => [ConnectionComponents, ConnectionComponents] | undefined;
 
     remove(connection: [ConnectionComponents, ConnectionComponents]): [ConnectionComponents, ConnectionComponents][] {
         this.connections = this.connections.filter((c) => c !== connection);
