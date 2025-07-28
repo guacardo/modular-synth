@@ -24,7 +24,7 @@ export class CoachingTextView extends LitElement {
         let text = "uhh...";
 
         if (
-            this.audioGraph.some((node) => node.isSelected) &&
+            this.audioGraph.some((node) => node.state.isSelected) &&
             this.audioGraph.some((node) => node instanceof OscillatorGraphNode) &&
             this.audioGraph.some((node) => node instanceof GainGraphNode) &&
             this.audioGraph.some((node) => node instanceof AudioDestinationGraphNode) &&
