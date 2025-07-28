@@ -61,6 +61,11 @@ export class AudioGraphRepo implements ImmutableRepository<AudioGraphNode> {
             } catch {}
         }
 
+        // Clean up microphone nodes
+        if (node instanceof MicrophoneGraphNode) {
+            node.cleanup();
+        }
+
         this.nodes = this.nodes.filter((n) => n.id !== node.id);
         return this.nodes;
     }
@@ -100,6 +105,10 @@ export class AudioGraphRepo implements ImmutableRepository<AudioGraphNode> {
             // all graph nodes should implement a stop method
             if (node.node instanceof OscillatorNode) {
                 node.node.stop();
+            }
+            // Clean up microphone nodes
+            if (node instanceof MicrophoneGraphNode) {
+                node.cleanup();
             }
         });
     }

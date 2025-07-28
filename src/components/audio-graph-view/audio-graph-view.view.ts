@@ -3,6 +3,7 @@ import { customElement, property } from "lit/decorators.js";
 import { AUDIO_DESTINATION_NODES, AUDIO_PROCESSOR_NODES, AUDIO_SOURCE_NODES, AudioGraphNode, AudioNodeType, Position } from "../../app/util";
 import { audioGraphStyles } from "./audio-graph-view.styles";
 import { OscillatorGraphNode } from "../audio-nodes/source/oscillator-node/oscillator-graph-node";
+import { MicrophoneGraphNode } from "../audio-nodes/source/microphone-node/microphone-graph-node";
 import { AudioDestinationGraphNode } from "../audio-nodes/destination/audio-destination-node/audio-destination-graph-node";
 import { BiquadFilterGraphNode } from "../audio-nodes/processing/biquad-filter/biquad-filter-graph-node";
 import { GainGraphNode } from "../audio-nodes/processing/gain-node/gain-graph-node";
@@ -94,7 +95,9 @@ export class AudioGraphView extends LitElement {
             <div class="nodes-container audiograph-source-nodes">
                 <h3>Source nodes</h3>
                 <div class="audio-graph-node-container">
-                    ${this.audioGraph.filter((node) => node instanceof OscillatorGraphNode).map((node) => this.renderNodeView(node))}
+                    ${this.audioGraph
+                        .filter((node) => node instanceof OscillatorGraphNode || node instanceof MicrophoneGraphNode)
+                        .map((node) => this.renderNodeView(node))}
                 </div>
                 <new-node-view .addNode=${this.addNode} .audioGraph=${this.audioGraph} .gridStyle=${true} .options=${AUDIO_SOURCE_NODES}></new-node-view>
             </div>
