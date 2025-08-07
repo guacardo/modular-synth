@@ -1,6 +1,14 @@
 import { LitElement, TemplateResult, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { AUDIO_DESTINATION_NODES, AUDIO_PROCESSOR_NODES, AUDIO_SOURCE_NODES, AudioGraphNode, AudioNodeType, Position } from "../../app/util";
+import {
+    AUDIO_DESTINATION_NODES,
+    AUDIO_PROCESSOR_NODES,
+    AUDIO_SOURCE_NODES,
+    AudioGraphNode,
+    AudioNodeType,
+    ConnectionComponents,
+    Position,
+} from "../../app/util";
 import { audioGraphStyles } from "./audio-graph-view.styles";
 import { OscillatorGraphNode } from "../audio-nodes/source/oscillator-node/oscillator-graph-node";
 import { MicrophoneGraphNode } from "../audio-nodes/source/microphone-node/microphone-graph-node";
@@ -19,7 +27,7 @@ export class AudioGraphView extends LitElement {
     @property({ attribute: false }) readonly addNode: (type: AudioNodeType, position: Position) => void;
     @property({ attribute: false }) readonly updateNode: (node: AudioGraphNode) => void;
     @property({ attribute: false }) readonly removeNode: (node: AudioGraphNode) => void;
-    @property({ attribute: false }) readonly updatePendingConnectionState: (id: string) => void;
+    @property({ attribute: false }) readonly updatePendingConnectionState: (connection: ConnectionComponents) => void;
 
     private renderNodeView(graphNode: AudioGraphNode): TemplateResult {
         if (graphNode instanceof GainGraphNode) {

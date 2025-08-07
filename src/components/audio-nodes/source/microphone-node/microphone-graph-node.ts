@@ -190,7 +190,7 @@ export class MicrophoneGraphNode implements AudioGraphNode {
         this.placeholderNode = context.createGain();
         this.placeholderNode.gain.setValueAtTime(0, context.currentTime); // Silent
         this.placeholderNode.connect(this.gainNode);
-        
+
         // Initialize node as placeholder - will be replaced when microphone permission is granted
         this.node = this.placeholderNode as any; // Type assertion to satisfy interface
     }
