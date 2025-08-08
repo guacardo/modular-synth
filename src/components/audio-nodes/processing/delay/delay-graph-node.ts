@@ -63,9 +63,9 @@ export class DelayGraphNode implements AudioGraphNode {
 
     connectOut(target: AudioNode | AudioParam | undefined): boolean {
         if (target instanceof AudioNode) {
-            this.node.connect(target);
+            this.gainNode.connect(target);
         } else if (target instanceof AudioParam) {
-            this.node.connect(target);
+            this.gainNode.connect(target);
         } else {
             return false;
         }
