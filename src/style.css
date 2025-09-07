@@ -23,6 +23,10 @@
     --hover-timing: 0.1s;
 }
 
+* {
+    box-sizing: border-box;
+}
+
 body {
     position: relative;
     background-color: var(--elevation-0);

@@ -10,7 +10,6 @@ import { appStyles } from "./styles/app-styles";
 // Component imports
 import {
     AudioDestinationGraphNode,
-    AudioGraphView,
     BiquadFilterGraphNode,
     BiquadFilterNodeView,
     CanvasOverlay,
@@ -35,7 +34,6 @@ import {
 import { WillysRackShackView } from "./views";
 
 // Component registration imports
-import "./components/audio-graph-view";
 import "./components/audio-nodes/destination";
 import "./components/audio-nodes/processing/biquad-filter";
 import "./components/audio-nodes/processing/delay";
@@ -66,6 +64,7 @@ export class AppView extends LitElement {
     @state() connections: Array<[ConnectionComponents, ConnectionComponents]> = this._connectionRepo.getAll();
     @state() pendingConnectionState = this._connectionRepo.getPendingConnectionState();
     @state() creationCounter: number = 0;
+    @state() curr_connection: [ConnectionComponents, ConnectionComponents] | null = null;
 
     connectedCallback(): void {
         super.connectedCallback();
@@ -170,20 +169,17 @@ export class AppView extends LitElement {
                 .updateNode=${this.handleUpdateNode}
                 .removeNode=${this.handleRemoveNode}
                 .updatePendingConnectionState=${this.handleUpdateNodeConnect}
-            >
-            </willys-rack-shack-view>
+            ></willys-rack-shack-view>
             <p>${this.pendingConnectionState}</p>
-            ${this.connections.map((connection) => {
-                return html`<p>Connection: ${connection[0]} -> ${connection[1]}</p>`;
-            })}
-            <keyboard-controller .keyboardAudioEvents=${this.mergeEventMaps()}></keyboard-controller>
-            <local-storage-view
+            <side-panel-view
+                orientation="right"
                 .audioGraph=${this.audioGraph}
                 .connections=${this.connections}
                 .loadAudioGraph=${this.handleLoadAudioGraph}
                 .clearAudioGraph=${this.clearAudioGraph}
-            ></local-storage-view>
-            <canvas-overlay .connections=${this.connections}></canvas-overlay>
+            ></side-panel-view>
+            <keyboard-controller .keyboardAudioEvents=${this.mergeEventMaps()}></keyboard-controller>
+            <canvas-overlay .connections=${this.connections} .curr_connection=${this.curr_connection}></canvas-overlay>
         </div>`;
     }
 }
@@ -191,7 +187,6 @@ export class AppView extends LitElement {
 declare global {
     interface HTMLElementTagNameMap {
         "app-view": AppView;
-        "audio-graph-view": AudioGraphView;
         "biquad-filter-node-view": BiquadFilterNodeView;
         "canvas-overlay": CanvasOverlay;
         "coaching-text-view": CoachingTextView;

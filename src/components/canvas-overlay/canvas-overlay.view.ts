@@ -10,7 +10,8 @@ export class CanvasOverlay extends LitElement {
     private canvas: HTMLCanvasElement;
     private ctx: CanvasRenderingContext2D | null = null;
 
-    @property({ type: Array }) connections: Array<[ConnectionComponents, ConnectionComponents]>;
+    @property({ attribute: false, type: Array }) connections: Array<[ConnectionComponents, ConnectionComponents]>;
+    @property({ attribute: false }) curr_connection: [ConnectionComponents, ConnectionComponents] | null = null;
 
     resizeObserver?: ResizeObserver;
 

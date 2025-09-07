@@ -1,4 +1,3 @@
-export * from "./audio-graph-view";
 export * from "./audio-nodes";
 export * from "./canvas-overlay";
 export * from "./coaching-text";

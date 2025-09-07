@@ -1,6 +1,11 @@
 import { css } from "lit";
 
 export const sidePanelStyles = css`
+    .side-panel-activator {
+        position: fixed;
+        top: 16px;
+        right: 16px;
+    }
     .side-panel-container {
         position: fixed;
         top: 0;
@@ -21,10 +26,20 @@ export const sidePanelStyles = css`
     }
 
     .left {
-        left: 0;
+        &.visible {
+            left: 0;
+        }
+        left: -100%;
     }
 
     .right {
-        right: 0;
+        &.visible {
+            right: 0;
+        }
+        right: -100%;
+    }
+
+    .connections-container {
+        background-color: red;
     }
 `;

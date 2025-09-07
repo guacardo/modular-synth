@@ -1,12 +1,8 @@
-import { LitElement, TemplateResult, html } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { LitElement, html } from "lit";
+import { customElement, property, state } from "lit/decorators.js";
 import { sidePanelStyles } from "./side-panel.styles";
 import { classMap } from "lit/directives/class-map.js";
-import { AUDIO_DESTINATION_NODES, AUDIO_PROCESSOR_NODES, AUDIO_SOURCE_NODES, AudioGraphNode, AudioNodeType, Position } from "../../app/util";
-import { OscillatorGraphNode } from "../audio-nodes/source/oscillator-node/oscillator-graph-node";
-import { AudioDestinationGraphNode } from "../audio-nodes/destination/audio-destination-node/audio-destination-graph-node";
-import { BiquadFilterGraphNode } from "../audio-nodes/processing/biquad-filter/biquad-filter-graph-node";
-import { GainGraphNode } from "../audio-nodes/processing/gain-node/gain-graph-node";
+import { AudioGraphNode, AudioNodeType, ConnectionComponents, Position } from "../../app/util";
 
 type Orientation = "left" | "right";
 
@@ -14,73 +10,49 @@ type Orientation = "left" | "right";
 export class SidePanelView extends LitElement {
     static styles = [sidePanelStyles];
 
+    @property({ type: String, attribute: true }) readonly orientation: Orientation;
     @property({ attribute: false, type: Array }) readonly audioGraph: AudioGraphNode[];
-    @property({ attribute: false, type: Array }) readonly connections: Array<[string, string]>;
+    @property({ attribute: false, type: Array }) readonly connections: Array<[ConnectionComponents, ConnectionComponents]> = [];
     @property({ attribute: false, type: Array }) readonly pendingConnectionState: [string, string];
     @property({ attribute: false }) readonly addNode: (type: AudioNodeType, position: Position) => void;
     @property({ attribute: false }) readonly updateNode: (node: AudioGraphNode) => void;
     @property({ attribute: false }) readonly removeNode: (node: AudioGraphNode) => void;
     @property({ attribute: false }) readonly updatePendingConnectionState: (id: string) => void;
-    @property({ type: String, attribute: true }) orientation: Orientation;
+    @property({ attribute: false }) readonly loadAudioGraph: (
+        audioGraph: AudioGraphNode[],
+        connections: Array<[ConnectionComponents, ConnectionComponents]>
+    ) => void;
+    @property({ attribute: false }) readonly clearAudioGraph: () => void;
+
+    @state() visible: boolean = false;
 
     connectedCallback(): void {
         super.connectedCallback();
     }
 
-    private renderNodeView(graphNode: AudioGraphNode): TemplateResult {
-        if (graphNode instanceof GainGraphNode) {
-            return html`<gain-node-view
-                .graphNode=${graphNode}
-                .connections=${this.connections}
-                .pendingConnectionState=${this.pendingConnectionState}
-                .updateNode=${this.updateNode}
-                .removeNode=${this.removeNode}
-                .updatePendingConnectionState=${this.updatePendingConnectionState}
-            ></gain-node-view>`;
-        } else if (graphNode instanceof OscillatorGraphNode) {
-            return html`<oscillator-node-view
-                .graphNode=${graphNode}
-                .connections=${this.connections}
-                .pendingConnectionState=${this.pendingConnectionState}
-                .updateNode=${this.updateNode}
-                .removeNode=${this.removeNode}
-                .updatePendingConnectionState=${this.updatePendingConnectionState}
-            ></oscillator-node-view>`;
-        } else if (graphNode instanceof BiquadFilterGraphNode) {
-            return html`<biquad-filter-node-view
-                .graphNode=${graphNode}
-                .connections=${this.connections}
-                .pendingConnectionState=${this.pendingConnectionState}
-                .updateNode=${this.updateNode}
-                .removeNode=${this.removeNode}
-                .updatePendingConnectionState=${this.updatePendingConnectionState}
-            ></biquad-filter-node-view>`;
-        } else if (graphNode instanceof AudioDestinationGraphNode) {
-            return html`<audio-destination-node-view
-                .graphNode=${graphNode}
-                .connections=${this.connections}
-                .pendingConnectionState=${this.pendingConnectionState}
-                .updateNode=${this.updateNode}
-                .removeNode=${this.removeNode}
-                .updatePendingConnectionState=${this.updatePendingConnectionState}
-            ></audio-destination-node-view>`;
-        } else {
-            return html`<p>ERroR: nOT a n Audio Noooode</p>`;
-        }
+    private toggleVisibility() {
+        this.visible = !this.visible;
+        console.log(this.visible);
     }
 
     render() {
         const classes = {
             left: this.orientation === "left" ? true : false,
             right: this.orientation === "right" ? true : false,
+            visible: this.visible,
         };
-        return html` <div class="side-panel-container${classMap(classes)}">
-            <div class="audio-graph-node-container">${this.audioGraph.map((node) => this.renderNodeView(node))}</div>
-            <new-node-view
-                .addNode=${this.addNode}
-                .audioGraph=${this.audioGraph}
-                .options=${[...AUDIO_DESTINATION_NODES, ...AUDIO_SOURCE_NODES, ...AUDIO_PROCESSOR_NODES]}
-            ></new-node-view>
-        </div>`;
+        return html` <button class="side-panel-activator" @click=${this.toggleVisibility}>O</button>
+            <div class="side-panel-container${classMap(classes)}">
+                <button class="close-button" @click=${this.toggleVisibility}>X</button>
+                <local-storage-view
+                    .audioGraph=${this.audioGraph}
+                    .connections=${this.connections}
+                    .loadAudioGraph=${this.loadAudioGraph}
+                    .clearAudioGraph=${this.clearAudioGraph}
+                ></local-storage-view>
+                <div class="connections-container">
+                    ${this.connections.map((connection) => html`<p>Connection: ${connection[0]} -> ${connection[1]}</p>`)}
+                </div>
+            </div>`;
     }
 }
